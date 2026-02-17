@@ -1,5 +1,7 @@
 // Create post form handler
 document.addEventListener("DOMContentLoaded", () => {
+  const user = getUser();
+
   // Check authentication
   if (!isAuthenticated()) {
     window.location.href = "/login";
@@ -8,6 +10,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const createPostForm = document.getElementById("create-post-form");
   const messageDiv = document.getElementById("message");
+  const categorySelect = document.getElementById("categoryId");
+  const userInfo = document.getElementById("user-info");
+
+  // Set user info
+  if (userInfo && user) {
+    userInfo.textContent = user.displayName || user.username;
+  }
+
+  // Load categories for dropdown
+  loadCategories();
+
+  async function loadCategories() {
+    try {
+      const data = await apiRequest("/categories");
+      if (data.success) {
+        data.categories.forEach((category) => {
+          const option = document.createElement("option");
+          option.value = category._id;
+          option.textContent = category.name;
+          categorySelect.appendChild(option);
+        });
+      }
+    } catch (error) {
+      console.error("Error loading categories:", error);
+    }
+  }
 
   createPostForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -16,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const content = document.getElementById("content").value;
     const excerpt = document.getElementById("excerpt").value;
     const tagsInput = document.getElementById("tags").value;
+    const categoryId = categorySelect.value;
     const status = document.getElementById("status").value;
 
     // Parse tags
@@ -29,7 +58,14 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const data = await apiRequest("/posts", {
         method: "POST",
-        body: JSON.stringify({ title, content, excerpt, tags, status }),
+        body: JSON.stringify({
+          title,
+          content,
+          excerpt,
+          tags,
+          status,
+          categoryId,
+        }),
       });
 
       messageDiv.innerHTML =

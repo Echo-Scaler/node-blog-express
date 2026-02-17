@@ -3,76 +3,205 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %> - Blog System</title>
+    <title>Edit Story - Byte & Beyond</title>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-    <nav class="navbar">
-      <div class="container">
-        <a href="/" class="logo">Blog System</a>
-        <div class="nav-links">
-          <a href="/">Home</a>
-          <a href="/dashboard">Dashboard</a>
-          <span id="user-info"></span>
-          <button id="logout-btn">Logout</button>
+    <header class="editor-header">
+      <div style="display: flex; align-items: center; gap: 16px">
+        <a
+          href="/dashboard"
+          class="logo"
+          style="text-decoration: none; font-size: 18px"
+          >Byte & Beyond</a
+        >
+        <div class="draft-status">
+          <div class="draft-dot saved"></div>
+          <span>Editing</span>
         </div>
       </div>
-    </nav>
+      <div style="display: flex; gap: 12px; align-items: center">
+        <span
+          id="user-info"
+          style="
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-right: 12px;
+          "
+        ></span>
+        <button
+          type="submit"
+          form="edit-post-form"
+          class="btn btn-primary"
+          style="padding: 8px 24px"
+        >
+          Save Changes
+        </button>
+      </div>
+    </header>
 
-    <main class="container">
-      <h1>Edit Post</h1>
+    <main>
+      <div class="editor-layout">
+        <form id="edit-post-form">
+          <input type="hidden" id="post-id" value="<%= postId %>" />
+          
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Title"
+            class="editor-title"
+            required
+            maxlength="200"
+          />
 
-      <form id="edit-post-form">
-        <input type="hidden" id="post-id" value="<%= postId %>" />
-
-        <div class="form-group">
-          <label for="title">Title *</label>
-          <input type="text" id="title" name="title" required maxlength="200" />
-        </div>
-
-        <div class="form-group">
-          <label for="content">Content *</label>
-          <textarea id="content" name="content" rows="15" required></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="excerpt">Excerpt (optional)</label>
           <textarea
-            id="excerpt"
-            name="excerpt"
-            rows="3"
-            maxlength="300"
+            id="content"
+            name="content"
+            placeholder="Tell your story..."
+            class="editor-content"
+            required
           ></textarea>
-        </div>
 
-        <div class="form-group">
-          <label for="tags">Tags (comma-separated)</label>
-          <input type="text" id="tags" name="tags" />
-        </div>
+          <div class="editor-settings">
+            <h2 style="font-size: 18px; margin-bottom: 24px; font-weight: 800">
+              Story Settings
+            </h2>
 
-        <div class="form-group">
-          <label for="status">Status *</label>
-          <select id="status" name="status">
-            <option value="published">Published</option>
-            <option value="draft">Draft</option>
-            <option value="hidden">Hidden</option>
-          </select>
-        </div>
+            <div class="form-group">
+              <label class="editor-label">Category</label>
+              <select
+                id="categoryId"
+                name="categoryId"
+                class="form-control"
+                required
+                style="border-radius: 12px; padding: 14px"
+              >
+                <option value="">Select a category</option>
+                <!-- Categories will be loaded dynamically -->
+              </select>
+            </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Update Post</button>
-          <a href="/dashboard" class="btn btn-secondary">Cancel</a>
-        </div>
-      </form>
+            <div class="form-group">
+              <label class="editor-label">Tags</label>
+              <input
+                type="text"
+                id="tags"
+                name="tags"
+                placeholder="Add some keywords..."
+                class="form-control"
+                style="border-radius: 12px; padding: 14px"
+              />
+            </div>
 
-      <div id="message"></div>
+            <div class="form-group">
+              <label class="editor-label">Short Preview</label>
+              <textarea
+                id="excerpt"
+                name="excerpt"
+                placeholder="What is this story about?"
+                rows="3"
+                maxlength="300"
+                class="form-control"
+                style="border-radius: 12px; padding: 14px; height: auto"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+               <label class="editor-label">Visibility</label>
+               <select id="status" name="status" class="form-control" style="border-radius: 12px; padding: 14px">
+                 <option value="published">Published</option>
+                 <option value="draft">Draft</option>
+                 <option value="hidden">Hidden</option>
+               </select>
+            </div>
+          </div>
+        </form>
+
+        <div id="message" style="margin-top: 40px"></div>
+      </div>
     </main>
 
-    <footer>
-      <div class="container">
-        <p>&copy; 2026 Blog System. All rights reserved.</p>
+    <script src="/js/auth.js"></script>
+    <script src="/js/edit-post.js"></script>
+  </body>
+</html>
+
+    <main>
+      <div class="content-column" style="max-width: 800px">
+        <form id="edit-post-form">
+          <input type="hidden" id="post-id" value="<%= postId %>" />
+
+          <div class="form-group">
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Title"
+              class="form-control-large"
+              required
+              maxlength="200"
+            />
+          </div>
+
+          <div class="form-group">
+            <textarea
+              id="content"
+              name="content"
+              placeholder="Tell your story..."
+              style="
+                border: none;
+                font-size: 20px;
+                font-family: var(--font-serif);
+                min-height: 400px;
+                resize: none;
+              "
+              required
+            ></textarea>
+          </div>
+
+          <div
+            style="
+              margin-top: 40px;
+              border-top: 1px solid var(--border-light);
+              padding-top: 20px;
+            "
+          >
+            <div class="form-group">
+              <label>Story Preview</label>
+              <textarea
+                id="excerpt"
+                name="excerpt"
+                placeholder="Write a short teaser (optional)"
+                rows="2"
+                maxlength="300"
+                style="font-size: 14px; border-bottom: none"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Tags</label>
+              <input
+                type="text"
+                id="tags"
+                name="tags"
+                placeholder="Add a tag..."
+                style="font-size: 14px; border-bottom: none"
+              />
+            </div>
+            <div class="form-group" style="display: none">
+              <select id="status" name="status">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="hidden">Hidden</option>
+              </select>
+            </div>
+          </div>
+        </form>
+
+        <div id="message"></div>
       </div>
-    </footer>
+    </main>
 
     <script src="/js/auth.js"></script>
     <script src="/js/edit-post.js"></script>

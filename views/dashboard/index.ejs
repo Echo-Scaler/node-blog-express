@@ -3,41 +3,103 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %> - Blog System</title>
+    <title>Your Stories - Byte & Beyond</title>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
     <nav class="navbar">
-      <div class="container">
-        <a href="/" class="logo">Blog System</a>
+      <div class="container nav-container glass">
+        <a href="/" class="logo">Byte & Beyond</a>
         <div class="nav-links">
-          <a href="/">Home</a>
-          <a href="/dashboard">Dashboard</a>
-          <a href="/posts/create">Create Post</a>
+          <a href="/posts/create" class="write-link">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+              ></path>
+              <path
+                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+              ></path>
+            </svg>
+            Write
+          </a>
+          <a href="/dashboard">Library</a>
           <span id="user-info"></span>
-          <button id="logout-btn">Logout</button>
+          <a href="#" id="logout-btn" style="display: none">Logout</a>
         </div>
       </div>
     </nav>
 
-    <main class="container">
-      <h1>My Dashboard</h1>
+    <main class="cms-container">
+      <header class="dashboard-header-v2">
+        <div>
+          <h1
+            style="font-size: 32px; font-weight: 800; letter-spacing: -0.02em"
+          >
+            Content Library
+          </h1>
+          <p style="color: var(--text-secondary); margin-top: 4px">
+            Manage your stories and performance.
+          </p>
+        </div>
+        <a
+          href="/posts/create"
+          class="btn btn-primary"
+          style="padding: 12px 28px"
+          >New Story</a
+        >
+      </header>
 
-      <div class="dashboard-actions">
-        <a href="/posts/create" class="btn btn-primary">Create New Post</a>
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Views</th>
+              <th>Date</th>
+              <th style="text-align: right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="my-posts-container">
+            <!-- Posts will be rendered here as table rows -->
+          </tbody>
+        </table>
+        <div
+          id="no-posts-msg"
+          style="
+            display: none;
+            padding: 60px;
+            text-align: center;
+            color: var(--text-secondary);
+          "
+        >
+          <p>No stories found. Start writing your first masterpiece!</p>
+        </div>
       </div>
 
-      <h2>My Posts</h2>
-      <div id="my-posts-container">
-        <p>Loading your posts...</p>
+```html
+      <div class="pagination-wrapper" style="display: flex; align-items: center; justify-content: space-between; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(0,0,0,0.05);">
+        <div class="pagination-info" style="font-size: 14px; color: var(--text-secondary);">
+          Showing <span id="page-range" style="font-weight: 600; color: #111827;">0-0</span> of <span id="total-count" style="font-weight: 600; color: #111827;">0</span> stories
+        </div>
+        <div id="pagination" style="display: flex; gap: 8px;">
+          <!-- Pagination buttons will be dynamically injected -->
+        </div>
       </div>
-
-      <div id="pagination"></div>
+```
     </main>
 
     <footer>
-      <div class="container">
-        <p>&copy; 2026 Blog System. All rights reserved.</p>
+      <div class="container" style="text-align: center; padding: 40px 0">
+        <p>&copy; 2026 Byte & Beyond. All rights reserved.</p>
       </div>
     </footer>
 

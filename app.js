@@ -9,6 +9,8 @@ const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const replyRoutes = require("./routes/replies");
 const reactionRoutes = require("./routes/reactions");
+const categoryRoutes = require("./routes/categories");
+const newsRoutes = require("./routes/news");
 
 const app = express();
 
@@ -31,10 +33,12 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/replies", replyRoutes);
 app.use("/api/reactions", reactionRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/news", newsRoutes);
 
 // CMS Routes (Web Interface)
 app.get("/", (req, res) => {
-  res.render("index", { title: "Blog System" });
+  res.render("index", { title: "Byte & Beyond" });
 });
 
 app.get("/dashboard", (req, res) => {

@@ -56,6 +56,10 @@ const postSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
   },
   {
     timestamps: true,
@@ -89,11 +93,10 @@ postSchema.methods.toggleVisibility = function () {
 };
 
 // Auto-generate excerpt from content if not provided
-postSchema.pre("save", function (next) {
+postSchema.pre("save", async function () {
   if (!this.excerpt && this.content) {
     this.excerpt = this.content.substring(0, 150) + "...";
   }
-  next();
 });
 
 module.exports = mongoose.model("Post", postSchema);

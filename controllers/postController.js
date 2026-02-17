@@ -8,20 +8,25 @@ const getAllPosts = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+    const categoryId = req.query.categoryId;
 
-    const posts = await Post.find({
+    const query = {
       status: "published",
       isDeleted: false,
-    })
+    };
+
+    if (categoryId) {
+      query.categoryId = categoryId;
+    }
+
+    const posts = await Post.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select("-isDeleted");
+      .select("-isDeleted")
+      .populate("categoryId", "name color slug");
 
-    const total = await Post.countDocuments({
-      status: "published",
-      isDeleted: false,
-    });
+    const total = await Post.countDocuments(query);
 
     res.json({
       success: true,
@@ -49,7 +54,7 @@ const getPostById = async (req, res) => {
     const post = await Post.findOne({
       _id: req.params.id,
       isDeleted: false,
-    });
+    }).populate("categoryId", "name color slug");
 
     if (!post) {
       return res.status(404).json({
@@ -90,7 +95,7 @@ const getPostById = async (req, res) => {
 // Create new post
 const createPost = async (req, res) => {
   try {
-    const { title, content, excerpt, status, tags } = req.body;
+    const { title, content, excerpt, status, tags, categoryId } = req.body;
 
     const post = new Post({
       userId: req.userId,
@@ -100,6 +105,7 @@ const createPost = async (req, res) => {
       excerpt,
       status: status || "published",
       tags: tags || [],
+      categoryId,
     });
 
     await post.save();
@@ -143,12 +149,13 @@ const updatePost = async (req, res) => {
     }
 
     // Update fields
-    const { title, content, excerpt, status, tags } = req.body;
+    const { title, content, excerpt, status, tags, categoryId } = req.body;
     if (title !== undefined) post.title = title;
     if (content !== undefined) post.content = content;
     if (excerpt !== undefined) post.excerpt = excerpt;
     if (status !== undefined) post.status = status;
     if (tags !== undefined) post.tags = tags;
+    if (categoryId !== undefined) post.categoryId = categoryId;
 
     await post.save();
 
@@ -324,6 +331,45 @@ const sharePost = async (req, res) => {
   }
 };
 
+// Get related posts (same category)
+const getRelatedPosts = async (req, res) => {
+  try {
+    const post = await Post.findOne({ _id: req.params.id, isDeleted: false });
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+
+    const query = {
+      _id: { $ne: post._id },
+      status: "published",
+      isDeleted: false,
+    };
+
+    if (post.categoryId) {
+      query.categoryId = post.categoryId;
+    }
+
+    const relatedPosts = await Post.find(query)
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .populate("categoryId", "name color slug");
+
+    res.json({
+      success: true,
+      posts: relatedPosts,
+    });
+  } catch (error) {
+    console.error("Get related posts error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching related posts",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAllPosts,
   getPostById,
@@ -333,4 +379,5 @@ module.exports = {
   hidePost,
   getUserPosts,
   sharePost,
+  getRelatedPosts,
 };

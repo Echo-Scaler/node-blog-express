@@ -1,41 +1,322 @@
-// Home page - display all published posts
+// Home page - display all published posts with category filtering and global news integration
 document.addEventListener("DOMContentLoaded", async () => {
   const postsContainer = document.getElementById("posts-container");
-  const currentPage = 1;
+  const categoryChips = document.getElementById("category-chips");
+  const paginationContainer = document.getElementById("pagination");
+  const btnLocal = document.getElementById("btn-local");
+  const btnGlobal = document.getElementById("btn-global");
 
-  try {
-    const data = await apiRequest(`/posts?page=${currentPage}&limit=10`);
+  let currentSource = "global"; // Default to global news for higher visibility
+  let currentCategoryId = "";
+  let currentPage = 1;
 
-    if (data.posts.length === 0) {
-      postsContainer.innerHTML = "<p>No posts available yet.</p>";
+  // Initialize
+  await loadCategories();
+  await loadData();
+
+  // Source Toggle Event Listeners
+  btnLocal.addEventListener("click", () => switchSource("local"));
+  btnGlobal.addEventListener("click", () => switchSource("global"));
+
+  function switchSource(source) {
+    if (currentSource === source) return;
+
+    currentSource = source;
+    currentPage = 1;
+
+    // Update UI buttons
+    if (source === "local") {
+      btnLocal.classList.add("active");
+      btnLocal.classList.remove("btn-outline");
+      btnGlobal.classList.remove("active");
+      btnGlobal.classList.add("btn-outline");
+      btnGlobal.style.border = "none";
+      categoryChips.style.opacity = "1";
+      categoryChips.style.pointerEvents = "auto";
+    } else {
+      btnGlobal.classList.add("active");
+      btnGlobal.classList.remove("btn-outline");
+      btnLocal.classList.remove("active");
+      btnLocal.classList.add("btn-outline");
+      btnLocal.style.border = "none";
+      btnLocal.style.border = "none";
+      // Enable categories for global news too (mapped by name)
+      categoryChips.style.opacity = "1";
+      categoryChips.style.pointerEvents = "auto";
+    }
+
+    loadData();
+  }
+
+  async function loadData() {
+    if (currentSource === "local") {
+      await loadPosts();
+    } else {
+      await loadNews();
+    }
+  }
+
+  async function loadCategories() {
+    try {
+      const data = await apiRequest("/categories");
+      if (data.success) {
+        data.categories.forEach((category) => {
+          const chip = document.createElement("div");
+          chip.className = "chip";
+          chip.textContent = category.name;
+          chip.dataset.id = category._id;
+          chip.addEventListener("click", () => {
+            selectCategory(category._id, chip);
+          });
+          categoryChips.appendChild(chip);
+        });
+      }
+    } catch (error) {
+      console.error("Error loading categories:", error);
+    }
+  }
+
+  async function loadPosts() {
+    postsContainer.innerHTML =
+      '<div class="loading">Loading incredible stories...</div>';
+
+    try {
+      let url = `/posts?page=${currentPage}&limit=9`;
+      if (currentCategoryId) {
+        url += `&categoryId=${currentCategoryId}`;
+      }
+
+      const data = await apiRequest(url);
+
+      if (data.posts.length === 0) {
+        postsContainer.innerHTML =
+          '<div class="no-posts" style="grid-column: 1/-1; text-align: center; padding: 60px;"><h3>No stories found.</h3><p>Try selecting another category or check back later!</p></div>';
+        paginationContainer.innerHTML = "";
+        return;
+      }
+
+      let html = "";
+      data.posts.forEach((post) => {
+        const date = new Date(post.createdAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        const categoryName = post.categoryId
+          ? post.categoryId.name
+          : "Uncategorized";
+        const readTime = Math.ceil(post.content.split(" ").length / 200);
+
+        html += `
+          <article class="story-card glass">
+            <div class="story-category">${categoryName}</div>
+            <h3><a href="/posts/${post._id}">${post.title}</a></h3>
+            <p class="story-excerpt">${post.excerpt || post.content.substring(0, 120) + "..."}</p>
+            <div class="story-footer">
+              <div class="story-author">
+                <div class="author-dot"></div>
+                <span>${post.username}</span>
+              </div>
+              <span>${date} · ${readTime} min read</span>
+            </div>
+          </article>
+        `;
+      });
+
+      postsContainer.innerHTML = html;
+      renderPagination(data.pagination);
+    } catch (error) {
+      postsContainer.innerHTML = `<p class="error" style="grid-column: 1/-1;">Error loading stories: ${error.message}</p>`;
+    }
+  }
+
+  async function loadNews() {
+    postsContainer.innerHTML =
+      '<div class="loading">Fetching global headlines...</div>';
+
+    try {
+      // NewsAPI doesn't have a simple total count for free tier pagination in the same way,
+      // but we'll fetch a fixed amount for now.
+      const data = await apiRequest(
+        `/news?category=${currentCategoryId || "general"}&page=${currentPage}`,
+      );
+
+      if (!data.articles || data.articles.length === 0) {
+        postsContainer.innerHTML =
+          '<div class="no-posts" style="grid-column: 1/-1; text-align: center; padding: 60px;"><h3>No global news available.</h3><p>Try a different category or verify your API key.</p></div>';
+        paginationContainer.innerHTML = "";
+        return;
+      }
+
+      let html = "";
+      data.articles.forEach((article) => {
+        const date = new Date(article.publishedAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
+        html += `
+          <article class="story-card glass news-card">
+            ${article.urlToImage ? `<div class="story-image" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;"><img src="${article.urlToImage}" alt="${article.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'"></div>` : ""}
+            <div class="story-content" style="padding: ${article.urlToImage ? "20px" : "24px"};">
+              <div class="story-category" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">GLOBAL NEWS</div>
+              <h3><a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a></h3>
+              <p class="story-excerpt">${article.description || "No description available."}</p>
+              <div class="story-footer">
+                 <div class="story-author">
+                    <span style="font-weight: 600;">${article.source}</span>
+                 </div>
+                 <span>${date}</span>
+              </div>
+            </div>
+          </article>
+        `;
+      });
+
+      postsContainer.innerHTML = html;
+      renderPagination(data.pagination);
+    } catch (error) {
+      postsContainer.innerHTML = `<p class="error" style="grid-column: 1/-1;">Error loading news: ${error.message}</p>`;
+    }
+  }
+
+  function selectCategory(id, chipElement) {
+    // Determine category based on source
+    let categoryValue = id;
+
+    if (currentSource === "global") {
+      // For global news, map the category name to NewsAPI allowed categories
+      if (!id) {
+        categoryValue = ""; // All
+      } else {
+        const text = chipElement
+          ? chipElement.textContent.trim().toLowerCase()
+          : "";
+        const allowed = [
+          "business",
+          "entertainment",
+          "general",
+          "health",
+          "science",
+          "sports",
+          "technology",
+        ];
+        categoryValue = allowed.includes(text) ? text : "general";
+      }
+    }
+
+    document
+      .querySelectorAll(".chip")
+      .forEach((c) => c.classList.remove("active"));
+
+    if (chipElement) {
+      chipElement.classList.add("active");
+    } else {
+      document.querySelector('.chip[data-id=""]').classList.add("active");
+    }
+
+    currentCategoryId = categoryValue;
+    currentPage = 1;
+    loadData();
+  }
+
+  function renderPagination(pagination) {
+    if (!pagination || pagination.pages <= 1) {
+      paginationContainer.innerHTML = "";
       return;
     }
 
-    let html = '<div class="posts-list">';
+    let html = "";
+    const currentPage = pagination.page;
+    const totalPages = pagination.pages;
 
-    data.posts.forEach((post) => {
-      html += `
-        <div class="post-item">
-          <h3><a href="/posts/${post._id}">${post.title}</a></h3>
-          <p class="post-meta">
-            By ${post.username} | 
-            ${new Date(post.createdAt).toLocaleDateString()} |
-            Views: ${post.viewCount} | Comments: ${post.commentCount} | Reactions: ${post.reactionCount}
-          </p>
-          <p>${post.excerpt}</p>
-          <a href="/posts/${post._id}" class="btn btn-sm">Read More</a>
-        </div>
-      `;
+    // Previous Button
+    html += `<button class="pagination-btn arrow" ${currentPage === 1 ? "disabled" : ""} data-page="${currentPage - 1}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>`;
+
+    // Page Numbers Logic
+    const delta = 2; // Number of pages to show around current page
+    const range = [];
+    const rangeWithDots = [];
+
+    range.push(1); // Always show first page
+
+    for (let i = currentPage - delta; i <= currentPage + delta; i++) {
+      if (i < totalPages && i > 1) {
+        range.push(i);
+      }
+    }
+
+    range.push(totalPages); // Always show last page
+
+    let l;
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push("...");
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    // Render Page Buttons
+    rangeWithDots.forEach((page) => {
+      if (page === "...") {
+        html += `<span class="pagination-dots">...</span>`;
+      } else {
+        html += `<button class="pagination-btn ${page === currentPage ? "active" : ""}" data-page="${page}">${page}</button>`;
+      }
     });
 
-    html += "</div>";
-    postsContainer.innerHTML = html;
+    // Next Button
+    html += `<button class="pagination-btn arrow" ${currentPage === totalPages ? "disabled" : ""} data-page="${currentPage + 1}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>`;
 
-    // Add pagination if needed
-    if (data.pagination.pages > 1) {
-      // Pagination logic here
-    }
-  } catch (error) {
-    postsContainer.innerHTML = `<p class="error">Error loading posts: ${error.message}</p>`;
+    paginationContainer.innerHTML = html;
+
+    // Re-attach event listeners
+    document
+      .querySelectorAll(".pagination-btn:not([disabled])")
+      .forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const newPage = parseInt(btn.dataset.page);
+          if (newPage > 0 && newPage <= totalPages) {
+            currentPage = newPage; // Update variable scope
+            // We need to update the parent scope's currentPage variable if possible,
+            // but since 'currentPage' is defined in the outer scope, we modify it directly via closure,
+            // assuming this function is inside the DOMContentLoaded callback.
+            // However, let's just call loadData() after updating the specific scope variable if it was passed,
+            // BUT wait, 'currentPage' is in the outer scope of 'home.js'.
+            // To be safe, we should update the outer 'currentPage' variable.
+            // The outer variable is 'currentPage'.
+
+            // Actually, the closure captures 'currentPage' from line 11.
+            // So we can just update it.
+            // But wait, in lines 211 and 239 of original code, it was doing exactly that.
+            // So I should ensure I'm updating the correct variable.
+
+            // I'll emit a custom event or just update the variable directly since I'm in the same scope.
+            updateCurrentPage(newPage);
+          }
+        });
+      });
   }
+
+  // Helper to update page and reload
+  function updateCurrentPage(page) {
+    currentPage = page;
+    loadData();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Handle "All Stories" click
+  document.querySelector('.chip[data-id=""]').addEventListener("click", () => {
+    selectCategory("", null);
+  });
 });
