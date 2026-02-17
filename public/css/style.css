@@ -302,6 +302,18 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.simple-nav-link {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.simple-nav-link:hover {
+  color: var(--primary);
+}
+
 /* Forms - Modern Floating Labels Style */
 .form-card {
   max-width: 600px;

@@ -9,7 +9,7 @@ const CACHE_LIMIT = 20; // Maximum number of cached keys to prevent memory leaks
 
 const getNews = async (req, res) => {
   try {
-    let { category, page = 1, limit = 9 } = req.query;
+    let { category, q, page = 1, limit = 9 } = req.query;
     limit = parseInt(limit);
     const apiKey = process.env.NEWS_API_KEY;
 
@@ -18,8 +18,8 @@ const getNews = async (req, res) => {
       category = "general";
     }
 
-    // Check cache (per category and page)
-    const cacheKey = `${category}_${page}_${limit}`;
+    // Check cache (per category, query, and page)
+    const cacheKey = `${category}_${q || "noquery"}_${page}_${limit}`;
     const now = Date.now();
     const cachedEntry = cache.get(cacheKey);
 
@@ -61,14 +61,27 @@ const getNews = async (req, res) => {
     }
 
     // Default to NewsAPI.org
-    const response = await axios.get("https://newsapi.org/v2/top-headlines", {
-      params: {
-        category: category,
-        language: "en",
-        page: page,
-        pageSize: limit,
-        apiKey: apiKey,
-      },
+    const endpoint = q
+      ? "https://newsapi.org/v2/everything"
+      : "https://newsapi.org/v2/top-headlines";
+
+    const params = {
+      apiKey: apiKey,
+      language: "en",
+      page: page,
+      pageSize: limit,
+    };
+
+    if (q) {
+      params.q = q;
+      // 'everything' endpoint allows sorting
+      params.sortBy = "publishedAt";
+    } else {
+      params.category = category;
+    }
+
+    const response = await axios.get(endpoint, {
+      params: params,
     });
 
     const articles = response.data.articles.map((article) => ({

@@ -2,6 +2,9 @@
   <div class="container nav-container">
     <a href="/" class="logo">Byte & Beyond</a>
     <div class="nav-links">
+      <% if (typeof path !== 'undefined' && path !== '/') { %>
+        <a href="/" class="simple-nav-link">Home</a>
+      <% } %>
       <a href="/posts/create" class="write-link">
         <svg
           width="20"

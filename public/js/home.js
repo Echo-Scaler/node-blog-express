@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const totalCount = document.getElementById("total-count");
   const btnLocal = document.getElementById("btn-local");
   const btnGlobal = document.getElementById("btn-global");
+  const btnFootball = document.getElementById("btn-football");
 
   let currentSource = "global"; // Default to global news for higher visibility
   let currentCategoryId = "";
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Source Toggle Event Listeners
   btnLocal.addEventListener("click", () => switchSource("local"));
   btnGlobal.addEventListener("click", () => switchSource("global"));
+  btnFootball.addEventListener("click", () => switchSource("football"));
 
   function switchSource(source) {
     if (currentSource === source) return;
@@ -28,25 +30,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     currentCategoryId = ""; // Reset category to avoid invalid ID errors
     currentPage = 1;
 
+    // Reset all buttons first
+    [btnLocal, btnGlobal, btnFootball].forEach((btn) => {
+      btn.classList.remove("active");
+      btn.classList.add("btn-outline");
+      btn.style.border = "none";
+    });
+
     // Update UI buttons
     if (source === "local") {
       btnLocal.classList.add("active");
       btnLocal.classList.remove("btn-outline");
-      btnGlobal.classList.remove("active");
-      btnGlobal.classList.add("btn-outline");
-      btnGlobal.style.border = "none";
       categoryChips.style.opacity = "1";
       categoryChips.style.pointerEvents = "auto";
-    } else {
+    } else if (source === "global") {
       btnGlobal.classList.add("active");
       btnGlobal.classList.remove("btn-outline");
-      btnLocal.classList.remove("active");
-      btnLocal.classList.add("btn-outline");
-      btnLocal.style.border = "none";
-      btnLocal.style.border = "none";
-      // Enable categories for global news too (mapped by name)
       categoryChips.style.opacity = "1";
       categoryChips.style.pointerEvents = "auto";
+    } else if (source === "football") {
+      btnFootball.classList.add("active");
+      btnFootball.classList.remove("btn-outline");
+      // Disable categories for football as it's a specific query
+      categoryChips.style.opacity = "0.5";
+      categoryChips.style.pointerEvents = "none";
     }
 
     loadData();
@@ -55,8 +62,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function loadData() {
     if (currentSource === "local") {
       await loadPosts();
-    } else {
+    } else if (currentSource === "global") {
       await loadNews();
+    } else if (currentSource === "football") {
+      await loadFootballNews();
     }
   }
 
@@ -191,6 +200,55 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderPagination(data.pagination);
     } catch (error) {
       postsContainer.innerHTML = `<p class="error" style="grid-column: 1/-1;">Error loading news: ${error.message}</p>`;
+    }
+  }
+
+  async function loadFootballNews() {
+    postsContainer.innerHTML =
+      '<div class="loading">Scouting for European football news...</div>';
+
+    try {
+      // Fetch news with category 'sports' and query 'football'
+      const data = await apiRequest(
+        `/news?category=sports&q=football&page=${currentPage}&limit=${limit}`,
+      );
+
+      if (!data.articles || data.articles.length === 0) {
+        postsContainer.innerHTML =
+          '<div class="no-posts" style="grid-column: 1/-1; text-align: center; padding: 60px;"><h3>No football news found.</h3><p>It might be halftime. Check back later!</p></div>';
+        paginationContainer.innerHTML = "";
+        return;
+      }
+
+      let html = "";
+      data.articles.forEach((article) => {
+        const date = new Date(article.publishedAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+
+        html += `
+          <article class="story-card glass news-card">
+            ${article.urlToImage ? `<div class="story-image" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;"><img src="${article.urlToImage}" alt="${article.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'"></div>` : ""}
+            <div class="story-content" style="padding: ${article.urlToImage ? "20px" : "24px"};">
+              <div class="story-category" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">EUROPEAN FOOTBALL</div>
+              <h3><a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a></h3>
+              <p class="story-excerpt">${article.description || "No description available."}</p>
+              <div class="story-footer">
+                 <div class="story-author">
+                    <span style="font-weight: 600;">${article.source}</span>
+                 </div>
+                 <span>${date}</span>
+              </div>
+            </div>
+          </article>
+        `;
+      });
+
+      postsContainer.innerHTML = html;
+      renderPagination(data.pagination);
+    } catch (error) {
+      postsContainer.innerHTML = `<p class="error" style="grid-column: 1/-1;">Error loading football news: ${error.message}</p>`;
     }
   }
 

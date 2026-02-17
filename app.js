@@ -38,19 +38,23 @@ app.use("/api/news", newsRoutes);
 
 // CMS Routes (Web Interface)
 app.get("/", (req, res) => {
-  res.render("index", { title: "Byte & Beyond" });
+  res.render("index", { title: "Byte & Beyond", path: req.path });
 });
 
 app.get("/dashboard", (req, res) => {
-  res.render("dashboard/index", { title: "Dashboard" });
+  res.render("dashboard/index", { title: "Dashboard", path: req.path });
 });
 
 app.get("/posts/create", (req, res) => {
-  res.render("posts/create", { title: "Create Post" });
+  res.render("posts/create", { title: "Create Post", path: req.path });
 });
 
 app.get("/posts/:id/edit", (req, res) => {
-  res.render("posts/edit", { title: "Edit Post", postId: req.params.id });
+  res.render("posts/edit", {
+    title: "Edit Post",
+    postId: req.params.id,
+    path: req.path,
+  });
 });
 
 app.get("/posts/:id", (req, res) => {
@@ -66,7 +70,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-  res.render("auth/profile", { title: "Edit Profile" });
+  res.render("auth/profile", { title: "Edit Profile", path: req.path });
 });
 
 // 404 handler
