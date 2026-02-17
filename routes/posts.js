@@ -29,10 +29,19 @@ router.get(
 );
 
 // Protected routes
-router.post("/", authenticate, createPostValidation, createPost);
+const upload = require("../middleware/upload");
+
+router.post(
+  "/",
+  authenticate,
+  upload.single("image"),
+  createPostValidation,
+  createPost,
+);
 router.put(
   "/:id",
   authenticate,
+  upload.single("image"),
   mongoIdValidation("id"),
   createPostValidation,
   updatePost,

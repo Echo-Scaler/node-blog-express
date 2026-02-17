@@ -8,14 +8,55 @@ const getCommentsByPost = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
+    const userId = req.userId; // Assuming authenticate or optionalAuth middleware sets this
 
-    const comments = await Comment.find({
-      postId,
-      isDeleted: false,
-    })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    // Build aggregation pipeline
+    const pipeline = [
+      {
+        $match: {
+          postId: new mongoose.Types.ObjectId(postId),
+          isDeleted: false,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ];
+
+    // If user is logged in, check if they liked the comment
+    if (userId) {
+      pipeline.push({
+        $lookup: {
+          from: "reactions",
+          let: { commentId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$targetId", "$$commentId"] },
+                    { $eq: ["$targetType", "comment"] },
+                    { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] },
+                  ],
+                },
+              },
+            },
+            { $project: { _id: 1 } },
+          ],
+          as: "userReaction",
+        },
+      });
+      pipeline.push({
+        $addFields: {
+          isLiked: { $gt: [{ $size: "$userReaction" }, 0] },
+        },
+      });
+      pipeline.push({
+        $project: { userReaction: 0 },
+      });
+    }
+
+    const comments = await Comment.aggregate(pipeline);
 
     const total = await Comment.countDocuments({
       postId,
@@ -139,11 +180,18 @@ const getCommenters = async (req, res) => {
   try {
     const { postId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Post ID",
+      });
+    }
+
     // Aggregate to get unique users who commented
     const commenters = await Comment.aggregate([
       {
         $match: {
-          postId: new require("mongoose").Types.ObjectId(postId),
+          postId: new mongoose.Types.ObjectId(postId),
           isDeleted: false,
         },
       },

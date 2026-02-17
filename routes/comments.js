@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authenticate } = require("../middleware/auth");
+const { authenticate, optionalAuth } = require("../middleware/auth");
 const {
   createCommentValidation,
   mongoIdValidation,
@@ -14,7 +14,12 @@ const {
 } = require("../controllers/commentController");
 
 // Get comments for a post (public)
-router.get("/post/:postId", mongoIdValidation("postId"), getCommentsByPost);
+router.get(
+  "/post/:postId",
+  optionalAuth,
+  mongoIdValidation("postId"),
+  getCommentsByPost,
+);
 router.get(
   "/post/:postId/commenters",
   mongoIdValidation("postId"),

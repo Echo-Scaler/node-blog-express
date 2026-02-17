@@ -113,9 +113,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         const readTime = Math.ceil(post.content.split(" ").length / 200);
 
         html += `
-          <article class="story-card glass">
+          <article class="story-card glass" onclick="window.location.href='/posts/${post._id}'" style="cursor: pointer;">
+            ${
+              post.image
+                ? `
+            <div class="story-image" style="height: 200px; margin: -24px -24px 20px -24px; overflow: hidden; border-bottom: 1px solid var(--border-light);">
+                <img src="${post.image}" alt="${post.title}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+            </div>
+            `
+                : ""
+            }
             <div class="story-category">${categoryName}</div>
-            <h3><a href="/posts/${post._id}">${post.title}</a></h3>
+            <h3><a href="/posts/${post._id}" style="text-decoration: none; color: inherit;">${post.title}</a></h3>
             <p class="story-excerpt">${post.excerpt || post.content.substring(0, 120) + "..."}</p>
             <div class="story-footer">
               <div class="story-author">

@@ -17,9 +17,11 @@ const {
 router.post("/register", registerValidation, register);
 router.post("/login", loginValidation, login);
 
+const upload = require("../middleware/upload");
+
 // Protected routes
 router.get("/profile", authenticate, getProfile);
-router.put("/profile", authenticate, updateProfile);
+router.put("/profile", authenticate, upload.single("avatar"), updateProfile);
 router.post("/logout", authenticate, logout);
 
 module.exports = router;

@@ -59,6 +59,7 @@ const updateAuthUI = () => {
   const loginLink = document.getElementById("login-link");
   const registerLink = document.getElementById("register-link");
   const logoutBtn = document.getElementById("logout-btn");
+  const profileLink = document.getElementById("profile-link");
   const writeLink = document.querySelector(".write-link");
   const libraryLink = document.querySelector('a[href="/dashboard"]');
 
@@ -67,6 +68,7 @@ const updateAuthUI = () => {
     if (loginLink) loginLink.style.display = "none";
     if (registerLink) registerLink.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "inline-block";
+    if (profileLink) profileLink.style.display = "inline-block";
     if (writeLink) writeLink.style.display = "flex";
     if (libraryLink) libraryLink.style.display = "inline-block";
   } else {
@@ -74,6 +76,7 @@ const updateAuthUI = () => {
     if (loginLink) loginLink.style.display = "inline-block";
     if (registerLink) registerLink.style.display = "inline-block";
     if (logoutBtn) logoutBtn.style.display = "none";
+    if (profileLink) profileLink.style.display = "none";
     if (writeLink) writeLink.style.display = "none";
     if (libraryLink) libraryLink.style.display = "none";
   }

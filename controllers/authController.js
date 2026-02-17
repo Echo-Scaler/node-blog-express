@@ -117,7 +117,10 @@ const getProfile = async (req, res) => {
 
     res.json({
       success: true,
-      user: user.toPublicProfile(),
+      user: {
+        ...user.toPublicProfile(),
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error("Get profile error:", error);
@@ -132,7 +135,12 @@ const getProfile = async (req, res) => {
 // Update user profile
 const updateProfile = async (req, res) => {
   try {
-    const { displayName, bio, avatar } = req.body;
+    const { displayName, bio } = req.body;
+    let avatarPath;
+
+    if (req.file) {
+      avatarPath = `/uploads/${req.file.filename}`;
+    }
 
     const user = await User.findById(req.userId);
 
@@ -146,7 +154,7 @@ const updateProfile = async (req, res) => {
     // Update fields
     if (displayName !== undefined) user.displayName = displayName;
     if (bio !== undefined) user.bio = bio;
-    if (avatar !== undefined) user.avatar = avatar;
+    if (avatarPath) user.avatar = avatarPath;
 
     await user.save();
 

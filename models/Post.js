@@ -60,6 +60,10 @@ const postSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
+    image: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

@@ -103,6 +103,11 @@ const getPostById = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     const { title, content, excerpt, status, tags, categoryId } = req.body;
+    let image = "";
+
+    if (req.file) {
+      image = "/uploads/" + req.file.filename;
+    }
 
     const post = new Post({
       userId: req.userId,
@@ -113,6 +118,7 @@ const createPost = async (req, res) => {
       status: status || "published",
       tags: tags || [],
       categoryId,
+      image,
     });
 
     await post.save();
@@ -163,6 +169,10 @@ const updatePost = async (req, res) => {
     if (status !== undefined) post.status = status;
     if (tags !== undefined) post.tags = tags;
     if (categoryId !== undefined) post.categoryId = categoryId;
+
+    if (req.file) {
+      post.image = "/uploads/" + req.file.filename;
+    }
 
     await post.save();
 

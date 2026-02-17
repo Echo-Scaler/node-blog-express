@@ -65,6 +65,10 @@ app.get("/register", (req, res) => {
   res.render("auth/register", { title: "Register" });
 });
 
+app.get("/profile", (req, res) => {
+  res.render("auth/profile", { title: "Edit Profile" });
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
