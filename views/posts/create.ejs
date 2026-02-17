@@ -157,10 +157,33 @@
           <textarea
             id="content"
             name="content"
-            placeholder="Tell your story..."
+            placeholder="Tell your story... (Markdown supported)"
             class="editor-content"
             required
           ></textarea>
+          <div
+            style="
+              margin-top: 8px;
+              font-size: 13px;
+              color: var(--text-secondary);
+              text-align: right;
+            "
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              style="margin-right: 4px; vertical-align: middle"
+            >
+              <path
+                d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"
+              ></path>
+            </svg>
+            Markdown formatting supported
+          </div>
 
           <script>
             function previewImage(input) {

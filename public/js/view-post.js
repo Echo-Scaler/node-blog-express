@@ -55,11 +55,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           <span>${readingTime} min read</span>
         </div>
       </header>
-      <div class="post-body">
-        ${currentPost.content
-          .split("\n")
-          .map((p) => (p.trim() ? `<p>${p}</p>` : ""))
-          .join("")}
+      <div class="post-body markdown-content">
+        ${DOMPurify.sanitize(marked.parse(currentPost.content))}
       </div>
       <div style="max-width: 720px; margin: 40px auto; display: flex; gap: 8px; flex-wrap: wrap;">
         ${

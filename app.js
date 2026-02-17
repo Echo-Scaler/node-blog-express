@@ -23,6 +23,20 @@ app.use(morgan("dev"));
 // Static files
 app.use(express.static(path.join(__dirname, "public")));
 
+// Markdown Support
+const { marked } = require("marked");
+const createDOMPurify = require("dompurify");
+const { JSDOM } = require("jsdom");
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
+
+// Make marked and DOMPurify available to all views
+app.use((req, res, next) => {
+  res.locals.marked = marked;
+  res.locals.DOMPurify = DOMPurify;
+  next();
+});
+
 // View engine setup
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
