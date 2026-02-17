@@ -42,7 +42,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         <h1 class="post-title">${currentPost.title}</h1>
         <div class="post-meta-v2">
           <div class="story-author">
-            <div class="author-dot"></div>
+            ${
+              currentPost.userId.avatar
+                ? `<img src="${currentPost.userId.avatar}" alt="${currentPost.username}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 8px;">`
+                : `<div class="author-dot"></div>`
+            }
             <span style="font-weight: 700; color: var(--text-main);">${currentPost.username}</span>
           </div>
           <span>·</span>
@@ -69,7 +73,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
 
     // Show action buttons if user owns the post
-    if (user && currentPost.userId === user._id) {
+    // Note: userId is now populated, so we check _id property
+    if (
+      user &&
+      (currentPost.userId === user._id ||
+        (currentPost.userId._id && currentPost.userId._id === user._id))
+    ) {
       postActions.style.display = "flex";
       postActions.style.gap = "15px";
 
@@ -468,8 +477,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (pagination.pages <= 1) {
       commentsPaginationContainer.innerHTML = "";
+      commentsPaginationContainer.style.display = "none";
       return;
     }
+    commentsPaginationContainer.style.display = "flex";
 
     let html = "";
     const currentPage = pagination.page;

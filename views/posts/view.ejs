@@ -13,6 +13,40 @@
       <div class="container">
         <input type="hidden" id="post-id" value="<%= postId %>" />
 
+        <div style="margin-top: 20px; margin-bottom: 20px">
+          <button
+            onclick="
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                window.location.href = '/';
+              }
+            "
+            class="btn btn-ghost"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              padding-left: 0;
+            "
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back
+          </button>
+        </div>
+
         <div id="post-content">
           <div class="loading" style="text-align: center; padding: 100px">
             Opening incredible story...
@@ -92,18 +126,6 @@
               </div>
             </form>
 
-            <div id="comments-container"></div>
-            <div
-              id="comments-pagination"
-              class="pagination-wrapper"
-              style="
-                display: flex;
-                gap: 8px;
-                justify-content: center;
-                border: none;
-                padding: 24px 0;
-              "
-            ></div>
           </div>
         </div>
       </div>

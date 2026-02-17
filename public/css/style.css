@@ -302,6 +302,39 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+/* Beauty Back Button */
+.back-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: 99px; /* Pill shape */
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.back-nav-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary-glow);
+  box-shadow: var(--shadow-md);
+  transform: translateX(-4px); /* Slide left on hover */
+}
+
+.back-nav-btn svg {
+  transition: transform 0.2s;
+}
+
+.back-nav-btn:hover svg {
+  transform: translateX(-2px);
+}
+
 .simple-nav-link {
   text-decoration: none;
   color: var(--text-secondary);

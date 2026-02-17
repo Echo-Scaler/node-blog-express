@@ -137,7 +137,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             <p class="story-excerpt">${post.excerpt || post.content.substring(0, 120) + "..."}</p>
             <div class="story-footer">
               <div class="story-author">
-                <div class="author-dot"></div>
+                ${
+                  post.userId && post.userId.avatar
+                    ? `<img src="${post.userId.avatar}" alt="${post.username}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 8px;">`
+                    : `<div class="author-dot"></div>`
+                }
                 <span>${post.username}</span>
               </div>
               <span>${date} · ${readTime} min read</span>

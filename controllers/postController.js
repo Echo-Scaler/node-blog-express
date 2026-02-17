@@ -31,7 +31,8 @@ const getAllPosts = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .select("-isDeleted")
-      .populate("categoryId", "name color slug");
+      .populate("categoryId", "name color slug")
+      .populate("userId", "username avatar");
 
     const total = await Post.countDocuments(query);
 
@@ -61,7 +62,9 @@ const getPostById = async (req, res) => {
     const post = await Post.findOne({
       _id: req.params.id,
       isDeleted: false,
-    }).populate("categoryId", "name color slug");
+    })
+      .populate("categoryId", "name color slug")
+      .populate("userId", "username avatar");
 
     if (!post) {
       return res.status(404).json({
@@ -371,7 +374,9 @@ const getRelatedPosts = async (req, res) => {
     const relatedPosts = await Post.find(query)
       .sort({ createdAt: -1 })
       .limit(3)
-      .populate("categoryId", "name color slug");
+      .limit(3)
+      .populate("categoryId", "name color slug")
+      .populate("userId", "username avatar");
 
     res.json({
       success: true,
