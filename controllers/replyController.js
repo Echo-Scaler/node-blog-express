@@ -1,0 +1,191 @@
+const Reply = require("../models/Reply");
+const Comment = require("../models/Comment");
+
+// Get all replies for a comment
+const getRepliesByComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    const replies = await Reply.find({
+      commentId,
+      isDeleted: false,
+    })
+      .sort({ createdAt: 1 }) // Ascending order for replies
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Reply.countDocuments({
+      commentId,
+      isDeleted: false,
+    });
+
+    res.json({
+      success: true,
+      replies,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("Get replies error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching replies",
+      error: error.message,
+    });
+  }
+};
+
+// Create new reply
+const createReply = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { content } = req.body;
+
+    // Check if comment exists
+    const comment = await Comment.findOne({
+      _id: commentId,
+      isDeleted: false,
+    });
+
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: "Comment not found",
+      });
+    }
+
+    const reply = new Reply({
+      commentId,
+      postId: comment.postId,
+      userId: req.userId,
+      username: req.user.username,
+      content,
+    });
+
+    await reply.save();
+
+    // Increment reply count on comment
+    comment.replyCount += 1;
+    await comment.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Reply created successfully",
+      reply,
+    });
+  } catch (error) {
+    console.error("Create reply error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error creating reply",
+      error: error.message,
+    });
+  }
+};
+
+// Update reply
+const updateReply = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    const reply = await Reply.findOne({
+      _id: id,
+      isDeleted: false,
+    });
+
+    if (!reply) {
+      return res.status(404).json({
+        success: false,
+        message: "Reply not found",
+      });
+    }
+
+    // Check ownership
+    if (!reply.canEdit(req.userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to edit this reply",
+      });
+    }
+
+    reply.content = content;
+    await reply.save();
+
+    res.json({
+      success: true,
+      message: "Reply updated successfully",
+      reply,
+    });
+  } catch (error) {
+    console.error("Update reply error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating reply",
+      error: error.message,
+    });
+  }
+};
+
+// Delete reply (soft delete)
+const deleteReply = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const reply = await Reply.findOne({
+      _id: id,
+      isDeleted: false,
+    });
+
+    if (!reply) {
+      return res.status(404).json({
+        success: false,
+        message: "Reply not found",
+      });
+    }
+
+    // Check ownership
+    if (!reply.canDelete(req.userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to delete this reply",
+      });
+    }
+
+    reply.isDeleted = true;
+    await reply.save();
+
+    // Decrement reply count on comment
+    const comment = await Comment.findById(reply.commentId);
+    if (comment) {
+      comment.replyCount = Math.max(0, comment.replyCount - 1);
+      await comment.save();
+    }
+
+    res.json({
+      success: true,
+      message: "Reply deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete reply error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting reply",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  getRepliesByComment,
+  createReply,
+  updateReply,
+  deleteReply,
+};

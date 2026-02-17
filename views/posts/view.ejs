@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %> - Blog System</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container">
+        <a href="/" class="logo">Blog System</a>
+        <div class="nav-links">
+          <a href="/">Home</a>
+          <a href="/dashboard">Dashboard</a>
+          <span id="user-info"></span>
+          <button id="logout-btn">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container">
+      <input type="hidden" id="post-id" value="<%= postId %>" />
+
+      <article id="post-content">
+        <p>Loading post...</p>
+      </article>
+
+      <div class="post-actions" id="post-actions" style="display: none">
+        <button id="edit-btn" class="btn btn-secondary">Edit</button>
+        <button id="hide-btn" class="btn btn-secondary">Hide/Show</button>
+        <button id="delete-btn" class="btn btn-danger">Delete</button>
+      </div>
+
+      <div class="reactions-section">
+        <h3>Reactions</h3>
+        <div id="reactions-container"></div>
+        <div id="reaction-buttons"></div>
+      </div>
+
+      <div class="comments-section">
+        <h3>Comments</h3>
+
+        <form id="comment-form" style="display: none">
+          <textarea
+            id="comment-content"
+            placeholder="Write a comment..."
+            rows="3"
+            maxlength="1000"
+          ></textarea>
+          <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+
+        <div id="comments-container"></div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2026 Blog System. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/view-post.js"></script>
+  </body>
+</html>
