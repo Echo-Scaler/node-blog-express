@@ -693,3 +693,84 @@ body {
   justify-content: flex-end;
   margin-top: 4px;
 }
+
+/* --- Minimalist Pagination (Dribbble/User Profile List Style) --- */
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-light);
+  background: white;
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+}
+
+/* For pages where it's not in a card (like Home), ensure it looks good */
+.story-grid .pagination-wrapper {
+  background: transparent;
+  border-top: none;
+  padding: 24px 0;
+}
+
+.pagination-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: var(--text-main);
+}
+
+.pagination-btn.active {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(99, 102, 241, 0.25);
+}
+
+.pagination-btn.arrow {
+  border: 1px solid var(--border-light);
+  background: white;
+  color: var(--text-main);
+  margin: 0 4px;
+}
+
+.pagination-btn.arrow:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+  background: white;
+}
+
+.pagination-btn.arrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--border-light);
+  background: #f8fafc;
+}
+
+.pagination-dots {
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 0 4px;
+  letter-spacing: 1px;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}

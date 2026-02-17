@@ -11,8 +11,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const userInfo = document.getElementById("user-info");
   const noPostsMsg = document.getElementById("no-posts-msg");
   const paginationContainer = document.getElementById("pagination");
+  const pageRange = document.getElementById("page-range");
+  const totalCount = document.getElementById("total-count");
 
   let currentPage = 1;
+  const limit = 9;
 
   if (!user) return; // Safeguard
 
@@ -25,7 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function loadPosts() {
     try {
       const data = await apiRequest(
-        `/posts/user/${user._id}?page=${currentPage}&limit=10`,
+        `/posts/user/${user._id}?page=${currentPage}&limit=${limit}`,
       );
 
       if (data.posts.length === 0 && currentPage === 1) {
@@ -105,7 +108,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadPosts();
 
   function renderPagination(pagination) {
-    if (!pagination || pagination.pages <= 1) {
+    if (!pagination) return;
+
+    const total = pagination.total;
+    const start = total === 0 ? 0 : (pagination.page - 1) * limit + 1;
+    const end = Math.min(pagination.page * limit, total);
+
+    if (pageRange) pageRange.textContent = `${start}-${end}`;
+    if (totalCount) totalCount.textContent = total;
+
+    if (pagination.pages <= 1) {
       paginationContainer.innerHTML = "";
       return;
     }

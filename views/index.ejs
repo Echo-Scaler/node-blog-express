@@ -86,17 +86,34 @@
 
         <div id="posts-container" class="story-grid">
           <div class="loading">Loading incredible stories...</div>
+          <div
+            class="pagination-wrapper"
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-top: 32px;
+              padding-top: 24px;
+              border-top: 1px solid rgba(0, 0, 0, 0.05);
+            "
+          >
+            <div
+              class="pagination-info"
+              style="font-size: 14px; color: var(--text-secondary)"
+            >
+              Showing
+              <span id="page-range" style="font-weight: 600; color: #111827"
+                >0-0</span
+              >
+              of
+              <span id="total-count" style="font-weight: 600; color: #111827"
+                >0</span
+              >
+              stories
+            </div>
+            <div id="pagination" style="display: flex; gap: 8px"></div>
+          </div>
         </div>
-
-        <div
-          id="pagination"
-          style="
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 40px;
-          "
-        ></div>
       </div>
     </main>
 

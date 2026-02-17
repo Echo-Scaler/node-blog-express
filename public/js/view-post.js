@@ -133,24 +133,85 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // Display reaction counts
       let html =
-        '<div style="display: flex; gap: 15px; font-size: 14px; color: var(--text-secondary);">';
-      if (data.grouped.like)
-        html += `<span>${data.grouped.like.length} claps</span>`;
-      if (data.grouped.love)
-        html += `<span>${data.grouped.love.length} loves</span>`;
+        '<div style="display: flex; gap: 15px; font-size: 14px; color: var(--text-secondary); align-items: center;">';
+
+      const loveCount = data.grouped.love ? data.grouped.love.length : 0;
+
+      html += `<span id="love-count-display" style="cursor: pointer; display: flex; align-items: center; gap: 4px;" class="hover-underline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="${loveCount > 0 ? "#ef4444" : "none"}" stroke="${loveCount > 0 ? "#ef4444" : "currentColor"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          ${loveCount} loves
+        </span>`;
+
+      // Display comment count
+      const commentCount = currentPost.commentCount || 0;
+      html += `<span id="comment-count-display" style="cursor: pointer; display: flex; align-items: center; gap: 4px;" class="hover-underline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          ${commentCount} comments
+        </span>`;
+
       html += "</div>";
       reactionsContainer.innerHTML = html;
 
+      // Add click event for modal (Loves)
+      document
+        .getElementById("love-count-display")
+        .addEventListener("click", () => {
+          openInteractionsModal("likes");
+        });
+
+      // Add click event for modal (Comments)
+      document
+        .getElementById("comment-count-display")
+        .addEventListener("click", () => {
+          openInteractionsModal("comments");
+        });
+
       // Show reaction buttons if authenticated and not own post
-      if (user && currentPost.userId !== user._id) {
+      // AND even if it is own post, maybe we want to allow them to see the button state but disabled?
+      // For now, keeping logic: "Show reaction buttons if authenticated and not own post"
+      // But actually, usually you can like your own post on many platforms.
+      // The requirement says "1 loves create instead of heart icons".
+      // Let's stick to the existing permission logic but strictly for Love.
+
+      if (user) {
+        // Check if user has already loved
+        const userLoved =
+          data.grouped.love &&
+          data.grouped.love.some((r) => r.userId._id === user._id);
+
         reactionButtons.innerHTML = `
-          <button class="reaction-btn btn-outline btn-sm" data-type="like">👏 Clap</button>
-          <button class="reaction-btn btn-outline btn-sm" data-type="love">❤️ Love</button>
+          <div style="display: flex; gap: 4px; width: 100%; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); padding: 4px 0;">
+            <button class="reaction-btn ${userLoved ? "active-love" : ""}" data-type="love" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: none; border: none; border-radius: 4px; cursor: pointer; color: ${userLoved ? "#ef4444" : "var(--text-secondary)"}; font-weight: 600; transition: background 0.2s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="${userLoved ? "#ef4444" : "none"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              Love
+            </button>
+            <button id="action-comment-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: none; border: none; border-radius: 4px; cursor: pointer; color: var(--text-secondary); font-weight: 600; transition: background 0.2s;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              Comment
+            </button>
+          </div>
         `;
 
-        document.querySelectorAll(".reaction-btn").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            const reactionType = btn.dataset.type;
+        // Add hover effect
+        document
+          .querySelectorAll(".reaction-btn, #action-comment-btn")
+          .forEach((btn) => {
+            btn.addEventListener(
+              "mouseenter",
+              () => (btn.style.backgroundColor = "rgba(0,0,0,0.05)"),
+            );
+            btn.addEventListener(
+              "mouseleave",
+              () => (btn.style.backgroundColor = "transparent"),
+            );
+          });
+
+        // Love Action
+        document
+          .querySelector(".reaction-btn[data-type='love']")
+          .addEventListener("click", async (e) => {
+            const btn = e.currentTarget;
+            const reactionType = "love"; // Force Love
             try {
               await apiRequest("/reactions", {
                 method: "POST",
@@ -165,7 +226,18 @@ document.addEventListener("DOMContentLoaded", async () => {
               alert(`Error: ${error.message}`);
             }
           });
-        });
+
+        // Comment Action - Scroll to form
+        document
+          .getElementById("action-comment-btn")
+          .addEventListener("click", () => {
+            const form = document.getElementById("comment-form");
+            if (form) {
+              form.scrollIntoView({ behavior: "smooth" });
+              const input = document.getElementById("comment-content");
+              if (input) input.focus();
+            }
+          });
       }
     } catch (error) {
       console.error("Error loading reactions:", error);
@@ -176,14 +248,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     "comments-pagination",
   );
   let currentCommentPage = 1;
-
-  // ... (rest of loadPost) ...
+  const DOC_LIMIT = 9;
 
   // Load comments
   async function loadComments() {
     try {
       const data = await apiRequest(
-        `/comments/post/${postId}?page=${currentCommentPage}&limit=10`,
+        `/comments/post/${postId}?page=${currentCommentPage}&limit=${DOC_LIMIT}`,
       );
 
       if (data.comments.length === 0 && currentCommentPage === 1) {
@@ -195,7 +266,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       let html = "";
       data.comments.forEach((comment) => {
-        // ... (existing render logic) ...
         // Generate user initials for avatar
         const initials = comment.username
           ? comment.username.substring(0, 2).toUpperCase()
@@ -246,7 +316,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function renderCommentsPagination(pagination) {
-    if (!pagination || pagination.pages <= 1) {
+    if (!pagination) return;
+
+    if (pagination.pages <= 1) {
       commentsPaginationContainer.innerHTML = "";
       return;
     }
@@ -304,7 +376,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </button>`;
 
+    // Add "View Commenters" button if there are comments
+    if (pagination.total > 0) {
+      html += `<button id="view-commenters-btn" class="btn btn-sm btn-outline" style="margin-left: 12px;">See who commented</button>`;
+    }
+
     commentsPaginationContainer.innerHTML = html;
+
+    // Attach event listener for View Commenters
+    const viewCommentersBtn = document.getElementById("view-commenters-btn");
+    if (viewCommentersBtn) {
+      viewCommentersBtn.addEventListener("click", () => {
+        openInteractionsModal("comments");
+      });
+    }
 
     // Re-attach event listeners
     commentsPaginationContainer
@@ -412,4 +497,130 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert(`Error updating comment: ${error.message}`);
     }
   };
+
+  // Interactions Modal Logic
+  const modal = document.getElementById("interactions-modal");
+  const closeModalBtn = document.getElementById("close-modal-btn");
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const likesList = document.getElementById("likes-list");
+  const commentsList = document.getElementById("comments-list");
+
+  function openInteractionsModal(tab = "likes") {
+    modal.style.display = "flex";
+    switchTab(tab);
+  }
+
+  function closeInteractionsModal() {
+    modal.style.display = "none";
+  }
+
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener("click", closeInteractionsModal);
+  }
+
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeInteractionsModal();
+    }
+  });
+
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  function switchTab(tab) {
+    // Update tabs
+    tabBtns.forEach((btn) => {
+      if (btn.dataset.tab === tab) {
+        btn.classList.add("active");
+        btn.style.borderBottomColor = "var(--primary-color)";
+        btn.style.color = "var(--text-main)";
+        btn.style.fontWeight = "600";
+      } else {
+        btn.classList.remove("active");
+        btn.style.borderBottomColor = "transparent";
+        btn.style.color = "var(--text-secondary)";
+        btn.style.fontWeight = "400";
+      }
+    });
+
+    // Update content
+    if (tab === "likes") {
+      likesList.style.display = "block";
+      commentsList.style.display = "none";
+      fetchLikes();
+    } else {
+      likesList.style.display = "none";
+      commentsList.style.display = "block";
+      fetchCommenters();
+    }
+  }
+
+  async function fetchLikes() {
+    likesList.innerHTML =
+      '<div class="loading-spinner" style="padding: 20px; text-align: center;">Loading...</div>';
+    try {
+      const data = await apiRequest(`/reactions/post/${postId}`);
+      const loves = data.grouped.love || [];
+
+      if (loves.length === 0) {
+        likesList.innerHTML =
+          '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">No loves yet.</div>';
+        return;
+      }
+
+      let html = "";
+      loves.forEach((reaction) => {
+        const u = reaction.userId; // Populated user object
+        const initials = u.username
+          ? u.username.substring(0, 2).toUpperCase()
+          : "U";
+        html += `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
+                    <div class="comment-avatar" style="width: 40px; height: 40px; font-size: 14px;">${initials}</div>
+                    <span style="font-weight: 600;">${u.username}</span>
+                </div>
+            `;
+      });
+      likesList.innerHTML = html;
+    } catch (error) {
+      likesList.innerHTML = `<div style="padding: 20px; color: red;">Error: ${error.message}</div>`;
+    }
+  }
+
+  async function fetchCommenters() {
+    commentsList.innerHTML =
+      '<div class="loading-spinner" style="padding: 20px; text-align: center;">Loading...</div>';
+    try {
+      const data = await apiRequest(`/comments/post/${postId}/commenters`);
+      const commenters = data.commenters || [];
+
+      if (commenters.length === 0) {
+        commentsList.innerHTML =
+          '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">No comments yet.</div>';
+        return;
+      }
+
+      let html = "";
+      commenters.forEach((c) => {
+        const initials = c.username
+          ? c.username.substring(0, 2).toUpperCase()
+          : "U";
+        html += `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
+                    <div class="comment-avatar" style="width: 40px; height: 40px; font-size: 14px;">${initials}</div>
+                    <div style="display: flex; flex-direction: column;">
+                         <span style="font-weight: 600;">${c.username}</span>
+                         <span style="font-size: 12px; color: var(--text-secondary);">Last commented: ${new Date(c.lastCommentAt).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `;
+      });
+      commentsList.innerHTML = html;
+    } catch (error) {
+      commentsList.innerHTML = `<div style="padding: 20px; color: red;">Error: ${error.message}</div>`;
+    }
+  }
 });

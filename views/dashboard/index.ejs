@@ -83,18 +83,35 @@
         >
           <p>No stories found. Start writing your first masterpiece!</p>
         </div>
-      </div>
-
-```html
-      <div class="pagination-wrapper" style="display: flex; align-items: center; justify-content: space-between; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(0,0,0,0.05);">
-        <div class="pagination-info" style="font-size: 14px; color: var(--text-secondary);">
-          Showing <span id="page-range" style="font-weight: 600; color: #111827;">0-0</span> of <span id="total-count" style="font-weight: 600; color: #111827;">0</span> stories
+        <div
+          class="pagination-wrapper"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-light);
+          "
+        >
+          <div
+            class="pagination-info"
+            style="font-size: 14px; color: var(--text-secondary)"
+          >
+            Showing
+            <span id="page-range" style="font-weight: 600; color: #111827"
+              >0-0</span
+            >
+            of
+            <span id="total-count" style="font-weight: 600; color: #111827"
+              >0</span
+            >
+            stories
+          </div>
+          <div id="pagination" style="display: flex; gap: 8px">
+            <!-- Pagination buttons will be dynamically injected -->
+          </div>
         </div>
-        <div id="pagination" style="display: flex; gap: 8px;">
-          <!-- Pagination buttons will be dynamically injected -->
-        </div>
       </div>
-```
     </main>
 
     <footer>

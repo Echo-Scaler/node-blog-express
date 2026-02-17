@@ -134,6 +134,60 @@ const updateComment = async (req, res) => {
   }
 };
 
+// Get unique commenters for a post
+const getCommenters = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Aggregate to get unique users who commented
+    const commenters = await Comment.aggregate([
+      {
+        $match: {
+          postId: new require("mongoose").Types.ObjectId(postId),
+          isDeleted: false,
+        },
+      },
+      {
+        $group: {
+          _id: "$userId",
+          username: { $first: "$username" },
+          lastCommentAt: { $max: "$createdAt" },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          lastCommentAt: 1,
+          // If you have an avatar field in User model, project it here
+          // avatar: { $arrayElemAt: ["$userDetails.avatar", 0] }
+        },
+      },
+      { $sort: { lastCommentAt: -1 } },
+    ]);
+
+    res.json({
+      success: true,
+      commenters,
+    });
+  } catch (error) {
+    console.error("Get commenters error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching commenters",
+      error: error.message,
+    });
+  }
+};
+
 // Delete comment (soft delete)
 const deleteComment = async (req, res) => {
   try {
@@ -188,4 +242,5 @@ module.exports = {
   createComment,
   updateComment,
   deleteComment,
+  getCommenters,
 };

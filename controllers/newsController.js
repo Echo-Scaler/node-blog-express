@@ -9,7 +9,8 @@ const CACHE_LIMIT = 20; // Maximum number of cached keys to prevent memory leaks
 
 const getNews = async (req, res) => {
   try {
-    let { category, page = 1 } = req.query;
+    let { category, page = 1, limit = 9 } = req.query;
+    limit = parseInt(limit);
     const apiKey = process.env.NEWS_API_KEY;
 
     // Default to "general" if no category or "all" provided
@@ -18,7 +19,7 @@ const getNews = async (req, res) => {
     }
 
     // Check cache (per category and page)
-    const cacheKey = `${category}_${page}`;
+    const cacheKey = `${category}_${page}_${limit}`;
     const now = Date.now();
     const cachedEntry = cache.get(cacheKey);
 
@@ -30,9 +31,9 @@ const getNews = async (req, res) => {
         articles: cachedEntry.data,
         pagination: {
           page: parseInt(page),
-          limit: 9,
+          limit: limit,
           total: cachedEntry.totalResults,
-          pages: Math.ceil(cachedEntry.totalResults / 9),
+          pages: Math.ceil(cachedEntry.totalResults / limit),
         },
       });
     }
@@ -55,7 +56,7 @@ const getNews = async (req, res) => {
         success: true,
         source: "mock",
         articles: mockArticles,
-        pagination: { page: 1, limit: 9, total: 1, pages: 1 },
+        pagination: { page: 1, limit: limit, total: 1, pages: 1 },
       });
     }
 
@@ -65,7 +66,7 @@ const getNews = async (req, res) => {
         category: category,
         language: "en",
         page: page,
-        pageSize: 9,
+        pageSize: limit,
         apiKey: apiKey,
       },
     });
@@ -98,9 +99,9 @@ const getNews = async (req, res) => {
       articles,
       pagination: {
         page: parseInt(page),
-        limit: 9,
+        limit: limit,
         total: response.data.totalResults,
-        pages: Math.ceil(response.data.totalResults / 9),
+        pages: Math.ceil(response.data.totalResults / limit),
       },
     });
   } catch (error) {

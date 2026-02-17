@@ -3,12 +3,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const postsContainer = document.getElementById("posts-container");
   const categoryChips = document.getElementById("category-chips");
   const paginationContainer = document.getElementById("pagination");
+  const pageRange = document.getElementById("page-range");
+  const totalCount = document.getElementById("total-count");
   const btnLocal = document.getElementById("btn-local");
   const btnGlobal = document.getElementById("btn-global");
 
   let currentSource = "global"; // Default to global news for higher visibility
   let currentCategoryId = "";
   let currentPage = 1;
+  const limit = 9;
 
   // Initialize
   await loadCategories();
@@ -22,6 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (currentSource === source) return;
 
     currentSource = source;
+    currentCategoryId = ""; // Reset category to avoid invalid ID errors
     currentPage = 1;
 
     // Update UI buttons
@@ -81,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       '<div class="loading">Loading incredible stories...</div>';
 
     try {
-      let url = `/posts?page=${currentPage}&limit=9`;
+      let url = `/posts?page=${currentPage}&limit=${limit}`;
       if (currentCategoryId) {
         url += `&categoryId=${currentCategoryId}`;
       }
@@ -139,7 +143,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       // NewsAPI doesn't have a simple total count for free tier pagination in the same way,
       // but we'll fetch a fixed amount for now.
       const data = await apiRequest(
-        `/news?category=${currentCategoryId || "general"}&page=${currentPage}`,
+        `/news?category=${currentCategoryId || "general"}&page=${currentPage}&limit=${limit}`,
       );
 
       if (!data.articles || data.articles.length === 0) {
@@ -213,7 +217,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (chipElement) {
       chipElement.classList.add("active");
     } else {
-      document.querySelector('.chip[data-id=""]').classList.add("active");
+      const allChip = document.querySelector('.chip[data-id=""]');
+      if (allChip) allChip.classList.add("active");
     }
 
     currentCategoryId = categoryValue;
@@ -222,7 +227,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function renderPagination(pagination) {
-    if (!pagination || pagination.pages <= 1) {
+    if (!pagination) return;
+
+    // Update Info Text
+    const total = pagination.total || 0;
+    const start = total === 0 ? 0 : (pagination.page - 1) * limit + 1;
+    const end = Math.min(pagination.page * limit, total);
+
+    if (pageRange) pageRange.textContent = `${start}-${end}`;
+    if (totalCount) totalCount.textContent = total;
+
+    if (pagination.pages <= 1) {
       paginationContainer.innerHTML = "";
       return;
     }

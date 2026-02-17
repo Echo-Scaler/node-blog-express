@@ -16,7 +16,14 @@ const getAllPosts = async (req, res) => {
     };
 
     if (categoryId) {
-      query.categoryId = categoryId;
+      const mongoose = require("mongoose");
+      if (mongoose.isValidObjectId(categoryId)) {
+        query.categoryId = categoryId;
+      } else {
+        // Invalid ID (e.g. from Global feed slug), ignore it or return error.
+        // Ignoring it allows fallback to "All Posts" which is better than crashing.
+        console.warn(`Invalid categoryId received: ${categoryId}`);
+      }
     }
 
     const posts = await Post.find(query)
