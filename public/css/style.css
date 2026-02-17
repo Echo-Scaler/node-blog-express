@@ -280,9 +280,26 @@ body {
   border: none;
 }
 
+
 .btn-primary:hover {
   filter: brightness(1.1);
   box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-ghost:hover {
+  background: white;
+  color: var(--text-main);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Forms - Modern Floating Labels Style */

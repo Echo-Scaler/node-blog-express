@@ -40,6 +40,15 @@ document.addEventListener("DOMContentLoaded", async () => {
           : post.categoryId;
     }
     document.getElementById("status").value = post.status;
+
+    // Show existing image preview if available
+    const preview = document.getElementById("image-preview");
+    const placeholder = document.getElementById("upload-placeholder");
+    if (post.image) {
+      preview.src = post.image;
+      preview.style.display = "block";
+      placeholder.style.display = "none";
+    }
   } catch (error) {
     messageDiv.innerHTML = `<p class="error">Error loading post: ${error.message}</p>`;
     return;
@@ -65,6 +74,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   editPostForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const submitBtn = document.querySelector('button[form="edit-post-form"]');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Saving...";
+
     const title = document.getElementById("title").value;
     const content = document.getElementById("content").value;
     const excerpt = document.getElementById("excerpt").value;
@@ -81,16 +95,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       : [];
 
     try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("excerpt", excerpt);
+      formData.append("status", status);
+      formData.append("categoryId", categoryId);
+
+      tags.forEach((tag) => {
+        formData.append("tags[]", tag);
+      });
+
+      const imageInput = document.getElementById("image");
+      if (imageInput.files[0]) {
+        formData.append("image", imageInput.files[0]);
+      }
+
       const data = await apiRequest(`/posts/${postId}`, {
         method: "PUT",
-        body: JSON.stringify({
-          title,
-          content,
-          excerpt,
-          tags,
-          status,
-          categoryId,
-        }),
+        body: formData,
       });
 
       messageDiv.innerHTML =
@@ -101,6 +124,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }, 1000);
     } catch (error) {
       messageDiv.innerHTML = `<p class="error">${error.message}</p>`;
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
     }
   });
 });

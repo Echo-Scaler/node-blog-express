@@ -40,6 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
   createPostForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const submitBtn = document.querySelector('button[form="create-post-form"]');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Publishing...";
+
     const title = document.getElementById("title").value;
     const content = document.getElementById("content").value;
     const excerpt = document.getElementById("excerpt").value;
@@ -56,16 +61,25 @@ document.addEventListener("DOMContentLoaded", () => {
       : [];
 
     try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("excerpt", excerpt);
+      formData.append("status", status);
+      formData.append("categoryId", categoryId);
+
+      tags.forEach((tag) => {
+        formData.append("tags[]", tag);
+      });
+
+      const imageInput = document.getElementById("image");
+      if (imageInput.files[0]) {
+        formData.append("image", imageInput.files[0]);
+      }
+
       const data = await apiRequest("/posts", {
         method: "POST",
-        body: JSON.stringify({
-          title,
-          content,
-          excerpt,
-          tags,
-          status,
-          categoryId,
-        }),
+        body: formData,
       });
 
       messageDiv.innerHTML =
@@ -76,6 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 1000);
     } catch (error) {
       messageDiv.innerHTML = `<p class="error">${error.message}</p>`;
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
     }
   });
 });

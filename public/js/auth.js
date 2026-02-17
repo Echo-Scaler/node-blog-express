@@ -34,6 +34,11 @@ const apiRequest = async (endpoint, options = {}) => {
     ...options.headers,
   };
 
+  // If body is FormData, let browser set Content-Type with boundary
+  if (options.body instanceof FormData) {
+    delete headers["Content-Type"];
+  }
+
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
@@ -62,9 +67,19 @@ const updateAuthUI = () => {
   const profileLink = document.getElementById("profile-link");
   const writeLink = document.querySelector(".write-link");
   const libraryLink = document.querySelector('a[href="/dashboard"]');
+  const userMenu = document.querySelector(".user-menu");
+  const headerAvatar = document.getElementById("header-avatar");
 
   if (user) {
     if (userInfo) userInfo.textContent = user.displayName || user.username;
+    if (userMenu) userMenu.style.display = "flex";
+    if (headerAvatar) {
+      headerAvatar.src =
+        user.avatar ||
+        "https://ui-avatars.com/api/?name=" +
+          encodeURIComponent(user.displayName || user.username) +
+          "&background=random";
+    }
     if (loginLink) loginLink.style.display = "none";
     if (registerLink) registerLink.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "inline-block";
@@ -73,6 +88,8 @@ const updateAuthUI = () => {
     if (libraryLink) libraryLink.style.display = "inline-block";
   } else {
     if (userInfo) userInfo.textContent = "";
+    if (userMenu) userMenu.style.display = "none";
+    if (headerAvatar) headerAvatar.src = "";
     if (loginLink) loginLink.style.display = "inline-block";
     if (registerLink) registerLink.style.display = "inline-block";
     if (logoutBtn) logoutBtn.style.display = "none";
