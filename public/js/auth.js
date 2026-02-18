@@ -43,18 +43,31 @@ const apiRequest = async (endpoint, options = {}) => {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
 
-  const data = await response.json();
+    let data;
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      data = { message: await response.text() };
+    }
 
-  if (!response.ok) {
-    throw new Error(data.message || "Request failed");
+    if (!response.ok) {
+      throw new Error(
+        data.message || `Request failed with status ${response.status}`,
+      );
+    }
+
+    return data;
+  } catch (error) {
+    console.error(`API Request Error [${endpoint}]:`, error);
+    throw error;
   }
-
-  return data;
 };
 
 // Update UI based on auth status

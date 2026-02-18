@@ -1,65 +1,90 @@
 // Dashboard - manage user's posts using the new CMS layout
 document.addEventListener("DOMContentLoaded", async () => {
-  // Check authentication
-  if (!isAuthenticated()) {
-    window.location.href = "/login";
-    return;
-  }
+  try {
+    // Check authentication
+    if (!isAuthenticated()) {
+      window.location.href = "/login";
+      return;
+    }
 
-  const user = getUser();
-  const postsContainer = document.getElementById("my-posts-container");
-  const userInfo = document.getElementById("user-info");
-  const noPostsMsg = document.getElementById("no-posts-msg");
-  const paginationContainer = document.getElementById("pagination");
-  const pageRange = document.getElementById("page-range");
-  const totalCount = document.getElementById("total-count");
+    const user = getUser();
+    const postsContainer = document.getElementById("my-posts-container");
+    const userInfo = document.getElementById("user-info");
+    const noPostsMsg = document.getElementById("no-posts-msg");
+    const paginationContainer = document.getElementById("pagination");
+    const pageRange = document.getElementById("page-range");
+    const totalCount = document.getElementById("total-count");
 
-  let currentPage = 1;
-  const limit = 9;
+    let currentPage = 1;
+    const limit = 9;
 
-  if (!user) return; // Safeguard
+    // Filter Elements
+    const filterQ = document.getElementById("filter-q");
+    const filterStatus = document.getElementById("filter-status");
+    const filterStartDate = document.getElementById("filter-start-date");
+    const filterEndDate = document.getElementById("filter-end-date");
+    const searchBtn = document.getElementById("search-btn");
 
-  // Set user info
-  if (userInfo && user) {
-    userInfo.textContent = user.displayName || user.username;
-  }
+    if (!user) return; // Safeguard
 
-  // Load posts function
-  async function loadPosts() {
-    try {
-      const data = await apiRequest(
-        `/posts/user/${user._id}?page=${currentPage}&limit=${limit}`,
-      );
+    // Set user info
+    if (userInfo && user) {
+      userInfo.textContent = user.displayName || user.username;
+    }
 
-      if (data.posts.length === 0 && currentPage === 1) {
-        postsContainer.innerHTML = "";
-        noPostsMsg.style.display = "block";
-        paginationContainer.innerHTML = "";
-        return;
-      }
+    // Load posts function
+    async function loadPosts() {
+      try {
+        const q = filterQ ? filterQ.value : "";
+        const status = filterStatus ? filterStatus.value : "";
+        const startDate = filterStartDate ? filterStartDate.value : "";
+        const endDate = filterEndDate ? filterEndDate.value : "";
 
-      noPostsMsg.style.display = "none";
-      let html = "";
+        // Always scope to the current user as requested
+        // Add timestamp to bypass cache
+        let url = `/posts/search?page=${currentPage}&limit=${limit}&userId=${user._id}&t=${Date.now()}`;
+        if (q) url += `&q=${encodeURIComponent(q)}`;
+        if (status) url += `&status=${status}`;
+        if (startDate) url += `&startDate=${startDate}`;
+        if (endDate) url += `&endDate=${endDate}`;
 
-      data.posts.forEach((post) => {
-        const date = new Date(post.createdAt).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        });
+        console.log("Dashboard: Fetching posts from URL:", url);
+        const data = await apiRequest(url);
+        console.log("Dashboard: Posts data received:", data);
 
-        const statusBadgeClass =
-          post.status === "published"
-            ? "badge-published"
-            : post.status === "hidden"
-              ? "badge-hidden"
-              : "badge-draft";
+        if (
+          !data ||
+          !data.posts ||
+          (data.posts.length === 0 && currentPage === 1)
+        ) {
+          postsContainer.innerHTML = "";
+          noPostsMsg.style.display = "block";
+          paginationContainer.innerHTML = "";
+          return;
+        }
 
-        const categoryName = post.categoryId
-          ? post.categoryId.name
-          : "Uncategorized";
+        noPostsMsg.style.display = "none";
+        let html = "";
 
-        html += `
+        data.posts.forEach((post) => {
+          const date = new Date(post.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+
+          const statusBadgeClass =
+            post.status === "published"
+              ? "badge-published"
+              : post.status === "hidden"
+                ? "badge-hidden"
+                : "badge-draft";
+
+          const categoryName = post.categoryId
+            ? post.categoryId.name
+            : "Uncategorized";
+
+          html += `
         <tr>
           <td>
             <div style="font-weight: 700; color: var(--text-main); font-size: 15px;">${post.title}</div>
@@ -95,100 +120,130 @@ document.addEventListener("DOMContentLoaded", async () => {
           </td>
         </tr>
       `;
+        });
+
+        postsContainer.innerHTML = html;
+        renderPagination(data.pagination);
+      } catch (error) {
+        console.error("Dashboard Error Detail:", error);
+        postsContainer.innerHTML = `<tr><td colspan="6" class="error">Error loading posts: ${error.message}</td></tr>`;
+      }
+    }
+
+    // Initial load
+    loadPosts();
+
+    // Search event listeners
+    if (searchBtn) {
+      searchBtn.addEventListener("click", () => {
+        currentPage = 1;
+        loadPosts();
       });
-
-      postsContainer.innerHTML = html;
-      renderPagination(data.pagination);
-    } catch (error) {
-      postsContainer.innerHTML = `<tr><td colspan="6" class="error">Error loading posts: ${error.message}</td></tr>`;
-    }
-  }
-
-  // Initial load
-  loadPosts();
-
-  function renderPagination(pagination) {
-    if (!pagination) return;
-
-    const total = pagination.total;
-    const start = total === 0 ? 0 : (pagination.page - 1) * limit + 1;
-    const end = Math.min(pagination.page * limit, total);
-
-    if (pageRange) pageRange.textContent = `${start}-${end}`;
-    if (totalCount) totalCount.textContent = total;
-
-    if (pagination.pages <= 1) {
-      paginationContainer.innerHTML = "";
-      return;
     }
 
-    let html = "";
-    const totalPages = pagination.pages;
-
-    // Previous Button
-    html += `<button class="pagination-btn arrow" ${currentPage === 1 ? "disabled" : ""} data-page="${currentPage - 1}">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-    </button>`;
-
-    // Page Numbers Logic
-    const delta = 2;
-    const range = [];
-    const rangeWithDots = [];
-
-    range.push(1);
-
-    for (let i = currentPage - delta; i <= currentPage + delta; i++) {
-      if (i < totalPages && i > 1) {
-        range.push(i);
-      }
-    }
-
-    if (totalPages > 1) {
-      range.push(totalPages);
-    }
-
-    let l;
-    for (let i of range) {
-      if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l !== 1) {
-          rangeWithDots.push("...");
+    [filterQ, filterStatus, filterStartDate, filterEndDate].forEach((el) => {
+      if (!el) return;
+      el.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          currentPage = 1;
+          loadPosts();
         }
-      }
-      rangeWithDots.push(i);
-      l = i;
-    }
-
-    // Render Page Buttons
-    rangeWithDots.forEach((page) => {
-      if (page === "...") {
-        html += `<span class="pagination-dots">...</span>`;
-      } else {
-        html += `<button class="pagination-btn ${page === currentPage ? "active" : ""}" data-page="${page}">${page}</button>`;
+      });
+      // For selects and dates, trigger on change
+      if (el.tagName === "SELECT" || el.type === "date") {
+        el.addEventListener("change", () => {
+          currentPage = 1;
+          loadPosts();
+        });
       }
     });
 
-    // Next Button
-    html += `<button class="pagination-btn arrow" ${currentPage === totalPages ? "disabled" : ""} data-page="${currentPage + 1}">
+    function renderPagination(pagination) {
+      if (!pagination) return;
+
+      const total = pagination.total;
+      const start = total === 0 ? 0 : (pagination.page - 1) * limit + 1;
+      const end = Math.min(pagination.page * limit, total);
+
+      if (pageRange) pageRange.textContent = `${start}-${end}`;
+      if (totalCount) totalCount.textContent = total;
+
+      if (pagination.pages <= 1) {
+        paginationContainer.innerHTML = "";
+        return;
+      }
+
+      let html = "";
+      const totalPages = pagination.pages;
+
+      // Previous Button
+      html += `<button class="pagination-btn arrow" ${currentPage === 1 ? "disabled" : ""} data-page="${currentPage - 1}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>`;
+
+      // Page Numbers Logic
+      const delta = 2;
+      const range = [];
+      const rangeWithDots = [];
+
+      range.push(1);
+
+      for (let i = currentPage - delta; i <= currentPage + delta; i++) {
+        if (i < totalPages && i > 1) {
+          range.push(i);
+        }
+      }
+
+      if (totalPages > 1) {
+        range.push(totalPages);
+      }
+
+      let l;
+      for (let i of range) {
+        if (l) {
+          if (i - l === 2) {
+            rangeWithDots.push(l + 1);
+          } else if (i - l !== 1) {
+            rangeWithDots.push("...");
+          }
+        }
+        rangeWithDots.push(i);
+        l = i;
+      }
+
+      // Render Page Buttons
+      rangeWithDots.forEach((page) => {
+        if (page === "...") {
+          html += `<span class="pagination-dots">...</span>`;
+        } else {
+          html += `<button class="pagination-btn ${page === currentPage ? "active" : ""}" data-page="${page}">${page}</button>`;
+        }
+      });
+
+      // Next Button
+      html += `<button class="pagination-btn arrow" ${currentPage === totalPages ? "disabled" : ""} data-page="${currentPage + 1}">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </button>`;
 
-    paginationContainer.innerHTML = html;
+      paginationContainer.innerHTML = html;
 
-    // Re-attach event listeners
-    document
-      .querySelectorAll(".pagination-btn:not([disabled])")
-      .forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const newPage = parseInt(btn.dataset.page);
-          if (newPage > 0 && newPage <= totalPages) {
-            currentPage = newPage;
-            loadPosts();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }
+      // Re-attach event listeners
+      document
+        .querySelectorAll(".pagination-btn:not([disabled])")
+        .forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const newPage = parseInt(btn.dataset.page);
+            if (newPage > 0 && newPage <= totalPages) {
+              currentPage = newPage;
+              loadPosts();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          });
         });
-      });
+    }
+  } catch (err) {
+    console.error("Dashboard initialization error:", err);
+    alert("Dashboard Error: " + err.message);
   }
 });
 

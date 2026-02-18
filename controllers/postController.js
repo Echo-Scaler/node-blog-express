@@ -274,6 +274,81 @@ const hidePost = async (req, res) => {
   }
 };
 
+// Search and filter posts (for CMS/Dashboard)
+const searchPosts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const { status, userId, startDate, endDate, q } = req.query;
+
+    const query = { isDeleted: false };
+
+    // Filter by status
+    if (status) {
+      query.status = status;
+    }
+
+    // Filter by editor (userId)
+    if (userId) {
+      query.userId = userId;
+    }
+
+    // Filter by date range
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        const start = new Date(startDate);
+        if (!isNaN(start.getTime())) {
+          query.createdAt.$gte = start;
+        }
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        if (!isNaN(end.getTime())) {
+          end.setHours(23, 59, 59, 999);
+          query.createdAt.$lte = end;
+        }
+      }
+    }
+
+    // Text search (optional)
+    if (q) {
+      query.title = { $regex: q, $options: "i" };
+    }
+
+    console.log("Search Posts Query:", JSON.stringify(query));
+
+    const posts = await Post.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("categoryId", "name color")
+      .populate("userId", "username displayName avatar");
+
+    const total = await Post.countDocuments(query);
+
+    res.json({
+      success: true,
+      posts,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("Search posts error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error searching posts",
+      error: error.message,
+    });
+  }
+};
+
 // Get posts by user
 const getUserPosts = async (req, res) => {
   try {
@@ -395,6 +470,7 @@ const getRelatedPosts = async (req, res) => {
 module.exports = {
   getAllPosts,
   getPostById,
+  searchPosts,
   createPost,
   updatePost,
   deletePost,

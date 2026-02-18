@@ -173,6 +173,26 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// Get all users (public profile)
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ isActive: true }).sort({ username: 1 });
+    const publicUsers = users.map((u) => u.toPublicProfile());
+
+    res.json({
+      success: true,
+      users: publicUsers,
+    });
+  } catch (error) {
+    console.error("Get all users error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching users",
+      error: error.message,
+    });
+  }
+};
+
 // Logout (client-side token removal, optional server-side blacklist)
 const logout = async (req, res) => {
   // In a stateless JWT system, logout is typically handled client-side
@@ -188,5 +208,6 @@ module.exports = {
   login,
   getProfile,
   updateProfile,
+  getAllUsers,
   logout,
 };

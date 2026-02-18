@@ -13,12 +13,14 @@ const {
   deletePost,
   hidePost,
   getUserPosts,
+  searchPosts,
   sharePost,
   getRelatedPosts,
 } = require("../controllers/postController");
 
 // Public routes (with optional auth for viewing own drafts)
 router.get("/", optionalAuth, getAllPosts);
+router.get("/search", authenticate, searchPosts);
 router.get("/:id", mongoIdValidation("id"), optionalAuth, getPostById);
 router.get("/:id/related", mongoIdValidation("id"), getRelatedPosts);
 router.get(

@@ -10,6 +10,7 @@ const {
   login,
   getProfile,
   updateProfile,
+  getAllUsers,
   logout,
 } = require("../controllers/authController");
 
@@ -22,6 +23,7 @@ const upload = require("../middleware/upload");
 // Protected routes
 router.get("/profile", authenticate, getProfile);
 router.put("/profile", authenticate, upload.single("avatar"), updateProfile);
+router.get("/users", authenticate, getAllUsers);
 router.post("/logout", authenticate, logout);
 
 module.exports = router;

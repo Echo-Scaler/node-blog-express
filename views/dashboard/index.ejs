@@ -10,24 +10,80 @@
     <%- include('../partials/header') %>
 
     <main class="cms-container">
-      <header class="dashboard-header-v2">
+      <header class="dashboard-header">
         <div>
-          <h1
-            style="font-size: 32px; font-weight: 800; letter-spacing: -0.02em"
-          >
-            Content Library
-          </h1>
-          <p style="color: var(--text-secondary); margin-top: 4px">
-            Manage your stories and performance.
-          </p>
+          <h1>Content Library</h1>
+          <p>Manage your stories and performance.</p>
         </div>
-        <a
-          href="/posts/create"
-          class="btn btn-primary"
-          style="padding: 12px 28px"
-          >New Story</a
-        >
+        <a href="/posts/create" class="btn btn-primary">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          New Story
+        </a>
       </header>
+
+      <div class="filter-bar-premium glass">
+        <div class="filter-item search-main">
+          <input type="text" id="filter-q" placeholder="Search by title..." />
+        </div>
+
+        <div class="filter-item">
+          <select id="filter-status">
+            <option value="">Status: All</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <input
+            type="text"
+            id="filter-start-date"
+            placeholder="From Date"
+            onfocus="this.type = 'date'"
+            onblur="this.type = 'text'"
+          />
+        </div>
+
+        <div class="filter-item">
+          <input
+            type="text"
+            id="filter-end-date"
+            placeholder="To Date"
+            onfocus="this.type = 'date'"
+            onblur="this.type = 'text'"
+          />
+        </div>
+
+        <button id="search-btn" class="btn btn-secondary search-submit">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>Search</span>
+        </button>
+      </div>
 
       <div class="data-table-container">
         <table class="data-table">
@@ -93,7 +149,7 @@
       </div>
     </footer>
 
-    <script src="/js/auth.js"></script>
-    <script src="/js/dashboard.js"></script>
+    <script src="/js/auth.js?v=1.1"></script>
+    <script src="/js/dashboard.js?v=1.1"></script>
   </body>
 </html>
