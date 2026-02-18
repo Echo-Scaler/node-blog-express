@@ -11,6 +11,7 @@ const replyRoutes = require("./routes/replies");
 const reactionRoutes = require("./routes/reactions");
 const categoryRoutes = require("./routes/categories");
 const newsRoutes = require("./routes/news");
+const mediaRoutes = require("./routes/media");
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api/replies", replyRoutes);
 app.use("/api/reactions", reactionRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/news", newsRoutes);
+app.use("/api/media", mediaRoutes);
 
 // CMS Routes (Web Interface)
 app.get("/", (req, res) => {

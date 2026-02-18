@@ -6,6 +6,7 @@ const validate = (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
+      message: "Validation failed",
       errors: errors.array(),
     });
   }
@@ -42,8 +43,48 @@ const loginValidation = [
   validate,
 ];
 
+const toArray = (value) => {
+  console.log("Sanitizing tags:", value, "Type:", typeof value);
+  if (value === undefined || value === null || value === "") return [];
+  if (Array.isArray(value)) return value;
+  try {
+    // Handle JSON stringified array if that ever happens
+    if (
+      typeof value === "string" &&
+      value.startsWith("[") &&
+      value.endsWith("]")
+    ) {
+      return JSON.parse(value);
+    }
+  } catch (e) {}
+  return [value];
+};
+
+// Normalize tags on req.body before express-validator runs
+const normalizeTags = (req, res, next) => {
+  const raw = req.body.tags;
+  if (raw === undefined || raw === null || raw === "") {
+    req.body.tags = [];
+  } else if (typeof raw === "string") {
+    try {
+      if (raw.startsWith("[") && raw.endsWith("]")) {
+        req.body.tags = JSON.parse(raw);
+      } else {
+        req.body.tags = [raw];
+      }
+    } catch (e) {
+      req.body.tags = [raw];
+    }
+  }
+  // If already an array, leave it
+  next();
+};
+
 // Validation rules for creating a post
 const createPostValidation = [
+  // First: normalize tags to a proper array on req.body
+  normalizeTags,
+
   body("title")
     .trim()
     .notEmpty()
@@ -55,7 +96,14 @@ const createPostValidation = [
     .optional()
     .isIn(["published", "draft", "hidden"])
     .withMessage("Invalid status"),
-  body("tags").optional().isArray().withMessage("Tags must be an array"),
+
+  body("tags").custom((value) => {
+    if (!Array.isArray(value)) {
+      throw new Error("Tags must be an array");
+    }
+    return true;
+  }),
+
   validate,
 ];
 

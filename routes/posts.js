@@ -37,6 +37,19 @@ router.post(
   "/",
   authenticate,
   upload.single("image"),
+  (req, res, next) => {
+    // Force tags to be an array
+    if (req.body.tags === undefined) {
+      req.body.tags = [];
+    } else if (typeof req.body.tags === "string") {
+      req.body.tags = [req.body.tags];
+    }
+    // If it's already an array, leave it.
+    // If it's something else (shouldn't be with multer + text fields), make it empty or array.
+
+    console.log("Normalized Tags:", req.body.tags);
+    next();
+  },
   createPostValidation,
   createPost,
 );

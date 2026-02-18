@@ -7,276 +7,222 @@
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-    <header class="editor-header">
-      <div style="display: flex; align-items: center; gap: 16px">
-        <a
-          href="/dashboard"
-          class="logo"
-          style="text-decoration: none; font-size: 18px"
-          >Byte & Beyond</a
-        >
-        <div class="draft-status">
-          <div class="draft-dot saved"></div>
-          <span>Editing</span>
+    <!-- Premium Header -->
+    <header class="premium-editor-header">
+      <div class="flex items-center gap-4">
+        <a href="/dashboard" class="editor-logo">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </a>
+        <div class="editor-status">
+          <span id="draft-status-text">Editing</span>
         </div>
       </div>
-      <div style="display: flex; gap: 12px; align-items: center">
-        <a href="/" class="simple-nav-link">Home</a>
-        <span
-          id="user-info"
-          style="
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-right: 12px;
-          "
-        ></span>
+
+      <div class="flex items-center gap-4">
+        <span id="user-info" class="text-sm font-medium text-gray-500"></span>
         <button
           type="submit"
           form="edit-post-form"
-          class="btn btn-primary"
-          style="padding: 8px 24px"
+          class="btn btn-primary rounded-full px-6 py-2"
         >
           Save Changes
         </button>
       </div>
     </header>
 
-    <main>
-      <div class="editor-layout">
-        <div
-          style="margin-bottom: 24px; display: flex; justify-content: flex-end"
-        >
-          <a href="/dashboard" class="btn btn-ghost" style="padding-left: 0">
+    <main class="premium-editor-layout">
+      <form id="edit-post-form">
+        <input type="hidden" id="post-id" value="<%= postId %>" />
+
+        <!-- Cover Image -->
+        <div class="premium-cover-upload">
+          <label for="image" class="cover-upload-trigger" id="cover-trigger">
+            <div class="upload-instruction">
+              <svg
+                class="mx-auto mb-2 w-8 h-8 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              <span class="font-medium">Change cover image</span>
+              <p class="text-xs mt-1 text-gray-400">High quality recommended</p>
+            </div>
+            <img id="image-preview" src="" style="display: none" />
+          </label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            class="hidden"
+            onchange="previewImage(this)"
+          />
+        </div>
+
+        <!-- Content -->
+        <input
+          type="text"
+          id="title"
+          name="title"
+          placeholder="Title"
+          class="premium-title-input"
+          required
+          autofocus
+          autocomplete="off"
+        />
+
+        <!-- Toolbar (Floating or localized) -->
+        <div class="flex items-center gap-2 mb-4 text-gray-400">
+          <button
+            type="button"
+            class="tool-btn"
+            onclick="openMediaLibrary()"
+            title="Add Media"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </button>
+          <span class="text-xs ml-2">Use Markdown for formatting</span>
+        </div>
+
+        <textarea
+          id="content"
+          name="content"
+          placeholder="Tell your story..."
+          class="premium-content-area"
+          required
+        ></textarea>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+          <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
             <svg
               width="20"
               height="20"
-              viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-            Back to Dashboard
-          </a>
-        </div>
-        <form id="edit-post-form">
-          <input type="hidden" id="post-id" value="<%= postId %>" />
-
-          <input
-            type="text"
-            id="title"
-            name="title"
-            placeholder="Title"
-            class="editor-title"
-            required
-            maxlength="200"
-          />
-
-          <div class="form-group" style="margin-bottom: 32px">
-            <label
-              for="image"
-              style="
-                display: block;
-                width: 100%;
-                height: 200px;
-                border: 2px dashed var(--border-light);
-                border-radius: var(--radius-md);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: all 0.2s;
-                background: #f8fafc;
-                overflow: hidden;
-                position: relative;
-              "
-              class="image-upload-label"
-            >
-              <div id="upload-placeholder" style="text-align: center">
-                <svg
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--text-secondary)"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  style="margin-bottom: 12px"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                  <polyline points="21 15 16 10 5 21"></polyline>
-                </svg>
-                <div
-                  style="
-                    font-weight: 600;
-                    color: var(--text-secondary);
-                    font-size: 14px;
-                  "
-                >
-                  Click to upload new cover image
-                </div>
-                <div
-                  style="
-                    font-size: 12px;
-                    color: var(--text-secondary);
-                    margin-top: 4px;
-                    opacity: 0.7;
-                  "
-                >
-                  Recommended: 1200x630px
-                </div>
-              </div>
-              <img
-                id="image-preview"
-                src=""
-                alt="Preview"
-                style="
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                  display: none;
-                "
-              />
-            </label>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              accept="image/*"
-              style="display: none"
-              onchange="previewImage(this)"
-            />
-          </div>
-
-          <textarea
-            id="content"
-            name="content"
-            placeholder="Tell your story... (Markdown supported)"
-            class="editor-content"
-            required
-          ></textarea>
-          <div
-            style="
-              margin-top: 8px;
-              font-size: 13px;
-              color: var(--text-secondary);
-              text-align: right;
-            "
-          >
-            <svg
-              width="12"
-              height="12"
               viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              style="margin-right: 4px; vertical-align: middle"
             >
               <path
-                d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"
-              ></path>
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+              />
             </svg>
-            Markdown formatting supported
-          </div>
+            Publishing Settings
+          </h3>
 
-          <script>
-            function previewImage(input) {
-              const preview = document.getElementById("image-preview");
-              const placeholder = document.getElementById("upload-placeholder");
-
-              if (input.files && input.files[0]) {
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                  preview.src = e.target.result;
-                  preview.style.display = "block";
-                  placeholder.style.display = "none";
-                };
-
-                reader.readAsDataURL(input.files[0]);
-              } else {
-                // Keep existing preview if available, otherwise show placeholder
-                if (!preview.src || preview.src === window.location.href) {
-                  preview.src = "";
-                  preview.style.display = "none";
-                  placeholder.style.display = "block";
-                }
-              }
-            }
-          </script>
-
-          <div class="editor-settings">
-            <h2 style="font-size: 18px; margin-bottom: 24px; font-weight: 800">
-              Story Settings
-            </h2>
-
-            <div class="form-group">
-              <label class="editor-label">Category</label>
+          <div class="settings-grid">
+            <div class="input-group">
+              <label>Category</label>
               <select
                 id="categoryId"
                 name="categoryId"
-                class="form-control"
+                class="input-field"
                 required
-                style="border-radius: 12px; padding: 14px"
               >
-                <option value="">Select a category</option>
-                <!-- Categories will be loaded dynamically -->
+                <option value="">Select Category...</option>
               </select>
             </div>
 
-            <div class="form-group">
-              <label class="editor-label">Tags</label>
+            <div class="input-group">
+              <label>Tags</label>
               <input
                 type="text"
                 id="tags"
                 name="tags"
-                placeholder="Add some keywords..."
-                class="form-control"
-                style="border-radius: 12px; padding: 14px"
+                placeholder="technology, life, coding"
+                class="input-field"
               />
             </div>
 
-            <div class="form-group">
-              <label class="editor-label">Short Preview</label>
+            <div class="input-group" style="grid-column: span 2">
+              <label>Short Description (SEO)</label>
               <textarea
                 id="excerpt"
                 name="excerpt"
-                placeholder="What is this story about?"
-                rows="3"
-                maxlength="300"
-                class="form-control"
-                style="border-radius: 12px; padding: 14px; height: auto"
+                placeholder="Write a short summary for search engines and previews..."
+                class="input-field"
               ></textarea>
             </div>
 
-            <div class="form-group">
-              <label class="editor-label">Visibility</label>
-              <select
-                id="status"
-                name="status"
-                class="form-control"
-                style="border-radius: 12px; padding: 14px"
-              >
+            <div class="input-group">
+              <label>Visibility</label>
+              <select id="status" name="status" class="input-field">
                 <option value="published">Published</option>
                 <option value="draft">Draft</option>
                 <option value="hidden">Hidden</option>
               </select>
             </div>
           </div>
-        </form>
+        </div>
+      </form>
 
-        <div id="message" style="margin-top: 40px"></div>
-      </div>
+      <div id="message" class="mt-8 text-center"></div>
     </main>
 
     <script src="/js/auth.js"></script>
     <script src="/js/edit-post.js"></script>
+    <script src="/js/media-library.js"></script>
+    <%- include('../partials/media-library-modal') %>
+
+    <script>
+      // Auto-resize textarea
+      const tx = document.getElementsByTagName("textarea");
+      for (let i = 0; i < tx.length; i++) {
+        tx[i].setAttribute(
+          "style",
+          "height:" + tx[i].scrollHeight + "px;overflow-y:hidden;",
+        );
+        tx[i].addEventListener("input", OnInput, false);
+      }
+
+      function OnInput() {
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+      }
+
+      function previewImage(input) {
+        const preview = document.getElementById("image-preview");
+        const trigger = document.getElementById("cover-trigger");
+
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+            trigger.classList.add("has-image");
+          };
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+    </script>
   </body>
 </html>
