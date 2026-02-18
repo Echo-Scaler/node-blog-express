@@ -53,13 +53,18 @@ const addReaction = async (req, res) => {
         });
     }
 
-    // Toggle reaction (validates no self-reaction)
+    // Validate no self-reaction (only for posts, comments/replies allowed like Facebook)
+    if (targetType === "post") {
+      await Reaction.validateReaction(req.userId, targetOwnerId);
+    }
+
+    // Toggle reaction
     const result = await Reaction.toggleReaction(
       req.userId,
       targetType,
       targetId,
       targetOwnerId,
-      reactionType || "like",
+      reactionType || "love",
     );
 
     // Update reaction count on target

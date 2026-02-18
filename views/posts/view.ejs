@@ -99,32 +99,60 @@
               <div
                 class="glass"
                 style="padding: 24px; border-radius: var(--radius-md)"
+            <form id="comment-form" style="display: none; margin-bottom: 32px">
+              <div
+                class="glass"
+                style="padding: 16px; border-radius: var(--radius-md); display: flex; gap: 12px; align-items: flex-start;"
               >
-                <textarea
-                  id="comment-content"
-                  class="form-control"
-                  placeholder="What are your thoughts?"
-                  rows="3"
-                  style="
-                    background: transparent;
-                    border: none;
-                    padding: 0;
-                    box-shadow: none;
-                  "
-                ></textarea>
-                <div
-                  style="
-                    display: flex;
-                    justify-content: flex-end;
-                    margin-top: 16px;
-                  "
-                >
-                  <button type="submit" class="btn btn-primary btn-sm">
-                    Respond
-                  </button>
+                <!-- Current User Avatar -->
+                <div id="comment-user-avatar" class="comment-avatar" style="width: 32px; height: 32px; font-size: 12px; margin-top: 4px;"></div>
+
+                <div style="flex: 1;">
+                  <textarea
+                    id="comment-content"
+                    class="form-control"
+                    placeholder="What are your thoughts?"
+                    rows="1"
+                    style="
+                      background: transparent;
+                      border: none;
+                      padding: 8px 0;
+                      box-shadow: none;
+                      resize: none;
+                      min-height: 40px;
+                      font-size: 15px;
+                    "
+                  ></textarea>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: flex-end;
+                      margin-top: 8px;
+                      border-top: 1px solid var(--border-light);
+                      padding-top: 8px;
+                    "
+                  >
+                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 6px 16px;">
+                      Comment
+                    </button>
+                  </div>
                 </div>
               </div>
             </form>
+
+            <div id="comments-container">
+              <!-- Comments will be rendered here by JS -->
+            </div>
+            <div
+              id="comments-pagination"
+              style="
+                display: flex;
+                gap: 4px;
+                align-items: center;
+                justify-content: center;
+                margin-top: 24px;
+              "
+            ></div>
           </div>
         </div>
       </div>

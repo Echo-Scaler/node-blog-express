@@ -183,11 +183,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         html += `
-          <article class="story-card glass news-card">
+          <article class="story-card glass news-card" onclick="checkAuthAndNavigate('${article.url}')" style="cursor: pointer;">
             ${article.urlToImage ? `<div class="story-image" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;"><img src="${article.urlToImage}" alt="${article.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'"></div>` : ""}
             <div class="story-content" style="padding: ${article.urlToImage ? "20px" : "24px"};">
               <div class="story-category" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">GLOBAL NEWS</div>
-              <h3><a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a></h3>
+              <h3><a href="javascript:void(0)" style="text-decoration: none; color: inherit;">${article.title}</a></h3>
               <p class="story-excerpt">${article.description || "No description available."}</p>
               <div class="story-footer">
                  <div class="story-author">
@@ -232,11 +232,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         html += `
-          <article class="story-card glass news-card">
+          <article class="story-card glass news-card" onclick="checkAuthAndNavigate('${article.url}')" style="cursor: pointer;">
             ${article.urlToImage ? `<div class="story-image" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;"><img src="${article.urlToImage}" alt="${article.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'"></div>` : ""}
             <div class="story-content" style="padding: ${article.urlToImage ? "20px" : "24px"};">
               <div class="story-category" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">EUROPEAN FOOTBALL</div>
-              <h3><a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a></h3>
+              <h3><a href="javascript:void(0)" style="text-decoration: none; color: inherit;">${article.title}</a></h3>
               <p class="story-excerpt">${article.description || "No description available."}</p>
               <div class="story-footer">
                  <div class="story-author">
@@ -405,4 +405,62 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.querySelector('.chip[data-id=""]').addEventListener("click", () => {
     selectCategory("", null);
   });
+
+  // Login Modal Logic
+  const loginModal = document.getElementById("login-modal");
+  const closeLoginModalBtn = document.getElementById("close-login-modal");
+
+  function showLoginModal() {
+    if (loginModal) {
+      loginModal.style.display = "flex";
+      // Prevent scrolling on body
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function hideLoginModal() {
+    if (loginModal) {
+      loginModal.style.display = "none";
+      document.body.style.overflow = "";
+    }
+  }
+
+  if (closeLoginModalBtn) {
+    closeLoginModalBtn.addEventListener("click", hideLoginModal);
+  }
+
+  window.addEventListener("click", (e) => {
+    if (e.target === loginModal) {
+      hideLoginModal();
+    }
+  });
+
+  // Expose for usage in inline onclick
+  window.checkAuthAndNavigate = (url) => {
+    // We can't easily access 'getUser' from here if it's not global,
+    // but auth.js exposes 'getUser' globally?
+    // Let's check auth.js. Yes, const getUser = ... is defined at top level but NOT exposed to window unless we do so.
+    // However, auth.js runs before home.js.
+    // Wait, auth.js definitions are const, not var, so they are not on window by default?
+    // Actually, in browser scripts (non-module), top-level const/let are NOT attached to window.
+    // BUT we are in the same scope if included via script tags? No, separate script tags have separate scopes if modules,
+    // but separate script tags share global scope if NOT modules.
+    // auth.js: const getUser = ...
+    // If auth.js is not type="module", then:
+    // Chrome console: const a = 1; window.a is undefined.
+    // So 'getUser' is not globally available unless auth.js attaches it to window.
+    // Checking auth.js... it does NOT attach to window.
+    // So 'getUser' is NOT available here directly if it was just 'const getUser'.
+    // WAIT. If they are just script tags, they share the global scope.
+    // But 'const' in global scope does not create a property on window, but it IS accessible by name in subsequent scripts.
+    // Let's assume it is available.
+    // Safer: localStorage check directly.
+
+    const user = localStorage.getItem("user");
+    if (user) {
+      window.open(url, "_blank");
+    } else {
+      showLoginModal();
+    }
+  };
 });

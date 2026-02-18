@@ -57,6 +57,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       </header>
       <div class="post-body markdown-content">
         ${DOMPurify.sanitize(marked.parse(currentPost.content))}
+        ${
+          data.isTruncated
+            ? `
+            <div class="content-fade-overlay" style="
+              height: 150px;
+              margin-top: -150px;
+              background: linear-gradient(transparent, var(--bg-main));
+              position: relative;
+              z-index: 10;
+              pointer-events: none;
+            "></div>
+            <div class="register-cta glass" style="
+              padding: 40px;
+              text-align: center;
+              margin-top: 0;
+              border-radius: var(--radius-md);
+              border: 1px solid var(--primary-glow);
+              background: rgba(255, 255, 255, 0.7);
+              backdrop-filter: blur(10px);
+            ">
+              <h3 style="margin-bottom: 12px; font-weight: 800; font-size: 24px;">Continue reading this story</h3>
+              <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 16px;">Create a free account to get full access to this story and all other content on Byte & Beyond.</p>
+              <div style="display: flex; gap: 16px; justify-content: center;">
+                 <a href="/register" class="btn btn-primary" style="padding: 10px 24px; font-size: 16px;">Sign up for free</a>
+                 <a href="/login" class="btn btn-outline" style="padding: 10px 24px; font-size: 16px;">Log in</a>
+              </div>
+            </div>
+            `
+            : ""
+        }
       </div>
       <div style="max-width: 720px; margin: 40px auto; display: flex; gap: 8px; flex-wrap: wrap;">
         ${
@@ -119,6 +149,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Show comment form if authenticated
     if (user) {
       commentForm.style.display = "block";
+
+      // Populate current user avatar in comment box
+      const userAvatarSlot = document.getElementById("comment-user-avatar");
+      if (userAvatarSlot) {
+        if (user.avatar) {
+          userAvatarSlot.innerHTML = `<img src="${user.avatar}" alt="${user.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        } else {
+          const initials = user.username
+            ? user.username.substring(0, 2).toUpperCase()
+            : "U";
+          userAvatarSlot.textContent = initials;
+        }
+      }
+
       commentForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const content = document.getElementById("comment-content").value;
@@ -130,7 +174,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             method: "POST",
             body: JSON.stringify({ content }),
           });
-          document.getElementById("comment-content").value = "";
+          const input = document.getElementById("comment-content");
+          input.value = "";
+          input.style.height = "40px"; // Reset height
           loadComments();
         } catch (error) {
           alert(`Error: ${error.message}`);
@@ -150,12 +196,39 @@ document.addEventListener("DOMContentLoaded", async () => {
       let html =
         '<div style="display: flex; gap: 15px; font-size: 14px; color: var(--text-secondary); align-items: center;">';
 
-      const loveCount = data.grouped.love ? data.grouped.love.length : 0;
+      const loves = data.grouped.love || [];
+      const loveCount = loves.length;
 
-      html += `<span id="love-count-display" style="cursor: pointer; display: flex; align-items: center; gap: 4px;" class="hover-underline">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="${loveCount > 0 ? "#ef4444" : "none"}" stroke="${loveCount > 0 ? "#ef4444" : "currentColor"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-          ${loveCount} loves
-        </span>`;
+      let avatarsHtml = "";
+      if (loves.length > 0) {
+        avatarsHtml =
+          '<div style="display: flex; margin-right: 8px; flex-direction: row-reverse; justify-content: flex-end; align-items: center;">';
+        loves.slice(0, 3).forEach((r, idx) => {
+          const u = r.userId;
+          const uInits = u.username
+            ? u.username.substring(0, 2).toUpperCase()
+            : "U";
+          const uAvatar = u.avatar
+            ? `<img src="${u.avatar}" alt="${u.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid white;">`
+            : uInits;
+          avatarsHtml += `
+            <div class="comment-avatar" style="width: 24px; height: 24px; font-size: 10px; margin-left: -8px; border: 2px solid white; z-index: ${4 - idx};">
+              ${uAvatar}
+            </div>
+          `;
+        });
+        avatarsHtml += "</div>";
+      }
+
+      html += `
+        <span id="love-count-display" style="cursor: pointer; display: flex; align-items: center;" class="hover-underline">
+          ${avatarsHtml}
+          <div style="background: #ef4444; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 4px;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          </div>
+          <span style="font-weight: 500;">${loveCount} loves</span>
+        </span>
+      `;
 
       // Display comment count
       const commentCount = currentPost.commentCount || 0;
@@ -197,7 +270,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         reactionButtons.innerHTML = `
           <div style="display: flex; gap: 4px; width: 100%; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); padding: 4px 0;">
             <button class="reaction-btn ${userLoved ? "active-love" : ""}" data-type="love" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: none; border: none; border-radius: 4px; cursor: pointer; color: ${userLoved ? "#ef4444" : "var(--text-secondary)"}; font-weight: 600; transition: background 0.2s;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="${userLoved ? "#ef4444" : "none"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <div style="background: ${userLoved ? "#ef4444" : "#e4e6eb"}; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              </div>
               Love
             </button>
             <button id="action-comment-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: none; border: none; border-radius: 4px; cursor: pointer; color: var(--text-secondary); font-weight: 600; transition: background 0.2s;">
@@ -281,11 +356,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       let html = "";
       data.comments.forEach((comment) => {
-        // Generate user initials for avatar
         const initials = comment.username
           ? comment.username.substring(0, 2).toUpperCase()
           : "U";
-
+        const avatarHtml = comment.userAvatar
+          ? `<img src="${comment.userAvatar}" alt="${comment.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+          : initials;
         const timeAgo = new Date(comment.createdAt).toLocaleDateString(
           "en-US",
           {
@@ -297,52 +373,104 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
         html += `
-          <div class="comment-item fb-style">
-            <div class="comment-avatar">${initials}</div>
-            <div class="comment-body">
+          <div class="comment-thread" id="comment-thread-${comment._id}">
+            <div class="comment-item fb-style" id="comment-wrapper-${comment._id}">
+              <div class="comment-avatar">${avatarHtml}</div>
+              <div class="comment-body">
                 <div class="comment-bubble">
-                    <div class="comment-header">
-                        <span class="comment-author-name">${comment.username}</span>
-                    </div>
-                    <div id="comment-text-${comment._id}" class="comment-text">${comment.content}</div>
+                  <div class="comment-header">
+                    <span class="comment-author-name">${comment.username}</span>
+                  </div>
+                  <div id="comment-text-${comment._id}" class="comment-text">${comment.content}</div>
                 </div>
                 <div class="comment-actions">
-                    <span>${timeAgo}</span>
-                    <button 
-                        class="action-link ${comment.isLiked ? "active-like" : ""}" 
-                        onclick="toggleCommentLike('${comment._id}', ${comment.isLiked}, ${comment.reactionCount})" 
-                        style="${comment.isLiked ? "color: #ef4444; font-weight: bold;" : ""}"
-                        id="like-btn-${comment._id}"
-                    >
-                        ${comment.isLiked ? "Loved" : "Love"}
-                    </button>
-                    <span 
-                        class="comment-reaction-count" 
-                        onclick="openCommentLikes('${comment._id}')" 
-                        style="cursor: pointer; display: ${comment.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 2px; color: var(--text-secondary);"
-                        id="like-count-display-${comment._id}"
-                    >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                        <span id="like-count-num-${comment._id}">${comment.reactionCount}</span>
-                    </span>
-                    ${
-                      user && comment.userId === user._id
-                        ? `
-                        <button onclick="enableEditComment('${comment._id}')" class="action-link">Edit</button>
-                        <button onclick="deleteComment('${comment._id}')" class="action-link delete-action">Delete</button>
-                    `
-                        : `<button class="action-link">Reply</button>`
-                    }
+                  <span>${timeAgo}</span>
+                  <button 
+                    class="action-link ${comment.isLiked ? "active-like" : ""}" 
+                    onclick="toggleCommentLike('${comment._id}', ${comment.isLiked}, ${comment.reactionCount})" 
+                    style="${comment.isLiked ? "color: #ef4444; font-weight: bold;" : ""}"
+                    id="like-btn-${comment._id}"
+                  >${comment.isLiked ? "Loved" : "Love"}</button>
+                  <span 
+                    class="comment-reaction-count" 
+                    onclick="openCommentLikes('${comment._id}')" 
+                    style="cursor: pointer; display: ${comment.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 2px; color: var(--text-secondary);"
+                    id="like-count-display-${comment._id}"
+                  >
+                    <div style="background: #ef4444; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="white" stroke="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </div>
+                    <span id="like-count-num-${comment._id}">${comment.reactionCount}</span>
+                  </span>
+                  ${user ? `<button onclick="toggleReplyForm('${comment._id}')" class="action-link">Reply</button>` : ""}
+                  ${
+                    user && String(comment.userId) === String(user._id)
+                      ? `
+                    <button onclick="enableEditComment('${comment._id}')" class="action-link">Edit</button>
+                    <button onclick="deleteComment('${comment._id}')" class="action-link delete-action">Delete</button>
+                  `
+                      : ""
+                  }
                 </div>
+              </div>
             </div>
+            ${
+              comment.replyCount > 0
+                ? `
+              <button class="reply-count-link" id="view-replies-btn-${comment._id}" onclick="toggleReplies('${comment._id}')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 4v7a4 4 0 0 0 4 4h12"></path></svg>
+                <span id="view-replies-text-${comment._id}">View ${comment.replyCount} ${comment.replyCount === 1 ? "reply" : "replies"}</span>
+              </button>
+            `
+                : ""
+            }
+            <div class="replies-container" id="replies-container-${comment._id}" style="display: none;"></div>
+            <div id="reply-form-slot-${comment._id}"></div>
           </div>
         `;
       });
 
       commentsContainer.innerHTML = html;
       renderCommentsPagination(data.pagination);
+
+      // Update total comment count (including replies)
+      if (data.pagination && data.pagination.totalWithReplies !== undefined) {
+        updateTotalCommentCount(data.pagination.totalWithReplies);
+      } else {
+        updateTotalCommentCount();
+      }
     } catch (error) {
       console.error("Error loading comments:", error);
+    }
+  }
+
+  // Calculate and update the total comment count including replies
+  async function updateTotalCommentCount(countArg) {
+    try {
+      let totalCount = countArg;
+
+      // If count isn't provided, fetch it efficiently
+      if (totalCount === undefined) {
+        const data = await apiRequest(`/comments/post/${postId}?limit=1`);
+        totalCount = data.pagination ? data.pagination.totalWithReplies : 0;
+      }
+
+      // Update the stat display
+      const countDisplay = document.getElementById("comment-count-display");
+      if (countDisplay) {
+        const svg = countDisplay.querySelector("svg");
+        countDisplay.innerHTML = "";
+        if (svg) countDisplay.appendChild(svg);
+        countDisplay.append(` ${totalCount} comments`);
+      }
+
+      // Update the section header
+      const header = document.querySelector(".comments-section h3");
+      if (header) {
+        header.textContent = `Responses (${totalCount})`;
+      }
+    } catch (e) {
+      console.error("Error updating comment count:", e);
     }
   }
 
@@ -432,17 +560,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (data.grouped && data.grouped.love) {
         likesList.innerHTML = data.grouped.love
-          .map(
-            (reaction) => `
-                <div class="user-list-item" style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-light);">
-                  <div class="author-dot" style="width: 40px; height: 40px;"></div>
-                  <div>
-                    <div style="font-weight: 700;">${reaction.userId.username}</div>
-                    <div style="font-size: 13px; color: var(--text-secondary);">${reaction.userId.displayName || ""}</div>
-                  </div>
+          .map((c) => {
+            const initials = c.username
+              ? c.username.substring(0, 2).toUpperCase()
+              : "U";
+
+            const avatarHtml = c.userAvatar
+              ? `<img src="${c.userAvatar}" alt="${c.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+              : initials;
+
+            return `
+                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
+                    <div class="comment-avatar" style="width: 40px; height: 40px; font-size: 14px;">${avatarHtml}</div>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-weight: 600;">${c.username}</span>
+                        <span style="font-size: 12px; color: var(--text-secondary);">${new Date(c.createdAt).toLocaleDateString()}</span>
+                    </div>
                 </div>
-              `,
-          )
+            `;
+          })
           .join("");
       } else {
         likesList.innerHTML =
@@ -654,6 +790,367 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
+  // ====== REPLY FUNCTIONS ======
+
+  // Toggle reply form visibility - opens inline under this comment thread
+  window.toggleReplyForm = (commentId) => {
+    const slot = document.getElementById(`reply-form-slot-${commentId}`);
+    if (!slot) return;
+
+    // If form already exists, toggle it off
+    if (slot.innerHTML.trim()) {
+      slot.innerHTML = "";
+      return;
+    }
+
+    // Also expand replies if they exist but are hidden
+    const repliesContainer = document.getElementById(
+      `replies-container-${commentId}`,
+    );
+    if (repliesContainer && repliesContainer.style.display === "none") {
+      const viewBtn = document.getElementById(`view-replies-btn-${commentId}`);
+      if (viewBtn) {
+        toggleReplies(commentId);
+      }
+    }
+
+    const userInitials = user.username
+      ? user.username.substring(0, 2).toUpperCase()
+      : "U";
+
+    const userAvatarHtml = user.avatar
+      ? `<img src="${user.avatar}" alt="${user.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+      : userInitials;
+
+    slot.innerHTML = `
+      <div class="reply-form-container">
+        <div class="comment-avatar">${userAvatarHtml}</div>
+        <div class="reply-input-wrap">
+          <textarea
+            class="reply-input"
+            id="reply-input-${commentId}"
+            placeholder="Write a reply..."
+            rows="1"
+            oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitReply('${commentId}')}"
+          ></textarea>
+          <div class="reply-form-actions">
+            <button class="reply-cancel-btn" onclick="toggleReplyForm('${commentId}')">Cancel</button>
+            <button class="reply-submit-btn" id="reply-submit-${commentId}" onclick="submitReply('${commentId}')">Reply</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Focus the input
+    const input = document.getElementById(`reply-input-${commentId}`);
+    if (input) input.focus();
+  };
+
+  // Toggle replies visibility (View X replies / Hide replies)
+  window.toggleReplies = async (commentId) => {
+    const container = document.getElementById(`replies-container-${commentId}`);
+    const textEl = document.getElementById(`view-replies-text-${commentId}`);
+    const thread = document.getElementById(`comment-thread-${commentId}`);
+    if (!container) return;
+
+    if (container.style.display === "none") {
+      // Show replies
+      container.style.display = "block";
+      container.innerHTML =
+        '<div style="padding: 8px 0; font-size: 13px; color: #65676b;">Loading...</div>';
+      if (thread) thread.classList.add("has-replies");
+      await loadReplies(commentId);
+      if (textEl) textEl.textContent = "Hide replies";
+    } else {
+      // Hide replies
+      container.style.display = "none";
+      if (thread) thread.classList.remove("has-replies");
+      // Restore original text from reply count
+      const replyCount = container.querySelectorAll(".reply-item").length;
+      if (textEl)
+        textEl.textContent = `View ${replyCount} ${replyCount === 1 ? "reply" : "replies"}`;
+    }
+  };
+
+  // Submit a reply
+  window.submitReply = async (commentId) => {
+    const input = document.getElementById(`reply-input-${commentId}`);
+    const submitBtn = document.getElementById(`reply-submit-${commentId}`);
+    if (!input) return;
+
+    const content = input.value.trim();
+    if (!content) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+
+    try {
+      await apiRequest(`/replies/comment/${commentId}`, {
+        method: "POST",
+        body: JSON.stringify({ content }),
+      });
+
+      // Clear the input but keep the form open for more replies
+      input.value = "";
+      input.style.height = "auto";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Reply";
+
+      // Show replies container if hidden
+      const repliesContainer = document.getElementById(
+        `replies-container-${commentId}`,
+      );
+      if (repliesContainer) {
+        repliesContainer.style.display = "block";
+      }
+
+      // Add thread line
+      const thread = document.getElementById(`comment-thread-${commentId}`);
+      if (thread) thread.classList.add("has-replies");
+
+      // Reload replies to show the new one
+      await loadReplies(commentId);
+
+      // Update total comment count (including replies)
+      updateTotalCommentCount();
+
+      // Update or create the 'View X replies' button text
+      const textEl = document.getElementById(`view-replies-text-${commentId}`);
+      if (textEl) {
+        textEl.textContent = "Hide replies";
+      } else {
+        // Create the button if first reply on this comment
+        const commentWrapper = document.getElementById(
+          `comment-wrapper-${commentId}`,
+        );
+        if (
+          commentWrapper &&
+          !document.getElementById(`view-replies-btn-${commentId}`)
+        ) {
+          const btn = document.createElement("button");
+          btn.className = "reply-count-link";
+          btn.id = `view-replies-btn-${commentId}`;
+          btn.onclick = () => toggleReplies(commentId);
+          btn.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 4v7a4 4 0 0 0 4 4h12"></path></svg>
+            <span id="view-replies-text-${commentId}">Hide replies</span>
+          `;
+          commentWrapper.after(btn);
+        }
+      }
+
+      // Focus input again for more replies
+      input.focus();
+    } catch (error) {
+      alert(`Error posting reply: ${error.message}`);
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Reply";
+    }
+  };
+
+  // Load and render replies for a comment
+  async function loadReplies(commentId) {
+    const container = document.getElementById(`replies-container-${commentId}`);
+    if (!container) return;
+
+    try {
+      const data = await apiRequest(`/replies/comment/${commentId}?limit=50`);
+      const replies = data.replies || [];
+
+      if (replies.length === 0) {
+        container.innerHTML = "";
+        // Remove thread line if no replies
+        const thread = document.getElementById(`comment-thread-${commentId}`);
+        if (thread) thread.classList.remove("has-replies");
+        return;
+      }
+
+      // Add thread line class
+      const thread = document.getElementById(`comment-thread-${commentId}`);
+      if (thread) thread.classList.add("has-replies");
+
+      let html = "";
+      const commentAuthorName =
+        document.querySelector(
+          `#comment-wrapper-${commentId} .comment-author-name`,
+        )?.textContent || "comment";
+
+      replies.forEach((reply) => {
+        const initials = reply.username
+          ? reply.username.substring(0, 2).toUpperCase()
+          : "U";
+        const avatarHtml = reply.userAvatar
+          ? `<img src="${reply.userAvatar}" alt="${reply.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+          : initials;
+        const timeAgo = new Date(reply.createdAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const isReplyOwner = user && String(reply.userId) === String(user._id);
+        const isLiked = reply.isLiked || false;
+
+        html += `
+          <div class="reply-item" id="reply-wrapper-${reply._id}">
+            <div class="comment-avatar">${avatarHtml}</div>
+            <div class="comment-body">
+              <div class="comment-bubble">
+                <div class="comment-header">
+                  <span class="comment-author-name">${reply.username}</span>
+                </div>
+                <div id="reply-text-${reply._id}" class="comment-text">
+                  <span style="color: var(--primary); font-weight: 600; font-size: 13px;">@${commentAuthorName}</span> ${reply.content}
+                </div>
+              </div>
+              <div class="comment-actions">
+                <span>${timeAgo}</span>
+                <button 
+                  class="action-link ${isLiked ? "active-like" : ""}" 
+                  onclick="toggleReplyLike('${reply._id}', ${reply.reactionCount})"
+                  id="reply-like-btn-${reply._id}"
+                  style="${isLiked ? "color: #ef4444; font-weight: bold;" : ""}"
+                >${isLiked ? "Loved" : "Love"}</button>
+                <span 
+                  style="cursor: pointer; display: ${reply.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 2px; color: var(--text-secondary);"
+                  id="reply-like-count-display-${reply._id}"
+                  class="comment-reaction-badge"
+                >
+                  <div style="background: #ef4444; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="white" stroke="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </div>
+                  <span id="reply-like-count-num-${reply._id}" style="font-size: 11px;">${reply.reactionCount}</span>
+                </span>
+                ${user ? `<button onclick="toggleReplyForm('${commentId}')" class="action-link">Reply</button>` : ""}
+                ${
+                  isReplyOwner
+                    ? `
+                  <button onclick="enableEditReply('${reply._id}')" class="action-link">Edit</button>
+                  <button onclick="deleteReply('${reply._id}', '${commentId}')" class="action-link delete-action">Delete</button>
+                `
+                    : ""
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    } catch (error) {
+      container.innerHTML = `<div style="padding: 8px 0; color: red; font-size: 13px;">Error loading replies: ${error.message}</div>`;
+    }
+  }
+
+  // Toggle Love on a reply
+  window.toggleReplyLike = async (replyId, currentCount) => {
+    const btn = document.getElementById(`reply-like-btn-${replyId}`);
+    const countDisplay = document.getElementById(
+      `reply-like-count-display-${replyId}`,
+    );
+    const countNum = document.getElementById(`reply-like-count-num-${replyId}`);
+
+    const isActive = btn.classList.contains("active-like");
+    const newLiked = !isActive;
+    let actualCount = parseInt(countNum.innerText);
+    actualCount = newLiked ? actualCount + 1 : Math.max(0, actualCount - 1);
+
+    // Optimistic UI
+    if (newLiked) {
+      btn.classList.add("active-like");
+      btn.style.color = "#ef4444";
+      btn.style.fontWeight = "bold";
+      btn.innerText = "Loved";
+    } else {
+      btn.classList.remove("active-like");
+      btn.style.color = "";
+      btn.style.fontWeight = "";
+      btn.innerText = "Love";
+    }
+    countNum.innerText = actualCount;
+    countDisplay.style.display = actualCount > 0 ? "inline-flex" : "none";
+
+    try {
+      await apiRequest("/reactions", {
+        method: "POST",
+        body: JSON.stringify({
+          targetType: "reply",
+          targetId: replyId,
+          reactionType: "love",
+        }),
+      });
+    } catch (error) {
+      console.error("Error toggling reply like:", error);
+      alert("Failed to react");
+    }
+  };
+
+  // Edit reply
+  const originalReplies = {};
+
+  window.enableEditReply = (replyId) => {
+    const textEl = document.getElementById(`reply-text-${replyId}`);
+    if (!textEl) return;
+
+    const currentContent = textEl.textContent;
+    originalReplies[replyId] = currentContent;
+
+    textEl.innerHTML = `
+      <textarea id="edit-reply-input-${replyId}" class="comment-edit-area" style="font-size: 13px; min-height: 40px;">${currentContent}</textarea>
+      <div class="edit-actions">
+        <button onclick="cancelEditReply('${replyId}')" class="btn btn-sm btn-outline" style="padding: 3px 8px; font-size: 11px;">Cancel</button>
+        <button onclick="saveEditReply('${replyId}')" class="btn btn-sm btn-primary" style="padding: 3px 10px; font-size: 11px;">Save</button>
+      </div>
+    `;
+  };
+
+  window.cancelEditReply = (replyId) => {
+    const textEl = document.getElementById(`reply-text-${replyId}`);
+    if (textEl && originalReplies[replyId] !== undefined) {
+      textEl.textContent = originalReplies[replyId];
+      delete originalReplies[replyId];
+    }
+  };
+
+  window.saveEditReply = async (replyId) => {
+    const input = document.getElementById(`edit-reply-input-${replyId}`);
+    if (!input) return;
+
+    const newContent = input.value.trim();
+    if (!newContent) return;
+
+    try {
+      await apiRequest(`/replies/${replyId}`, {
+        method: "PUT",
+        body: JSON.stringify({ content: newContent }),
+      });
+      // Reload replies for the parent comment
+      const replyWrapper = document.getElementById(`reply-wrapper-${replyId}`);
+      const repliesContainer = replyWrapper
+        ? replyWrapper.closest(".replies-container")
+        : null;
+      if (repliesContainer) {
+        const commentId = repliesContainer.id.replace("replies-container-", "");
+        await loadReplies(commentId);
+      }
+    } catch (error) {
+      alert(`Error updating reply: ${error.message}`);
+    }
+  };
+
+  // Delete reply
+  window.deleteReply = async (replyId, commentId) => {
+    if (!confirm("Are you sure you want to delete this reply?")) return;
+    try {
+      await apiRequest(`/replies/${replyId}`, { method: "DELETE" });
+      await loadReplies(commentId);
+      updateTotalCommentCount();
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
   // Interactions Modal Logic
   const modal = document.getElementById("interactions-modal");
   const closeModalBtn = document.getElementById("close-modal-btn");
@@ -661,8 +1158,33 @@ document.addEventListener("DOMContentLoaded", async () => {
   const likesList = document.getElementById("likes-list");
   const commentsList = document.getElementById("comments-list");
 
-  function openInteractionsModal(tab = "likes") {
+  async function openInteractionsModal(tab = "likes") {
     modal.style.display = "flex";
+
+    // Refresh counts for tabs
+    try {
+      const [reactionData, commentData] = await Promise.all([
+        apiRequest(`/reactions/post/${postId}`),
+        apiRequest(`/comments/post/${postId}?limit=1`),
+      ]);
+
+      const loveCount = reactionData.grouped.love
+        ? reactionData.grouped.love.length
+        : 0;
+      const totalComments = commentData.pagination
+        ? commentData.pagination.totalWithReplies
+        : 0;
+
+      tabBtns.forEach((btn) => {
+        if (btn.dataset.tab === "likes") {
+          btn.innerText = `Loves (${loveCount})`;
+        } else if (btn.dataset.tab === "comments") {
+          btn.innerText = `Comments (${totalComments})`;
+        }
+      });
+    } catch (e) {
+      console.error("Error refreshing modal counts:", e);
+    }
 
     // Reset UI state for Post Interactions
     const modalTitle = document.querySelector("#interactions-modal h3");
@@ -744,9 +1266,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         const initials = u.username
           ? u.username.substring(0, 2).toUpperCase()
           : "U";
+
+        const avatarHtml = u.avatar
+          ? `<img src="${u.avatar}" alt="${u.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+          : initials;
+
         html += `
                 <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
-                    <div class="comment-avatar" style="width: 40px; height: 40px; font-size: 14px;">${initials}</div>
+                    <div class="comment-avatar" style="width: 40px; height: 40px; font-size: 14px;">${avatarHtml}</div>
                     <span style="font-weight: 600;">${u.username}</span>
                 </div>
             `;
@@ -761,33 +1288,549 @@ document.addEventListener("DOMContentLoaded", async () => {
     commentsList.innerHTML =
       '<div class="loading-spinner" style="padding: 20px; text-align: center;">Loading...</div>';
     try {
-      const data = await apiRequest(`/comments/post/${postId}/commenters`);
-      const commenters = data.commenters || [];
+      const data = await apiRequest(`/comments/post/${postId}?limit=50`);
+      const comments = data.comments || [];
 
-      if (commenters.length === 0) {
+      if (comments.length === 0) {
         commentsList.innerHTML =
           '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">No comments yet.</div>';
         return;
       }
 
       let html = "";
-      commenters.forEach((c) => {
+      comments.forEach((c) => {
         const initials = c.username
           ? c.username.substring(0, 2).toUpperCase()
           : "U";
+        const timeAgo = new Date(c.createdAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const isOwner = user && String(c.userId) === String(user._id);
+
+        const avatarHtml = c.userAvatar
+          ? `<img src="${c.userAvatar}" alt="${c.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+          : initials;
+
         html += `
-                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
-                    <div class="comment-avatar" style="width: 40px; height: 40px; font-size: 14px;">${initials}</div>
-                    <div style="display: flex; flex-direction: column;">
-                         <span style="font-weight: 600;">${c.username}</span>
-                         <span style="font-size: 12px; color: var(--text-secondary);">Last commented: ${new Date(c.lastCommentAt).toLocaleDateString()}</span>
-                    </div>
+          <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+              <div class="comment-avatar" style="width: 32px; height: 32px; min-width: 32px; font-size: 12px;">${avatarHtml}</div>
+              <div style="flex: 1; min-width: 0;">
+                <div class="comment-bubble" style="display: inline-block; max-width: 100%;">
+                  <div class="comment-header">
+                    <span class="comment-author-name">${c.username}</span>
+                  </div>
+                  <div id="modal-comment-text-${c._id}" class="comment-text">${c.content}</div>
                 </div>
-            `;
+                <div class="comment-actions" style="margin-top: 4px; margin-left: 12px;">
+                  <span>${timeAgo}</span>
+                  ${
+                    user
+                      ? `
+                    <button 
+                      class="action-link ${c.isLiked ? "active-like" : ""}" 
+                      onclick="toggleModalCommentLike('${c._id}', this)"
+                      style="${c.isLiked ? "color: #ef4444; font-weight: bold;" : ""}"
+                    >${c.isLiked ? "Loved" : "Love"}</button>
+                  `
+                      : ""
+                  }
+                  <span 
+                    style="display: ${c.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 2px; color: var(--text-secondary);"
+                    id="modal-like-count-${c._id}"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    <span id="modal-like-num-${c._id}">${c.reactionCount}</span>
+                  </span>
+                  ${user ? `<button onclick="toggleModalReplyForm('${c._id}')" class="action-link">Reply</button>` : ""}
+                  ${
+                    isOwner
+                      ? `
+                    <button onclick="enableModalEditComment('${c._id}')" class="action-link">Edit</button>
+                    <button onclick="deleteModalComment('${c._id}')" class="action-link delete-action">Delete</button>
+                  `
+                      : ""
+                  }
+                </div>
+                ${
+                  c.replyCount > 0
+                    ? `
+                  <button onclick="toggleModalReplies('${c._id}')" style="background: none; border: none; color: #65676b; font-weight: 600; font-size: 12px; cursor: pointer; margin-left: 12px; margin-top: 6px; display: flex; align-items: center; gap: 4px; padding: 2px 0;" id="modal-view-replies-btn-${c._id}">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 4v7a4 4 0 0 0 4 4h12"></path></svg>
+                    <span id="modal-view-replies-text-${c._id}">View ${c.replyCount} ${c.replyCount === 1 ? "reply" : "replies"}</span>
+                  </button>
+                `
+                    : ""
+                }
+                <div id="modal-replies-${c._id}" style="margin-left: 12px; margin-top: 4px; display: none;"></div>
+                <div id="modal-reply-form-slot-${c._id}" style="margin-left: 12px;"></div>
+              </div>
+            </div>
+          </div>
+        `;
       });
       commentsList.innerHTML = html;
     } catch (error) {
       commentsList.innerHTML = `<div style="padding: 20px; color: red;">Error: ${error.message}</div>`;
     }
   }
+
+  // --- Modal Comment Actions ---
+
+  // Love toggle in modal
+  window.toggleModalCommentLike = async (commentId, btn) => {
+    const countDisplay = document.getElementById(
+      `modal-like-count-${commentId}`,
+    );
+    const countNum = document.getElementById(`modal-like-num-${commentId}`);
+
+    const isActive = btn.classList.contains("active-like");
+    const newLiked = !isActive;
+    let count = parseInt(countNum.innerText);
+    count = newLiked ? count + 1 : Math.max(0, count - 1);
+
+    if (newLiked) {
+      btn.classList.add("active-like");
+      btn.style.color = "#ef4444";
+      btn.style.fontWeight = "bold";
+      btn.innerText = "Loved";
+    } else {
+      btn.classList.remove("active-like");
+      btn.style.color = "";
+      btn.style.fontWeight = "";
+      btn.innerText = "Love";
+    }
+    countNum.innerText = count;
+    countDisplay.style.display = count > 0 ? "inline-flex" : "none";
+
+    try {
+      await apiRequest("/reactions", {
+        method: "POST",
+        body: JSON.stringify({
+          targetType: "comment",
+          targetId: commentId,
+          reactionType: "love",
+        }),
+      });
+      // Also sync the main comment list
+      loadComments();
+    } catch (error) {
+      alert("Failed to react");
+    }
+  };
+
+  // Toggle replies in modal (View X replies / Hide replies)
+  window.toggleModalReplies = async (commentId) => {
+    const container = document.getElementById(`modal-replies-${commentId}`);
+    const textEl = document.getElementById(
+      `modal-view-replies-text-${commentId}`,
+    );
+    if (!container) return;
+
+    if (container.style.display === "none") {
+      container.style.display = "block";
+      container.innerHTML =
+        '<div style="padding: 6px 0; font-size: 12px; color: #65676b;">Loading...</div>';
+      try {
+        const data = await apiRequest(`/replies/comment/${commentId}?limit=50`);
+        const replies = data.replies || [];
+        if (replies.length === 0) {
+          container.innerHTML =
+            '<div style="padding: 6px 0; font-size: 12px; color: #65676b;">No replies yet.</div>';
+        } else {
+          let replyHtml = "";
+          replies.forEach((r) => {
+            const rInitials = r.username
+              ? r.username.substring(0, 2).toUpperCase()
+              : "U";
+            const rTime = new Date(r.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const rAvatarHtml = r.userAvatar
+              ? `<img src="${r.userAvatar}" alt="${r.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+              : rInitials;
+            replyHtml += `
+              <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px;" id="modal-reply-wrapper-${r._id}">
+                <div class="comment-avatar" style="width: 22px; height: 22px; min-width: 22px; font-size: 9px;">${rAvatarHtml}</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div class="comment-bubble" style="display: inline-block; max-width: 100%; padding: 5px 10px; border-radius: 12px; font-size: 12px;">
+                    <span style="font-weight: 700; font-size: 11px;">${r.username}</span>
+                    <div style="font-size: 12px; line-height: 1.3;" id="modal-reply-text-${r._id}">${r.content}</div>
+                  </div>
+                  <div style="margin-left: 8px; margin-top: 2px; font-size: 10px; color: #65676b; display: flex; gap: 8px; align-items: center;">
+                    <span>${rTime}</span>
+                    <button class="action-link" onclick="toggleModalReplyLike('${r._id}', this)" style="font-size: 10px; ${r.isLiked ? "color: #ef4444; font-weight: bold;" : ""}">${r.isLiked ? "Loved" : "Love"}</button>
+                    ${user ? `<button onclick="toggleModalReplyForm('${commentId}')" class="action-link" style="font-size: 10px;">Reply</button>` : ""}
+                    ${
+                      user && String(r.userId) === String(user._id)
+                        ? `
+                      <button onclick="enableModalEditReply('${r._id}')" class="action-link" style="font-size: 10px;">Edit</button>
+                      <button onclick="deleteModalReply('${r._id}', '${commentId}')" class="action-link delete-action" style="font-size: 10px;">Delete</button>
+                    `
+                        : ""
+                    }
+                    ${r.reactionCount > 0 ? `<span style="margin-left: 4px; display: flex; align-items: center; gap: 2px;"><div style="background: #ef4444; width: 12px; height: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><svg width="7" height="7" viewBox="0 0 24 24" fill="white" stroke="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div> <span id="modal-reply-like-num-${r._id}">${r.reactionCount}</span></span>` : ""}
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          container.innerHTML = replyHtml;
+        }
+        if (textEl) textEl.textContent = "Hide replies";
+      } catch (err) {
+        container.innerHTML =
+          '<div style="padding: 6px 0; font-size: 12px; color: red;">Error loading replies</div>';
+      }
+    } else {
+      container.style.display = "none";
+      const replyCount = container.querySelectorAll(
+        '[style*="display: flex"]',
+      ).length;
+      if (textEl)
+        textEl.textContent = `View ${replyCount || ""} ${replyCount === 1 ? "reply" : "replies"}`;
+    }
+  };
+
+  // Toggle reply form in modal (inline)
+  window.toggleModalReplyForm = (commentId) => {
+    const slot = document.getElementById(`modal-reply-form-slot-${commentId}`);
+    if (!slot) return;
+
+    if (slot.innerHTML.trim()) {
+      slot.innerHTML = "";
+      return;
+    }
+
+    // Also expand replies if hidden
+    const repliesContainer = document.getElementById(
+      `modal-replies-${commentId}`,
+    );
+    if (repliesContainer && repliesContainer.style.display === "none") {
+      const viewBtn = document.getElementById(
+        `modal-view-replies-btn-${commentId}`,
+      );
+      if (viewBtn) toggleModalReplies(commentId);
+    }
+
+    const userInitials = user.username
+      ? user.username.substring(0, 2).toUpperCase()
+      : "U";
+    const userAvatarHtml = user.avatar
+      ? `<img src="${user.avatar}" alt="${user.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+      : userInitials;
+
+    slot.innerHTML = `
+      <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 8px;">
+        <div class="comment-avatar" style="width: 22px; height: 22px; min-width: 22px; font-size: 9px;">${userAvatarHtml}</div>
+        <div style="flex: 1; background: #f0f2f5; border-radius: 16px; padding: 6px 10px;">
+          <textarea
+            id="modal-reply-input-${commentId}"
+            placeholder="Write a reply..."
+            rows="1"
+            style="width: 100%; background: transparent; border: none; outline: none; font-family: inherit; font-size: 12px; resize: none; min-height: 24px; max-height: 100px; line-height: 1.4;"
+            oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitModalReply('${commentId}')}"
+          ></textarea>
+          <div style="display: flex; gap: 4px; justify-content: flex-end; margin-top: 4px;">
+            <button onclick="toggleModalReplyForm('${commentId}')" style="padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #ddd; background: white; color: #65676b;">Cancel</button>
+            <button id="modal-reply-submit-${commentId}" onclick="submitModalReply('${commentId}')" style="padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; cursor: pointer; border: none; background: var(--primary); color: white;">Reply</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const input = document.getElementById(`modal-reply-input-${commentId}`);
+    if (input) input.focus();
+  };
+
+  // Submit reply from the modal
+  window.submitModalReply = async (commentId) => {
+    const input = document.getElementById(`modal-reply-input-${commentId}`);
+    const submitBtn = document.getElementById(
+      `modal-reply-submit-${commentId}`,
+    );
+    if (!input) return;
+
+    const content = input.value.trim();
+    if (!content) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+
+    try {
+      await apiRequest(`/replies/comment/${commentId}`, {
+        method: "POST",
+        body: JSON.stringify({ content }),
+      });
+
+      // Clear input but keep form open
+      input.value = "";
+      input.style.height = "auto";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Reply";
+
+      // Show and reload replies in modal
+      const repliesContainer = document.getElementById(
+        `modal-replies-${commentId}`,
+      );
+      if (repliesContainer) {
+        repliesContainer.style.display = "block";
+        // Reload the replies
+        const data = await apiRequest(`/replies/comment/${commentId}?limit=50`);
+        const replies = data.replies || [];
+        let replyHtml = "";
+        replies.forEach((r) => {
+          const rInitials = r.username
+            ? r.username.substring(0, 2).toUpperCase()
+            : "U";
+          const rTime = new Date(r.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const isReplyOwner = user && String(r.userId) === String(user._id);
+          const rAvatarHtml = r.userAvatar
+            ? `<img src="${r.userAvatar}" alt="${r.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+            : rInitials;
+          replyHtml += `
+            <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px;" id="modal-reply-wrapper-${r._id}">
+              <div class="comment-avatar" style="width: 22px; height: 22px; min-width: 22px; font-size: 9px;">${rAvatarHtml}</div>
+              <div style="flex: 1; min-width: 0;">
+                <div class="comment-bubble" style="display: inline-block; max-width: 100%; padding: 5px 10px; border-radius: 12px; font-size: 12px;">
+                  <span style="font-weight: 700; font-size: 11px;">${r.username}</span>
+                  <div style="font-size: 12px; line-height: 1.3;" id="modal-reply-text-${r._id}">${r.content}</div>
+                </div>
+                <div style="margin-left: 8px; margin-top: 2px; font-size: 10px; color: #65676b; display: flex; gap: 8px; align-items: center;">
+                  <span>${rTime}</span>
+                  <button class="action-link" onclick="toggleModalReplyLike('${r._id}', this)" style="font-size: 10px; ${r.isLiked ? "color: #ef4444; font-weight: bold;" : ""}">${r.isLiked ? "Loved" : "Love"}</button>
+                  ${user ? `<button onclick="toggleModalReplyForm('${commentId}')" class="action-link" style="font-size: 10px;">Reply</button>` : ""}
+                  ${
+                    isReplyOwner
+                      ? `
+                    <button onclick="enableModalEditReply('${r._id}')" class="action-link" style="font-size: 10px;">Edit</button>
+                    <button onclick="deleteModalReply('${r._id}', '${commentId}')" class="action-link delete-action" style="font-size: 10px;">Delete</button>
+                  `
+                      : ""
+                  }
+                  ${r.reactionCount > 0 ? `<span style="margin-left: 4px; display: flex; align-items: center; gap: 2px;"><div style="background: #ef4444; width: 12px; height: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><svg width="7" height="7" viewBox="0 0 24 24" fill="white" stroke="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div> <span id="modal-reply-like-num-${r._id}">${r.reactionCount}</span></span>` : ""}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        repliesContainer.innerHTML = replyHtml;
+      }
+
+      // Update total comment count
+      updateTotalCommentCount();
+
+      // Update the toggle button text
+      const textEl = document.getElementById(
+        `modal-view-replies-text-${commentId}`,
+      );
+      if (textEl) textEl.textContent = "Hide replies";
+
+      // Also sync the main page comments
+      loadComments();
+
+      // Focus input for more replies
+      input.focus();
+    } catch (error) {
+      alert(`Error posting reply: ${error.message}`);
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Reply";
+    }
+  };
+
+  // Edit comment in modal
+  const modalOriginalComments = {};
+
+  window.enableModalEditComment = (commentId) => {
+    const textEl = document.getElementById(`modal-comment-text-${commentId}`);
+    if (!textEl) return;
+
+    const currentContent = textEl.textContent;
+    modalOriginalComments[commentId] = currentContent;
+
+    textEl.innerHTML = `
+      <textarea id="modal-edit-input-${commentId}" class="comment-edit-area" style="font-size: 13px;">${currentContent}</textarea>
+      <div class="edit-actions">
+        <button onclick="cancelModalEditComment('${commentId}')" class="btn btn-sm btn-outline" style="padding: 4px 8px; font-size: 12px;">Cancel</button>
+        <button onclick="saveModalEditComment('${commentId}')" class="btn btn-sm btn-primary" style="padding: 4px 12px; font-size: 12px;">Save</button>
+      </div>
+    `;
+  };
+
+  window.cancelModalEditComment = (commentId) => {
+    const textEl = document.getElementById(`modal-comment-text-${commentId}`);
+    if (textEl && modalOriginalComments[commentId] !== undefined) {
+      textEl.textContent = modalOriginalComments[commentId];
+      delete modalOriginalComments[commentId];
+    }
+  };
+
+  window.saveModalEditComment = async (commentId) => {
+    const input = document.getElementById(`modal-edit-input-${commentId}`);
+    if (!input) return;
+
+    const newContent = input.value.trim();
+    if (!newContent) return;
+
+    try {
+      await apiRequest(`/comments/${commentId}`, {
+        method: "PUT",
+        body: JSON.stringify({ content: newContent }),
+      });
+      // Refresh both modal and main list
+      fetchCommenters();
+      loadComments();
+    } catch (error) {
+      alert(`Error updating comment: ${error.message}`);
+    }
+  };
+
+  // Delete comment in modal
+  window.deleteModalComment = async (commentId) => {
+    if (!confirm("Are you sure you want to delete this comment?")) return;
+    try {
+      await apiRequest(`/comments/${commentId}`, { method: "DELETE" });
+      // Refresh both modal and main list
+      fetchCommenters();
+      loadComments();
+      updateTotalCommentCount();
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  // Reply Like in modal
+  window.toggleModalReplyLike = async (replyId, btn) => {
+    const isLiked = btn.style.fontWeight === "bold";
+    const numEl = document.getElementById(`modal-reply-like-num-${replyId}`);
+
+    try {
+      await apiRequest("/reactions", {
+        method: "POST",
+        body: JSON.stringify({
+          targetId: replyId,
+          targetType: "reply",
+          reactionType: "love",
+        }),
+      });
+
+      if (isLiked) {
+        btn.style.color = "";
+        btn.style.fontWeight = "";
+        btn.innerText = "Love";
+        if (numEl) numEl.innerText = Math.max(0, parseInt(numEl.innerText) - 1);
+      } else {
+        btn.style.color = "#ef4444";
+        btn.style.fontWeight = "bold";
+        btn.innerText = "Loved";
+        if (numEl) numEl.innerText = (parseInt(numEl.innerText) || 0) + 1;
+      }
+
+      // Sync main view
+      loadComments();
+    } catch (error) {
+      console.error("Error reacting to modal reply:", error);
+    }
+  };
+
+  // Edit reply in modal
+  window.enableModalEditReply = (replyId) => {
+    const textEl = document.getElementById(`modal-reply-text-${replyId}`);
+    if (!textEl) return;
+
+    const currentContent = textEl.textContent;
+    modalOriginalComments[`reply-${replyId}`] = currentContent;
+
+    textEl.innerHTML = `
+      <textarea id="modal-reply-edit-input-${replyId}" class="comment-edit-area" style="font-size: 12px; min-height: 40px;">${currentContent}</textarea>
+      <div class="edit-actions">
+        <button onclick="cancelModalEditReply('${replyId}')" class="btn btn-sm btn-outline" style="padding: 2px 6px; font-size: 10px;">Cancel</button>
+        <button onclick="saveModalEditReply('${replyId}')" class="btn btn-sm btn-primary" style="padding: 2px 8px; font-size: 10px;">Save</button>
+      </div>
+    `;
+  };
+
+  window.cancelModalEditReply = (replyId) => {
+    const textEl = document.getElementById(`modal-reply-text-${replyId}`);
+    if (textEl && modalOriginalComments[`reply-${replyId}`] !== undefined) {
+      textEl.textContent = modalOriginalComments[`reply-${replyId}`];
+      delete modalOriginalComments[`reply-${replyId}`];
+    }
+  };
+
+  window.saveModalEditReply = async (replyId) => {
+    const input = document.getElementById(`modal-reply-edit-input-${replyId}`);
+    if (!input) return;
+
+    const newContent = input.value.trim();
+    if (!newContent) return;
+
+    try {
+      await apiRequest(`/replies/${replyId}`, {
+        method: "PUT",
+        body: JSON.stringify({ content: newContent }),
+      });
+      // Refresh modal
+      const textEl = document.getElementById(`modal-reply-text-${replyId}`);
+      if (textEl) textEl.textContent = newContent;
+      // Sync main view
+      loadComments();
+    } catch (error) {
+      alert(`Error updating reply: ${error.message}`);
+    }
+  };
+
+  // Delete reply in modal
+  window.deleteModalReply = async (replyId, commentId) => {
+    if (!confirm("Are you sure you want to delete this reply?")) return;
+    try {
+      await apiRequest(`/replies/${replyId}`, { method: "DELETE" });
+
+      // Remove element from modal
+      const wrapper = document.getElementById(`modal-reply-wrapper-${replyId}`);
+      if (wrapper) wrapper.remove();
+
+      // Update toggle text
+      const container = document.getElementById(`modal-replies-${commentId}`);
+      const textEl = document.getElementById(
+        `modal-view-replies-text-${commentId}`,
+      );
+      if (container && textEl) {
+        const replyCount = container.querySelectorAll(
+          '[id^="modal-reply-wrapper-"]',
+        ).length;
+        textEl.textContent = `View ${replyCount} ${replyCount === 1 ? "reply" : "replies"}`;
+        if (replyCount === 0) container.style.display = "none";
+      }
+
+      // Sync main view
+      loadComments();
+      updateTotalCommentCount();
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  // Reply from modal: close modal, scroll to comment, open reply form
+  window.replyFromModal = (commentId) => {
+    // legacy function if still called anywhere
+    const modal = document.getElementById("interactions-modal");
+    if (modal) modal.style.display = "none";
+    const commentEl = document.getElementById(`comment-wrapper-${commentId}`);
+    if (commentEl)
+      commentEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => toggleReplyForm(commentId), 400);
+  };
 });

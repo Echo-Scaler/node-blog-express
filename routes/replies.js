@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authenticate } = require("../middleware/auth");
+const { authenticate, optionalAuth } = require("../middleware/auth");
 const {
   createReplyValidation,
   mongoIdValidation,
@@ -15,6 +15,7 @@ const {
 // Get replies for a comment (public)
 router.get(
   "/comment/:commentId",
+  optionalAuth,
   mongoIdValidation("commentId"),
   getRepliesByComment,
 );

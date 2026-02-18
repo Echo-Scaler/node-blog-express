@@ -1,6 +1,8 @@
 const Reply = require("../models/Reply");
 const Comment = require("../models/Comment");
 
+const mongoose = require("mongoose");
+
 // Get all replies for a comment
 const getRepliesByComment = async (req, res) => {
   try {
@@ -8,14 +10,74 @@ const getRepliesByComment = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
+    const userId = req.userId;
 
-    const replies = await Reply.find({
-      commentId,
-      isDeleted: false,
-    })
-      .sort({ createdAt: 1 }) // Ascending order for replies
-      .skip(skip)
-      .limit(limit);
+    const pipeline = [
+      {
+        $match: {
+          commentId: new mongoose.Types.ObjectId(commentId),
+          isDeleted: false,
+        },
+      },
+      { $sort: { createdAt: 1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ];
+
+    if (userId) {
+      pipeline.push({
+        $lookup: {
+          from: "reactions",
+          let: { replyId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$targetId", "$$replyId"] },
+                    { $eq: ["$targetType", "reply"] },
+                    { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] },
+                  ],
+                },
+              },
+            },
+            { $project: { _id: 1 } },
+          ],
+          as: "userReaction",
+        },
+      });
+      pipeline.push({
+        $addFields: {
+          isLiked: { $gt: [{ $size: "$userReaction" }, 0] },
+        },
+      });
+      pipeline.push({
+        $project: { userReaction: 0 },
+      });
+    }
+
+    // Add user avatar lookup
+    pipeline.push({
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "author",
+      },
+    });
+    pipeline.push({
+      $unwind: { path: "$author", preserveNullAndEmptyArrays: true },
+    });
+    pipeline.push({
+      $addFields: {
+        userAvatar: "$author.avatar",
+      },
+    });
+    pipeline.push({
+      $project: { author: 0 },
+    });
+
+    const replies = await Reply.aggregate(pipeline);
 
     const total = await Reply.countDocuments({
       commentId,
@@ -74,6 +136,14 @@ const createReply = async (req, res) => {
     // Increment reply count on comment
     comment.replyCount += 1;
     await comment.save();
+
+    // Increment comment count on post
+    const Post = require("../models/Post");
+    const post = await Post.findById(comment.postId);
+    if (post) {
+      post.commentCount += 1;
+      await post.save();
+    }
 
     res.status(201).json({
       success: true,
@@ -167,6 +237,14 @@ const deleteReply = async (req, res) => {
     if (comment) {
       comment.replyCount = Math.max(0, comment.replyCount - 1);
       await comment.save();
+    }
+
+    // Decrement comment count on post
+    const Post = require("../models/Post");
+    const post = await Post.findById(reply.postId);
+    if (post) {
+      post.commentCount = Math.max(0, post.commentCount - 1);
+      await post.save();
     }
 
     res.json({

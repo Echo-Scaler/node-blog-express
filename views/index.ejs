@@ -87,7 +87,104 @@
           </div>
         </div>
       </div>
+      </div>
     </main>
+
+    <!-- Login Required Modal -->
+    <div
+      id="login-modal"
+      class="modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+      "
+    >
+      <div
+        class="modal-content glass"
+        style="
+          background: white;
+          padding: 40px;
+          border-radius: var(--radius-lg);
+          max-width: 400px;
+          width: 90%;
+          text-align: center;
+          position: relative;
+          box-shadow: var(--shadow-xl);
+        "
+      >
+        <button
+          id="close-login-modal"
+          style="
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+          "
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <h3 style="margin-bottom: 12px; font-size: 24px; font-weight: 800">
+          Join Byte & Beyond
+        </h3>
+        <p
+          style="
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+          "
+        >
+          Create a free account to read the full story and access all features.
+        </p>
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+          "
+        >
+          <a
+            href="/register"
+            class="btn btn-primary"
+            style="justify-content: center; padding: 12px"
+            >Sign up for free</a
+          >
+          <a
+            href="/login"
+            class="btn btn-outline"
+            style="justify-content: center; padding: 12px"
+            >Log in</a
+          >
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary)">
+          Already have an account? <a href="/login">Sign in</a>
+        </p>
+      </div>
+    </div>
 
     <script src="/js/auth.js"></script>
     <script src="/js/home.js"></script>

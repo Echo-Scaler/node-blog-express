@@ -61,8 +61,8 @@ reactionSchema.statics.toggleReaction = async function (
   targetOwnerId,
   reactionType = "like",
 ) {
-  // Validate no self-reaction
-  await this.validateReaction(userId, targetOwnerId);
+  // Validate no self-reaction (skipped for comments/replies, like Facebook)
+  // Validation is handled at the controller level if needed
 
   // Check if reaction already exists
   const existingReaction = await this.findOne({
