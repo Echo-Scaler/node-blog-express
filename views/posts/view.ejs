@@ -1,1302 +1,2449 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title><%= title %> — Byte & Beyond</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %> — Byte & Beyond</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    :root {
-      --bg:        #f7f6f3;
-      --surface:   #ffffff;
-      --surface2:  #f2f1ee;
-      --border:    #e3e2de;
-      --border2:   #ccc9c2;
-      --text:      #1c1b19;
-      --text-2:    #5a5854;
-      --text-3:    #9a9793;
-      --accent:    #2563eb;
-      --danger:    #dc2626;
-      --success:   #16a34a;
-      --warn:      #d97706;
-      --radius:    10px;
-      --radius-lg: 14px;
-      --shadow:    0 2px 8px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
-      --shadow-md: 0 8px 32px rgba(0,0,0,.10);
-      --font-body: 'DM Sans', sans-serif;
-      --font-serif:'Lora', Georgia, serif;
-    }
+      :root {
+        --bg: #f7f6f3;
+        --surface: #ffffff;
+        --surface2: #f2f1ee;
+        --border: #e3e2de;
+        --border2: #ccc9c2;
+        --text: #1c1b19;
+        --text-2: #5a5854;
+        --text-3: #9a9793;
+        --accent: #2563eb;
+        --danger: #dc2626;
+        --success: #16a34a;
+        --warn: #d97706;
+        --radius: 10px;
+        --radius-lg: 14px;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.1);
+        --font-body: "DM Sans", sans-serif;
+        --font-serif: "Lora", Georgia, serif;
+      }
 
-    body {
-      background: var(--bg);
-      font-family: var(--font-body);
-      color: var(--text);
-      min-height: 100vh;
-    }
+      body {
+        background: var(--bg);
+        font-family: var(--font-body);
+        color: var(--text);
+        min-height: 100vh;
+      }
 
-    /* ═══ HEADER ══ */
-    .site-header {
-      position: sticky; top: 0; z-index: 200;
-      height: 56px;
-      background: rgba(247,246,243,.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px;
-    }
-    .header-left { display: flex; align-items: center; gap: 16px; }
-    .back-btn {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 13px; font-weight: 500; color: var(--text-2);
-      text-decoration: none; cursor: pointer;
-      padding: 6px 10px; border-radius: 20px;
-      border: 1px solid var(--border); background: var(--surface);
-      transition: all .15s;
-    }
-    .back-btn:hover { background: var(--border); color: var(--text); }
-    .site-logo {
-      font-family: var(--font-serif);
-      font-size: 17px; font-weight: 700;
-      color: var(--text); text-decoration: none;
-      letter-spacing: -.01em;
-    }
-    .header-right { display: flex; align-items: center; gap: 10px; }
-    .avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: linear-gradient(135deg,#6366f1,#2563eb);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 600; color: #fff;
-      cursor: pointer;
-    }
-    .btn {
-      font-family: var(--font-body); font-size: 13px; font-weight: 600;
-      padding: 7px 16px; border-radius: 20px; border: none;
-      cursor: pointer; transition: all .15s; text-decoration: none;
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .btn-ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
-    .btn-ghost:hover { background: var(--surface2); color: var(--text); }
-    .btn-primary { background: var(--text); color: #fff; }
-    .btn-primary:hover { background: #333; }
-    .btn-danger { background: transparent; color: var(--danger); border: 1px solid #fecaca; }
-    .btn-danger:hover { background: #fee2e2; }
+      /* ═══ HEADER ══ */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        height: 56px;
+        background: rgba(247, 246, 243, 0.92);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+      }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-2);
+        text-decoration: none;
+        cursor: pointer;
+        padding: 6px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        transition: all 0.15s;
+      }
+      .back-btn:hover {
+        background: var(--border);
+        color: var(--text);
+      }
+      .site-name {
+        font-family: var(--font-serif);
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        background: linear-gradient(135deg, #6366f1, #10b981);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #2563eb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+      }
+      .btn {
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 600;
+        padding: 7px 16px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-2);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        background: var(--surface2);
+        color: var(--text);
+      }
+      .btn-primary {
+        background: var(--text);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #333;
+      }
+      .btn-danger {
+        background: transparent;
+        color: var(--danger);
+        border: 1px solid #fecaca;
+      }
+      .btn-danger:hover {
+        background: #fee2e2;
+      }
 
-    /* ═══ PROGRESS BAR ══ */
-    .read-progress {
-      position: fixed; top: 56px; left: 0; z-index: 199;
-      height: 3px; width: 0%;
-      background: linear-gradient(90deg, var(--accent), #7c3aed);
-      transition: width .1s linear;
-      border-radius: 0 2px 2px 0;
-    }
+      /* ═══ PROGRESS BAR ══ */
+      .read-progress {
+        position: fixed;
+        top: 56px;
+        left: 0;
+        z-index: 199;
+        height: 3px;
+        width: 0%;
+        background: linear-gradient(90deg, var(--accent), #7c3aed);
+        transition: width 0.1s linear;
+        border-radius: 0 2px 2px 0;
+      }
 
-    /* ═══ HERO / COVER ══ */
-    .post-hero {
-      width: 100%;
-      max-height: 520px;
-      overflow: hidden;
-      position: relative;
-    }
-    .post-hero img {
-      width: 100%; height: 520px;
-      object-fit: cover;
-      display: block;
-    }
-    .post-hero-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,.5) 100%);
-    }
-    .no-cover { height: 32px; }
+      /* ═══ HERO / COVER ══ */
+      .post-hero {
+        width: 100%;
+        max-height: 520px;
+        overflow: hidden;
+        position: relative;
+      }
+      .post-hero img {
+        width: 100%;
+        height: 520px;
+        object-fit: cover;
+        display: block;
+      }
+      .post-hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 40%,
+          rgba(0, 0, 0, 0.5) 100%
+        );
+      }
+      .no-cover {
+        height: 32px;
+      }
 
-    /* ═══ MAIN LAYOUT ══ */
-    .post-layout {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 48px;
-      align-items: start;
-    }
+      /* ═══ MAIN LAYOUT ══ */
+      .post-layout {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 48px;
+        align-items: start;
+      }
 
-    /* ═══ ARTICLE COLUMN ══ */
-    .article-col {
-      min-width: 0;
-      padding-top: 48px;
-      padding-bottom: 80px;
-    }
+      /* ═══ ARTICLE COLUMN ══ */
+      .article-col {
+        min-width: 0;
+        padding-top: 48px;
+        padding-bottom: 80px;
+      }
 
-    /* Meta row */
-    .post-meta-top {
-      display: flex; align-items: center; gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .category-badge {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase;
-      background: var(--accent); color: #fff;
-      padding: 4px 10px; border-radius: 20px;
-    }
-    .tag-pill {
-      font-size: 11px; font-weight: 500;
-      color: var(--text-2); background: var(--surface2);
-      border: 1px solid var(--border);
-      padding: 3px 9px; border-radius: 20px;
-    }
-    .status-pill {
-      font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
-    }
-    .status-draft  { background: #fef3c7; color: var(--warn); }
-    .status-hidden { background: #f3f4f6; color: var(--text-3); }
+      /* Meta row */
+      .post-meta-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .category-badge {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: var(--accent);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+      .tag-pill {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-2);
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 3px 9px;
+        border-radius: 20px;
+      }
+      .status-pill {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 9px;
+        border-radius: 20px;
+      }
+      .status-draft {
+        background: #fef3c7;
+        color: var(--warn);
+      }
+      .status-hidden {
+        background: #f3f4f6;
+        color: var(--text-3);
+      }
 
-    /* Title */
-    .post-title {
-      font-family: var(--font-serif);
-      font-size: clamp(28px, 4vw, 44px);
-      font-weight: 700; line-height: 1.15;
-      color: var(--text); margin-bottom: 16px;
-      letter-spacing: -.02em;
-    }
-    .post-subtitle {
-      font-family: var(--font-serif);
-      font-size: 20px; font-style: italic;
-      color: var(--text-2); line-height: 1.6;
-      margin-bottom: 28px;
-    }
+      /* Title */
+      .post-title {
+        font-family: var(--font-serif);
+        font-size: clamp(28px, 4vw, 44px);
+        font-weight: 700;
+        line-height: 1.15;
+        color: var(--text);
+        margin-bottom: 16px;
+        letter-spacing: -0.02em;
+      }
+      .post-subtitle {
+        font-family: var(--font-serif);
+        font-size: 20px;
+        font-style: italic;
+        color: var(--text-2);
+        line-height: 1.6;
+        margin-bottom: 28px;
+      }
 
-    /* Author row */
-    .author-row {
-      display: flex; align-items: center; gap: 12px;
-      padding: 16px 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 40px;
-    }
-    .author-avatar {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: linear-gradient(135deg,#6366f1,#2563eb);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 700; color: #fff;
-      flex-shrink: 0;
-    }
-    .author-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-    .author-info { flex: 1; }
-    .author-name {
-      font-size: 14px; font-weight: 600; color: var(--text);
-      text-decoration: none;
-    }
-    .author-name:hover { color: var(--accent); }
-    .author-meta {
-      font-size: 12px; color: var(--text-3); margin-top: 2px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .author-meta span { display: flex; align-items: center; gap: 3px; }
-    .dot { color: var(--border2); }
+      /* Author row */
+      .author-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 40px;
+      }
+      .author-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #2563eb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .author-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .author-info {
+        flex: 1;
+      }
+      .author-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        text-decoration: none;
+      }
+      .author-name:hover {
+        color: var(--accent);
+      }
+      .author-meta {
+        font-size: 12px;
+        color: var(--text-3);
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .author-meta span {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .dot {
+        color: var(--border2);
+      }
 
-    /* Owner action buttons */
-    .owner-actions {
-      display: none;
-      align-items: center; gap: 8px;
-    }
-    .owner-actions.visible { display: flex; }
+      /* Owner action buttons */
+      .owner-actions {
+        display: none;
+        align-items: center;
+        gap: 8px;
+      }
+      .owner-actions.visible {
+        display: flex;
+      }
 
-    /* Article body */
-    .article-body {
-      font-family: var(--font-serif);
-      font-size: 19px; line-height: 1.85;
-      color: var(--text);
-    }
-    .article-body p { margin-bottom: 20px; }
-    .article-body h1 { font-size: 32px; font-weight: 700; margin: 36px 0 16px; line-height: 1.2; }
-    .article-body h2 { font-size: 26px; font-weight: 700; margin: 32px 0 14px; line-height: 1.25; }
-    .article-body h3 { font-size: 20px; font-weight: 700; margin: 28px 0 12px; }
-    .article-body h4 { font-size: 17px; font-weight: 700; margin: 24px 0 10px; }
-    .article-body blockquote {
-      border-left: 4px solid var(--accent);
-      margin: 32px 0; padding: 16px 24px;
-      background: #f0f4ff; border-radius: 0 10px 10px 0;
-      font-style: italic; color: var(--text-2);
-      font-size: 20px;
-    }
-    .article-body ul, .article-body ol { padding-left: 28px; margin-bottom: 20px; }
-    .article-body li { margin-bottom: 8px; }
-    .article-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-    .article-body a:hover { color: var(--accent-dk, #1d4ed8); }
-    .article-body img { max-width: 100%; border-radius: 10px; margin: 24px 0; display: block; }
-    .article-body code {
-      font-family: 'Courier New', monospace; font-size: 15px;
-      background: var(--surface2); border: 1px solid var(--border);
-      padding: 2px 6px; border-radius: 4px;
-    }
-    .article-body pre {
-      background: #1e1e1e; color: #d4d4d4;
-      padding: 20px 24px; border-radius: 10px;
-      overflow-x: auto; margin: 24px 0;
-      font-size: 14px; line-height: 1.65;
-    }
-    .article-body pre code { background: none; border: none; padding: 0; font-size: inherit; color: inherit; }
-    .article-body hr { border: none; border-top: 2px solid var(--border); margin: 40px 0; }
-    .article-body strong { font-weight: 700; color: var(--text); }
-    .article-body em { font-style: italic; }
+      /* Article body */
+      .article-body {
+        font-family: var(--font-serif);
+        font-size: 19px;
+        line-height: 1.85;
+        color: var(--text);
+      }
+      .article-body p {
+        margin-bottom: 20px;
+      }
+      .article-body h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin: 36px 0 16px;
+        line-height: 1.2;
+      }
+      .article-body h2 {
+        font-size: 26px;
+        font-weight: 700;
+        margin: 32px 0 14px;
+        line-height: 1.25;
+      }
+      .article-body h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 28px 0 12px;
+      }
+      .article-body h4 {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 24px 0 10px;
+      }
+      .article-body blockquote {
+        border-left: 4px solid var(--accent);
+        margin: 32px 0;
+        padding: 16px 24px;
+        background: #f0f4ff;
+        border-radius: 0 10px 10px 0;
+        font-style: italic;
+        color: var(--text-2);
+        font-size: 20px;
+      }
+      .article-body ul,
+      .article-body ol {
+        padding-left: 28px;
+        margin-bottom: 20px;
+      }
+      .article-body li {
+        margin-bottom: 8px;
+      }
+      .article-body a {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .article-body a:hover {
+        color: var(--accent-dk, #1d4ed8);
+      }
+      .article-body img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 24px 0;
+        display: block;
+      }
+      .article-body code {
+        font-family: "Courier New", monospace;
+        font-size: 15px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+      .article-body pre {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: 20px 24px;
+        border-radius: 10px;
+        overflow-x: auto;
+        margin: 24px 0;
+        font-size: 14px;
+        line-height: 1.65;
+      }
+      .article-body pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: inherit;
+        color: inherit;
+      }
+      .article-body hr {
+        border: none;
+        border-top: 2px solid var(--border);
+        margin: 40px 0;
+      }
+      .article-body strong {
+        font-weight: 700;
+        color: var(--text);
+      }
+      .article-body em {
+        font-style: italic;
+      }
 
-    /* Loading skeleton */
-    .skeleton {
-      background: linear-gradient(90deg, var(--surface2) 25%, #ebe9e4 50%, var(--surface2) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: 6px;
-    }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .skeleton-title  { height: 48px; margin-bottom: 16px; border-radius: 8px; }
-    .skeleton-sub    { height: 24px; width: 70%; margin-bottom: 28px; border-radius: 6px; }
-    .skeleton-author { height: 60px; margin-bottom: 40px; border-radius: 10px; }
-    .skeleton-line   { height: 18px; margin-bottom: 12px; border-radius: 4px; }
-    .skeleton-line.short { width: 60%; }
+      /* Loading skeleton */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--surface2) 25%,
+          #ebe9e4 50%,
+          var(--surface2) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite;
+        border-radius: 6px;
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      .skeleton-title {
+        height: 48px;
+        margin-bottom: 16px;
+        border-radius: 8px;
+      }
+      .skeleton-sub {
+        height: 24px;
+        width: 70%;
+        margin-bottom: 28px;
+        border-radius: 6px;
+      }
+      .skeleton-author {
+        height: 60px;
+        margin-bottom: 40px;
+        border-radius: 10px;
+      }
+      .skeleton-line {
+        height: 18px;
+        margin-bottom: 12px;
+        border-radius: 4px;
+      }
+      .skeleton-line.short {
+        width: 60%;
+      }
 
-    /* ═══ REACTIONS ══ */
-    .reactions-bar {
-      display: flex; align-items: center; gap: 8px;
-      flex-wrap: wrap;
-      padding: 24px 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      margin: 40px 0;
-    }
-    .reaction-btn {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 16px; border-radius: 24px;
-      border: 1px solid var(--border); background: var(--surface);
-      font-family: var(--font-body); font-size: 14px; font-weight: 500;
-      color: var(--text-2); cursor: pointer;
-      transition: all .15s;
-    }
-    .reaction-btn:hover { border-color: var(--border2); background: var(--surface2); color: var(--text); transform: translateY(-1px); }
-    .reaction-btn.active { border-color: var(--accent); background: #eff6ff; color: var(--accent); }
-    .reaction-emoji { font-size: 18px; }
-    .reaction-count { font-size: 13px; font-weight: 600; }
+      /* ═══ REACTIONS ══ */
+      .reactions-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        padding: 24px 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        margin: 40px 0;
+      }
+      .reaction-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        font-family: var(--font-body);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-2);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .reaction-btn:hover {
+        border-color: var(--border2);
+        background: var(--surface2);
+        color: var(--text);
+        transform: translateY(-1px);
+      }
+      .reaction-btn.active {
+        border-color: var(--accent);
+        background: #eff6ff;
+        color: var(--accent);
+      }
+      .reaction-emoji {
+        font-size: 18px;
+      }
+      .reaction-count {
+        font-size: 13px;
+        font-weight: 600;
+      }
 
-    .reactions-summary {
-      font-size: 13px; color: var(--text-3);
-      cursor: pointer; text-decoration: underline;
-      text-underline-offset: 2px; padding: 8px;
-    }
-    .reactions-summary:hover { color: var(--text-2); }
+      .reactions-summary {
+        font-size: 13px;
+        color: var(--text-3);
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        padding: 8px;
+      }
+      .reactions-summary:hover {
+        color: var(--text-2);
+      }
 
-    /* ═══ COMMENTS ══ */
-    .comments-section { margin-top: 0; }
-    .comments-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 28px;
-    }
-    .comments-title {
-      font-size: 22px; font-weight: 700; font-family: var(--font-serif);
-    }
+      /* ═══ COMMENTS ══ */
+      .comments-section {
+        margin-top: 0;
+      }
+      .comments-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+      .comments-title {
+        font-size: 22px;
+        font-weight: 700;
+        font-family: var(--font-serif);
+      }
 
-    /* Comment form */
-    .comment-form {
-      display: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-      margin-bottom: 32px;
-      box-shadow: var(--shadow);
-    }
-    .comment-form.visible { display: block; }
-    .comment-form-inner { display: flex; gap: 12px; }
-    .comment-form textarea {
-      flex: 1; font-family: var(--font-body);
-      font-size: 14px; line-height: 1.6;
-      border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 10px 14px; outline: none; resize: none;
-      color: var(--text); background: var(--bg);
-      transition: border-color .15s;
-      min-height: 80px;
-    }
-    .comment-form textarea:focus { border-color: var(--accent); background: #fff; }
-    .comment-form textarea::placeholder { color: var(--text-3); }
-    .comment-form-actions {
-      display: flex; justify-content: flex-end; gap: 8px;
-      margin-top: 10px;
-    }
-    .btn-sm {
-      font-size: 12px; font-weight: 600; padding: 6px 14px;
-      border-radius: 16px; border: none; cursor: pointer;
-      font-family: var(--font-body); transition: all .15s;
-    }
-    .btn-sm-ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
-    .btn-sm-ghost:hover { background: var(--surface2); }
-    .btn-sm-primary { background: var(--text); color: #fff; }
-    .btn-sm-primary:hover { background: #333; }
+      /* Comment form */
+      .comment-form {
+        display: none;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+        margin-bottom: 32px;
+        box-shadow: var(--shadow);
+      }
+      .comment-form.visible {
+        display: block;
+      }
+      .comment-form-inner {
+        display: flex;
+        gap: 12px;
+      }
+      .comment-form textarea {
+        flex: 1;
+        font-family: var(--font-body);
+        font-size: 14px;
+        line-height: 1.6;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 14px;
+        outline: none;
+        resize: none;
+        color: var(--text);
+        background: var(--bg);
+        transition: border-color 0.15s;
+        min-height: 80px;
+      }
+      .comment-form textarea:focus {
+        border-color: var(--accent);
+        background: #fff;
+      }
+      .comment-form textarea::placeholder {
+        color: var(--text-3);
+      }
+      .comment-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .btn-sm {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 16px;
+        border: none;
+        cursor: pointer;
+        font-family: var(--font-body);
+        transition: all 0.15s;
+      }
+      .btn-sm-ghost {
+        background: transparent;
+        color: var(--text-2);
+        border: 1px solid var(--border);
+      }
+      .btn-sm-ghost:hover {
+        background: var(--surface2);
+      }
+      .btn-sm-primary {
+        background: var(--text);
+        color: #fff;
+      }
+      .btn-sm-primary:hover {
+        background: #333;
+      }
 
-    /* Comment card */
-    .comment-card {
-      display: flex; gap: 12px;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--border);
-      animation: fadeIn .25s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-    .comment-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: linear-gradient(135deg,#f59e0b,#ef4444);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
-    }
-    .comment-body { flex: 1; min-width: 0; }
-    .comment-meta {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 6px; flex-wrap: wrap;
-    }
-    .comment-author { font-size: 13px; font-weight: 600; color: var(--text); }
-    .comment-time   { font-size: 11px; color: var(--text-3); }
-    .comment-text   { font-size: 14px; line-height: 1.65; color: var(--text-2); }
-    .comment-actions {
-      display: flex; align-items: center; gap: 12px;
-      margin-top: 10px;
-    }
-    .comment-action-btn {
-      font-size: 12px; font-weight: 500; color: var(--text-3);
-      background: none; border: none; cursor: pointer; padding: 0;
-      transition: color .15s; display: flex; align-items: center; gap: 4px;
-    }
-    .comment-action-btn:hover { color: var(--text-2); }
-    .comment-action-btn.liked { color: var(--accent); }
-    .comment-action-btn.delete-c { color: var(--danger); }
+      /* Comment card */
+      .comment-card {
+        display: flex;
+        gap: 12px;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border);
+        animation: fadeIn 0.25s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .comment-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .comment-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .comment-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .comment-author {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .comment-time {
+        font-size: 11px;
+        color: var(--text-3);
+      }
+      .comment-text {
+        font-size: 14px;
+        line-height: 1.65;
+        color: var(--text-2);
+      }
+      .comment-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+      }
+      .comment-action-btn {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-3);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        transition: color 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .comment-action-btn:hover {
+        color: var(--text-2);
+      }
+      .comment-action-btn.liked {
+        color: var(--accent);
+      }
+      .comment-action-btn.delete-c {
+        color: var(--danger);
+      }
 
-    /* Reply form */
-    .reply-form {
-      display: none; margin-top: 12px;
-      background: var(--surface2); border-radius: var(--radius);
-      padding: 12px;
-    }
-    .reply-form.open { display: block; }
-    .reply-form textarea {
-      width: 100%; font-family: var(--font-body); font-size: 13px;
-      border: 1px solid var(--border); border-radius: 8px;
-      padding: 8px 12px; outline: none; resize: none;
-      color: var(--text); background: var(--surface);
-      min-height: 64px; transition: border-color .15s;
-    }
-    .reply-form textarea:focus { border-color: var(--accent); }
+      /* Reply form */
+      .reply-form {
+        display: none;
+        margin-top: 12px;
+        background: var(--surface2);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+      .reply-form.open {
+        display: block;
+      }
+      .reply-form textarea {
+        width: 100%;
+        font-family: var(--font-body);
+        font-size: 13px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        outline: none;
+        resize: none;
+        color: var(--text);
+        background: var(--surface);
+        min-height: 64px;
+        transition: border-color 0.15s;
+      }
+      .reply-form textarea:focus {
+        border-color: var(--accent);
+      }
 
-    /* Replies */
-    .replies-list { margin-top: 12px; padding-left: 20px; border-left: 2px solid var(--border); }
-    .reply-card {
-      display: flex; gap: 10px; padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .reply-card:last-child { border-bottom: none; }
-    .reply-avatar {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: linear-gradient(135deg,#10b981,#3b82f6);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
-    }
-    .reply-body { flex: 1; }
-    .reply-author { font-size: 12px; font-weight: 600; color: var(--text); }
-    .reply-time   { font-size: 11px; color: var(--text-3); }
-    .reply-text   { font-size: 13px; line-height: 1.6; color: var(--text-2); margin-top: 4px; }
+      /* Replies */
+      .replies-list {
+        margin-top: 12px;
+        padding-left: 20px;
+        border-left: 2px solid var(--border);
+      }
+      .reply-card {
+        display: flex;
+        gap: 10px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .reply-card:last-child {
+        border-bottom: none;
+      }
+      .reply-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .reply-body {
+        flex: 1;
+      }
+      .reply-author {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .reply-time {
+        font-size: 11px;
+        color: var(--text-3);
+      }
+      .reply-text {
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--text-2);
+        margin-top: 4px;
+      }
 
-    /* Pagination */
-    .pagination {
-      display: flex; align-items: center; justify-content: center;
-      gap: 4px; margin-top: 32px;
-    }
-    .page-btn {
-      width: 36px; height: 36px; border-radius: 8px;
-      border: 1px solid var(--border); background: var(--surface);
-      font-family: var(--font-body); font-size: 13px; font-weight: 500;
-      color: var(--text-2); cursor: pointer; transition: all .15s;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .page-btn:hover { background: var(--surface2); color: var(--text); }
-    .page-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
-    .page-btn:disabled { opacity: .4; cursor: not-allowed; }
+      /* Pagination */
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 32px;
+      }
+      .page-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-2);
+        cursor: pointer;
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .page-btn:hover {
+        background: var(--surface2);
+        color: var(--text);
+      }
+      .page-btn.active {
+        background: var(--text);
+        color: #fff;
+        border-color: var(--text);
+      }
+      .page-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
 
-    /* ═══ SIDEBAR ══ */
-    .sidebar-col {
-      position: sticky; top: 80px;
-      padding-top: 48px;
-      padding-bottom: 40px;
-    }
+      /* ═══ SIDEBAR ══ */
+      .sidebar-col {
+        position: sticky;
+        top: 80px;
+        padding-top: 48px;
+        padding-bottom: 40px;
+      }
 
-    .sidebar-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow);
-    }
-    .sidebar-card-title {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--text-3); margin-bottom: 14px;
-    }
+      .sidebar-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow);
+      }
+      .sidebar-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-3);
+        margin-bottom: 14px;
+      }
 
-    /* Author card */
-    .sidebar-author {
-      display: flex; flex-direction: column; align-items: center;
-      text-align: center; gap: 10px;
-    }
-    .sidebar-author-avatar {
-      width: 64px; height: 64px; border-radius: 50%;
-      background: linear-gradient(135deg,#6366f1,#2563eb);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; font-weight: 700; color: #fff;
-    }
-    .sidebar-author-name { font-size: 15px; font-weight: 700; color: var(--text); }
-    .sidebar-author-bio  { font-size: 13px; color: var(--text-2); line-height: 1.5; }
-    .follow-btn {
-      width: 100%; font-family: var(--font-body); font-size: 13px; font-weight: 600;
-      background: var(--text); color: #fff; border: none;
-      border-radius: 20px; padding: 9px; cursor: pointer;
-      transition: background .15s; margin-top: 4px;
-    }
-    .follow-btn:hover { background: #333; }
-    .follow-btn.following { background: var(--surface2); color: var(--text-2); border: 1px solid var(--border); }
-    .follow-btn.following:hover { background: #fee2e2; color: var(--danger); border-color: #fecaca; }
+      /* Author card */
+      .sidebar-author {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }
+      .sidebar-author-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #2563eb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .sidebar-author-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .sidebar-author-bio {
+        font-size: 13px;
+        color: var(--text-2);
+        line-height: 1.5;
+      }
+      .follow-btn {
+        width: 100%;
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 600;
+        background: var(--text);
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 9px;
+        cursor: pointer;
+        transition: background 0.15s;
+        margin-top: 4px;
+      }
+      .follow-btn:hover {
+        background: #333;
+      }
+      .follow-btn.following {
+        background: var(--surface2);
+        color: var(--text-2);
+        border: 1px solid var(--border);
+      }
+      .follow-btn.following:hover {
+        background: #fee2e2;
+        color: var(--danger);
+        border-color: #fecaca;
+      }
 
-    /* Share */
-    .share-btns { display: flex; flex-direction: column; gap: 8px; }
-    .share-btn {
-      display: flex; align-items: center; gap: 10px;
-      font-family: var(--font-body); font-size: 13px; font-weight: 500;
-      color: var(--text-2); background: var(--bg);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 9px 14px; cursor: pointer; transition: all .15s; width: 100%;
-    }
-    .share-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
-    .share-btn svg { flex-shrink: 0; }
+      /* Share */
+      .share-btns {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .share-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-2);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 9px 14px;
+        cursor: pointer;
+        transition: all 0.15s;
+        width: 100%;
+      }
+      .share-btn:hover {
+        background: var(--surface2);
+        color: var(--text);
+        border-color: var(--border2);
+      }
+      .share-btn svg {
+        flex-shrink: 0;
+      }
 
-    /* Stats */
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .stat-item { text-align: center; padding: 12px; background: var(--bg); border-radius: var(--radius); }
-    .stat-num   { font-size: 20px; font-weight: 700; color: var(--text); }
-    .stat-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+      /* Stats */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 12px;
+        background: var(--bg);
+        border-radius: var(--radius);
+      }
+      .stat-num {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .stat-label {
+        font-size: 10px;
+        color: var(--text-3);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 2px;
+      }
 
-    /* ═══ RELATED POSTS ══ */
-    .related-section {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 60px 24px;
-      margin-top: 40px;
-    }
-    .related-inner { max-width: 1100px; margin: 0 auto; }
-    .related-heading {
-      font-family: var(--font-serif);
-      font-size: 24px; font-weight: 700; margin-bottom: 32px;
-    }
-    .related-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px;
-    }
-    .related-card {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); overflow: hidden;
-      cursor: pointer; transition: all .2s; text-decoration: none;
-      display: flex; flex-direction: column;
-    }
-    .related-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--border2); }
-    .related-cover { width: 100%; height: 160px; object-fit: cover; display: block; }
-    .related-cover-placeholder {
-      width: 100%; height: 160px; background: var(--surface2);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text-3);
-    }
-    .related-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
-    .related-category { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-bottom: 8px; }
-    .related-title {
-      font-family: var(--font-serif); font-size: 16px; font-weight: 700;
-      color: var(--text); line-height: 1.35; margin-bottom: 8px;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .related-meta { font-size: 11px; color: var(--text-3); margin-top: auto; }
+      /* ═══ RELATED POSTS ══ */
+      .related-section {
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        padding: 60px 24px;
+        margin-top: 40px;
+      }
+      .related-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .related-heading {
+        font-family: var(--font-serif);
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 32px;
+      }
+      .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+      }
+      .related-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+      }
+      .related-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-3px);
+        border-color: var(--border2);
+      }
+      .related-cover {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        display: block;
+      }
+      .related-cover-placeholder {
+        width: 100%;
+        height: 160px;
+        background: var(--surface2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-3);
+      }
+      .related-body {
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .related-category {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .related-title {
+        font-family: var(--font-serif);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.35;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .related-meta {
+        font-size: 11px;
+        color: var(--text-3);
+        margin-top: auto;
+      }
 
-    /* ═══ INTERACTIONS MODAL ══ */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 500;
-      background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: var(--surface); border-radius: var(--radius-lg);
-      width: 480px; max-width: 92vw;
-      max-height: 80vh; display: flex; flex-direction: column;
-      box-shadow: var(--shadow-md);
-      animation: slideUp .2s ease;
-      overflow: hidden;
-    }
-    @keyframes slideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
-    .modal-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-    .modal-head h3 { font-size: 16px; font-weight: 700; }
-    .modal-close {
-      width: 30px; height: 30px; border-radius: 50%;
-      border: none; background: var(--surface2);
-      font-size: 18px; cursor: pointer; color: var(--text-2);
-      display: flex; align-items: center; justify-content: center;
-      transition: background .15s;
-    }
-    .modal-close:hover { background: var(--border); }
-    .modal-tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-    }
-    .tab-btn {
-      flex: 1; padding: 12px;
-      background: none; border: none;
-      font-family: var(--font-body); font-size: 13px; font-weight: 600;
-      color: var(--text-3); cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all .15s;
-    }
-    .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
-    .modal-body { overflow-y: auto; flex: 1; }
+      /* ═══ INTERACTIONS MODAL ══ */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-box {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        width: 480px;
+        max-width: 92vw;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-md);
+        animation: slideUp 0.2s ease;
+        overflow: hidden;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .modal-head h3 {
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .modal-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: none;
+        background: var(--surface2);
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--text-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s;
+      }
+      .modal-close:hover {
+        background: var(--border);
+      }
+      .modal-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 12px;
+        background: none;
+        border: none;
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-3);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .tab-btn.active {
+        color: var(--text);
+        border-bottom-color: var(--accent);
+      }
+      .modal-body {
+        overflow-y: auto;
+        flex: 1;
+      }
 
-    /* User list in modal */
-    .user-list-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 14px 20px; border-bottom: 1px solid var(--border);
-    }
-    .user-list-item:last-child { border-bottom: none; }
-    .user-list-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: linear-gradient(135deg,#f59e0b,#ef4444);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
-    }
-    .user-list-name { font-size: 14px; font-weight: 600; color: var(--text); }
-    .user-list-meta { font-size: 12px; color: var(--text-3); }
+      /* User list in modal */
+      .user-list-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .user-list-item:last-child {
+        border-bottom: none;
+      }
+      .user-list-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .user-list-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .user-list-meta {
+        font-size: 12px;
+        color: var(--text-3);
+      }
 
-    /* ═══ TOAST ══ */
-    .toast {
-      position: fixed; bottom: 28px; left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: var(--text); color: #fff;
-      font-size: 13px; font-weight: 500;
-      padding: 12px 24px; border-radius: 24px;
-      box-shadow: var(--shadow-md);
-      transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-      z-index: 999; white-space: nowrap;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.success { background: var(--success); }
-    .toast.error   { background: var(--danger); }
+      /* ═══ TOAST ══ */
+      .toast {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: var(--text);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 12px 24px;
+        border-radius: 24px;
+        box-shadow: var(--shadow-md);
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 999;
+        white-space: nowrap;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+      }
+      .toast.success {
+        background: var(--success);
+      }
+      .toast.error {
+        background: var(--danger);
+      }
 
-    /* ═══ FOOTER ══ */
-    .site-footer {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 40px 24px;
-      text-align: center;
-    }
-    .footer-inner { max-width: 1100px; margin: 0 auto; }
-    .footer-logo {
-      font-family: var(--font-serif);
-      font-size: 20px; font-weight: 700;
-      color: var(--text); margin-bottom: 8px;
-    }
-    .footer-copy { font-size: 13px; color: var(--text-3); }
+      /* ═══ FOOTER ══ */
+      .site-footer {
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        padding: 40px 24px;
+        text-align: center;
+      }
+      .footer-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .footer-logo {
+        font-family: var(--font-serif);
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .footer-copy {
+        font-size: 13px;
+        color: var(--text-3);
+      }
 
-    /* ═══ RESPONSIVE ══ */
-    @media (max-width: 900px) {
-      .post-layout { grid-template-columns: 1fr; gap: 0; }
-      .sidebar-col { position: static; padding-top: 0; border-top: 1px solid var(--border); margin-top: 40px; }
-      .article-col { padding-top: 32px; }
-    }
-    @media (max-width: 600px) {
-      .post-layout { padding: 0 16px; }
-      .post-title { font-size: 26px; }
-      .related-grid { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
-<body>
-
-<!-- ════════════ HEADER ══ -->
-<header class="site-header">
-  <div class="header-left">
-    <button class="back-btn" onclick="window.history.length > 1 ? window.history.back() : window.location.href='/'">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-      </svg>
-      Back
-    </button>
-    <a href="/" class="site-logo">Byte & Beyond</a>
-  </div>
-  <div class="header-right" id="header-right">
-    <div class="avatar" id="user-avatar" title="My account">JD</div>
-  </div>
-</header>
-
-<!-- Reading progress bar -->
-<div class="read-progress" id="read-progress"></div>
-
-<!-- Hidden post ID -->
-<input type="hidden" id="post-id" value="<%= postId %>">
-
-<!-- ════════════ HERO COVER ══ -->
-<div id="post-hero-wrap"></div>
-
-<!-- ════════════ MAIN CONTENT ══ -->
-<div class="post-layout" id="post-layout">
-
-  <!-- ── ARTICLE COLUMN ── -->
-  <article class="article-col" id="article-col">
-
-    <!-- Loading skeleton -->
-    <div id="post-skeleton">
-      <div style="display:flex;gap:8px;margin-bottom:20px;">
-        <div class="skeleton" style="height:22px;width:80px;border-radius:20px;"></div>
-        <div class="skeleton" style="height:22px;width:60px;border-radius:20px;"></div>
+      /* ═══ RESPONSIVE ══ */
+      @media (max-width: 900px) {
+        .post-layout {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .sidebar-col {
+          position: static;
+          padding-top: 0;
+          border-top: 1px solid var(--border);
+          margin-top: 40px;
+        }
+        .article-col {
+          padding-top: 32px;
+        }
+      }
+      @media (max-width: 600px) {
+        .post-layout {
+          padding: 0 16px;
+        }
+        .post-title {
+          font-size: 26px;
+        }
+        .related-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ════════════ HEADER ══ -->
+    <header class="site-header">
+      <div class="header-left">
+        <a href="/dashboard" class="back-btn" title="Back">
+          <svg
+            width="15"
+            height="15"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </a>
+        <span class="site-name">Byte & Beyond</span>
       </div>
-      <div class="skeleton skeleton-title"></div>
-      <div class="skeleton skeleton-sub"></div>
-      <div class="skeleton skeleton-author"></div>
-      <div class="skeleton skeleton-line"></div>
-      <div class="skeleton skeleton-line"></div>
-      <div class="skeleton skeleton-line short"></div>
-      <div class="skeleton skeleton-line"></div>
-      <div class="skeleton skeleton-line short"></div>
-    </div>
+      <div class="header-right" id="header-right">
+        <div class="avatar" id="user-avatar" title="My account">JD</div>
+      </div>
+    </header>
 
-    <!-- Actual post content (populated by JS) -->
-    <div id="post-content" style="display:none;">
+    <!-- Reading progress bar -->
+    <div class="read-progress" id="read-progress"></div>
 
-      <!-- Meta top (category + tags + status) -->
-      <div class="post-meta-top" id="post-meta-top"></div>
+    <!-- Hidden post ID -->
+    <input type="hidden" id="post-id" value="<%= postId %>" />
 
-      <!-- Title -->
-      <h1 class="post-title" id="post-title"></h1>
-      <p class="post-subtitle" id="post-subtitle" style="display:none;"></p>
+    <!-- ════════════ HERO COVER ══ -->
+    <div id="post-hero-wrap"></div>
 
-      <!-- Author row -->
-      <div class="author-row">
-        <div class="author-avatar" id="author-avatar-el"></div>
-        <div class="author-info">
-          <a href="#" class="author-name" id="author-name-el"></a>
-          <div class="author-meta">
-            <span id="post-date-el"></span>
-            <span class="dot">·</span>
-            <span id="read-time-el"></span>
-            <span class="dot">·</span>
-            <span id="view-count-el"></span>
+    <!-- ════════════ MAIN CONTENT ══ -->
+    <div class="post-layout" id="post-layout">
+      <!-- ── ARTICLE COLUMN ── -->
+      <article class="article-col" id="article-col">
+        <!-- Loading skeleton -->
+        <div id="post-skeleton">
+          <div style="display: flex; gap: 8px; margin-bottom: 20px">
+            <div
+              class="skeleton"
+              style="height: 22px; width: 80px; border-radius: 20px"
+            ></div>
+            <div
+              class="skeleton"
+              style="height: 22px; width: 60px; border-radius: 20px"
+            ></div>
           </div>
-        </div>
-        <!-- Owner actions -->
-        <div class="owner-actions" id="owner-actions">
-          <button class="btn btn-ghost" id="edit-btn" onclick="editPost()">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg>
-            Edit
-          </button>
-          <button class="btn btn-ghost" id="hide-btn" onclick="toggleVisibility()">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-            </svg>
-            Visibility
-          </button>
-          <button class="btn btn-danger" id="delete-btn" onclick="openDeleteModal()">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
-              <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
-            </svg>
-            Delete
-          </button>
-        </div>
-      </div>
-
-      <!-- Article body -->
-      <div class="article-body" id="article-body"></div>
-
-      <!-- Reactions bar -->
-      <div class="reactions-bar" id="reactions-bar">
-        <div id="reaction-buttons" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
-        <span class="reactions-summary" id="reactions-summary" onclick="openInteractionsModal('likes')" style="display:none;"></span>
-      </div>
-
-      <!-- Comments -->
-      <div class="comments-section">
-        <div class="comments-header">
-          <h2 class="comments-title" id="comments-count-title">Responses</h2>
-          <button class="btn btn-ghost" id="add-comment-btn" onclick="toggleCommentForm()" style="display:none;">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-            </svg>
-            Add comment
-          </button>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-sub"></div>
+          <div class="skeleton skeleton-author"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line short"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line short"></div>
         </div>
 
-        <!-- Comment form -->
-        <div class="comment-form" id="comment-form">
-          <div class="comment-form-inner">
-            <div class="comment-avatar" id="comment-user-avatar" style="width:36px;height:36px;font-size:13px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#2563eb);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0;"></div>
-            <div style="flex:1;">
-              <textarea id="comment-content" placeholder="What are your thoughts?" rows="3"></textarea>
-              <div class="comment-form-actions">
-                <button class="btn-sm btn-sm-ghost" onclick="toggleCommentForm()">Cancel</button>
-                <button class="btn-sm btn-sm-primary" onclick="submitComment()">Comment</button>
+        <!-- Actual post content (populated by JS) -->
+        <div id="post-content" style="display: none">
+          <!-- Meta top (category + tags + status) -->
+          <div class="post-meta-top" id="post-meta-top"></div>
+
+          <!-- Title -->
+          <h1 class="post-title" id="post-title"></h1>
+          <p class="post-subtitle" id="post-subtitle" style="display: none"></p>
+
+          <!-- Author row -->
+          <div class="author-row">
+            <div class="author-avatar" id="author-avatar-el"></div>
+            <div class="author-info">
+              <a href="#" class="author-name" id="author-name-el"></a>
+              <div class="author-meta">
+                <span id="post-date-el"></span>
+                <span class="dot">·</span>
+                <span id="read-time-el"></span>
+                <span class="dot">·</span>
+                <span id="view-count-el"></span>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Comments list -->
-        <div id="comments-container"></div>
-        <div id="comments-pagination" class="pagination"></div>
-      </div>
-
-    </div><!-- /post-content -->
-  </article>
-
-  <!-- ── SIDEBAR ── -->
-  <aside class="sidebar-col" id="sidebar-col">
-
-    <!-- Author card -->
-    <div class="sidebar-card">
-      <div class="sidebar-card-title">Written by</div>
-      <div class="sidebar-author">
-        <div class="sidebar-author-avatar" id="sidebar-author-avatar"></div>
-        <div class="sidebar-author-name" id="sidebar-author-name"></div>
-        <div class="sidebar-author-bio" id="sidebar-author-bio">Writes about technology, design, and the future of the web.</div>
-        <button class="follow-btn" id="follow-btn" onclick="toggleFollow()">Follow</button>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="sidebar-card">
-      <div class="sidebar-card-title">Story Stats</div>
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-num" id="sidebar-views">—</div>
-          <div class="stat-label">Views</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num" id="sidebar-reactions">—</div>
-          <div class="stat-label">Reactions</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num" id="sidebar-comments">—</div>
-          <div class="stat-label">Comments</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num" id="sidebar-read">—</div>
-          <div class="stat-label">Min Read</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Share -->
-    <div class="sidebar-card">
-      <div class="sidebar-card-title">Share this story</div>
-      <div class="share-btns">
-        <button class="share-btn" onclick="sharePost('copy')">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-          </svg>
-          Copy link
-        </button>
-        <button class="share-btn" onclick="sharePost('twitter')">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-          Share on X
-        </button>
-        <button class="share-btn" onclick="sharePost('linkedin')">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-          </svg>
-          Share on LinkedIn
-        </button>
-      </div>
-    </div>
-
-  </aside>
-</div>
-
-<!-- ════════════ RELATED POSTS ══ -->
-<section class="related-section" id="related-section" style="display:none;">
-  <div class="related-inner">
-    <h2 class="related-heading">Recommended for you</h2>
-    <div class="related-grid" id="related-posts-container"></div>
-  </div>
-</section>
-
-<!-- ════════════ INTERACTIONS MODAL ══ -->
-<div class="modal-overlay" id="interactions-modal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h3>Interactions</h3>
-      <button class="modal-close" onclick="closeModal('interactions-modal')">&times;</button>
-    </div>
-    <div class="modal-tabs">
-      <button class="tab-btn active" data-tab="likes" onclick="switchTab('likes')">Reactions</button>
-      <button class="tab-btn" data-tab="comments" onclick="switchTab('comments')">Comments</button>
-    </div>
-    <div class="modal-body">
-      <div id="likes-list" style="display:block;">
-        <div style="padding:40px;text-align:center;color:var(--text-3);">Loading…</div>
-      </div>
-      <div id="comments-list" style="display:none;">
-        <div style="padding:40px;text-align:center;color:var(--text-3);">Loading…</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════ DELETE CONFIRM MODAL ══ -->
-<div class="modal-overlay" id="delete-modal">
-  <div class="modal-box" style="max-width:400px;">
-    <div class="modal-head">
-      <h3>Delete Story</h3>
-      <button class="modal-close" onclick="closeModal('delete-modal')">&times;</button>
-    </div>
-    <div style="padding:24px;">
-      <div style="width:52px;height:52px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-        <svg width="22" height="22" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24">
-          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/>
-        </svg>
-      </div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Delete this story permanently?</div>
-      <div style="font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:24px;">
-        All comments and reactions will be removed. This action cannot be undone.
-      </div>
-      <div style="display:flex;gap:10px;">
-        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('delete-modal')">Cancel</button>
-        <button class="btn" style="flex:1;background:var(--danger);color:#fff;" onclick="executeDelete()">Delete</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
-<!-- ════════════ FOOTER ══ -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-logo">Byte & Beyond</div>
-    <p class="footer-copy">&copy; 2026 Byte & Beyond. All rights reserved.</p>
-  </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
-<script src="/js/auth.js"></script>
-<script src="/js/view-post.js"></script>
-
-<script>
-  /* ═══ Reading Progress ══ */
-  window.addEventListener('scroll', () => {
-    const el = document.documentElement;
-    const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
-    document.getElementById('read-progress').style.width = pct + '%';
-  });
-
-  /* ═══ Toast ══ */
-  function showToast(msg, type = '') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast show ' + type;
-    setTimeout(() => t.className = 'toast', 3000);
-  }
-
-  /* ═══ Modal helpers ══ */
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-  function openModal(id)  { document.getElementById(id).classList.add('open'); }
-
-  document.querySelectorAll('.modal-overlay').forEach(o => {
-    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
-  });
-
-  /* ═══ Tab switching ══ */
-  function switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-    document.getElementById('likes-list').style.display    = tab === 'likes'    ? 'block' : 'none';
-    document.getElementById('comments-list').style.display = tab === 'comments' ? 'block' : 'none';
-  }
-
-  /* ═══ Populate post ══ (called by view-post.js or standalone) ═══
-     In production, view-post.js calls your API and then calls renderPost(data).
-     Below is a standalone demo loader. Remove the loadMockPost() call
-     if you have a real view-post.js that handles data fetching. */
-
-  function renderPost(post) {
-    // Hide skeleton, show content
-    document.getElementById('post-skeleton').style.display = 'none';
-    document.getElementById('post-content').style.display  = 'block';
-
-    // Hero cover
-    const heroWrap = document.getElementById('post-hero-wrap');
-    if (post.coverImage) {
-      heroWrap.innerHTML = `<div class="post-hero"><img src="${post.coverImage}" alt="${post.title}"><div class="post-hero-overlay"></div></div>`;
-    } else {
-      heroWrap.innerHTML = '<div class="no-cover"></div>';
-    }
-
-    // Meta top
-    const metaTop = document.getElementById('post-meta-top');
-    let metaHTML = '';
-    if (post.category) metaHTML += `<span class="category-badge">${post.category}</span>`;
-    (post.tags || []).forEach(t => metaHTML += `<span class="tag-pill">${t}</span>`);
-    if (post.status === 'draft')  metaHTML += `<span class="status-pill status-draft">📝 Draft</span>`;
-    if (post.status === 'hidden') metaHTML += `<span class="status-pill status-hidden">🔒 Hidden</span>`;
-    metaTop.innerHTML = metaHTML;
-
-    // Title & subtitle
-    document.getElementById('post-title').textContent = post.title || '';
-    if (post.subtitle) {
-      const sub = document.getElementById('post-subtitle');
-      sub.textContent = post.subtitle;
-      sub.style.display = 'block';
-    }
-
-    // Author row
-    const initials = (post.authorName || 'A').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-    document.getElementById('author-avatar-el').textContent = initials;
-    document.getElementById('author-name-el').textContent = post.authorName || 'Anonymous';
-    document.getElementById('post-date-el').textContent = formatDate(post.createdAt);
-    const words = (post.content || '').replace(/<[^>]+>/g,'').split(/\s+/).filter(Boolean).length;
-    const readMin = Math.max(1, Math.round(words / 200));
-    document.getElementById('read-time-el').textContent = readMin + ' min read';
-    document.getElementById('view-count-el').textContent = (post.views || 0) + ' views';
-
-    // Sidebar author
-    document.getElementById('sidebar-author-avatar').textContent = initials;
-    document.getElementById('sidebar-author-name').textContent = post.authorName || 'Anonymous';
-
-    // Sidebar stats
-    document.getElementById('sidebar-views').textContent = post.views || 0;
-    document.getElementById('sidebar-reactions').textContent = post.reactionCount || 0;
-    document.getElementById('sidebar-comments').textContent = post.commentCount || 0;
-    document.getElementById('sidebar-read').textContent = readMin;
-
-    // Article body — sanitize HTML or render markdown
-    const bodyEl = document.getElementById('article-body');
-    if (typeof DOMPurify !== 'undefined' && typeof marked !== 'undefined') {
-      bodyEl.innerHTML = DOMPurify.sanitize(marked.parse(post.content || ''));
-    } else {
-      bodyEl.innerHTML = post.content || '';
-    }
-
-    // Owner actions
-    const currentUserId = getCurrentUserId && getCurrentUserId();
-    if (post.authorId && currentUserId && post.authorId === currentUserId) {
-      document.getElementById('owner-actions').classList.add('visible');
-    }
-    document.getElementById('edit-btn').onclick = () => window.location.href = `/posts/${post._id}/edit`;
-
-    // Comment form for logged in users
-    const loggedIn = isLoggedIn && isLoggedIn();
-    if (loggedIn) {
-      document.getElementById('add-comment-btn').style.display = 'inline-flex';
-      const commentAvatar = document.getElementById('comment-user-avatar');
-      const userInitials = (getCurrentUser && getCurrentUser()?.username || 'U').slice(0,2).toUpperCase();
-      commentAvatar.textContent = userInitials;
-    }
-
-    // Render reactions
-    renderReactions(post.reactions || []);
-
-    // Render comments
-    renderComments(post.comments || []);
-
-    // Related posts
-    if (post.related && post.related.length) {
-      renderRelated(post.related);
-    }
-  }
-
-  /* ═══ Reactions ══ */
-  const REACTIONS = [
-    { type: 'like',       emoji: '❤️',  label: 'Love' },
-    { type: 'insightful', emoji: '💡',  label: 'Insightful' },
-    { type: 'funny',      emoji: '😄',  label: 'Funny' },
-    { type: 'love',       emoji: '🔥',  label: 'Fire' },
-  ];
-
-  function renderReactions(reactions) {
-    const container = document.getElementById('reaction-buttons');
-    const summary   = document.getElementById('reactions-summary');
-    const counts = {};
-    reactions.forEach(r => { counts[r.type] = (counts[r.type] || 0) + 1; });
-    const total = reactions.length;
-
-    container.innerHTML = '';
-    REACTIONS.forEach(r => {
-      const btn = document.createElement('button');
-      btn.className = 'reaction-btn';
-      btn.innerHTML = `<span class="reaction-emoji">${r.emoji}</span><span>${r.label}</span><span class="reaction-count">${counts[r.type] || 0}</span>`;
-      btn.onclick = () => toggleReaction(r.type, btn);
-      container.appendChild(btn);
-    });
-
-    if (total > 0) {
-      summary.style.display = 'inline';
-      summary.textContent = total + ' reaction' + (total !== 1 ? 's' : '');
-    }
-  }
-
-  function toggleReaction(type, btn) {
-    btn.classList.toggle('active');
-    const countEl = btn.querySelector('.reaction-count');
-    const cur = parseInt(countEl.textContent) || 0;
-    countEl.textContent = btn.classList.contains('active') ? cur + 1 : Math.max(0, cur - 1);
-    // In production: POST /api/reactions with { targetType:'post', targetId, reactionType:type }
-  }
-
-  /* ═══ Comments ══ */
-  function renderComments(comments) {
-    const container = document.getElementById('comments-container');
-    const title     = document.getElementById('comments-count-title');
-    title.textContent = `Responses (${comments.length})`;
-
-    if (!comments.length) {
-      container.innerHTML = `<div style="text-align:center;padding:48px 0;color:var(--text-3);">
-        <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:12px;opacity:.4;">
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-        </svg>
-        <p style="font-size:14px;">No responses yet. Be the first!</p>
-      </div>`;
-      return;
-    }
-
-    container.innerHTML = '';
-    comments.forEach(c => {
-      const initials = (c.authorName || 'A').slice(0,2).toUpperCase();
-      const el = document.createElement('div');
-      el.className = 'comment-card';
-      el.innerHTML = `
-        <div class="comment-avatar">${initials}</div>
-        <div class="comment-body">
-          <div class="comment-meta">
-            <span class="comment-author">${escapeHtml(c.authorName || 'Anonymous')}</span>
-            <span class="comment-time">${timeAgo(c.createdAt)}</span>
-          </div>
-          <div class="comment-text">${escapeHtml(c.content || '')}</div>
-          <div class="comment-actions">
-            <button class="comment-action-btn" onclick="likeComment(this)">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/>
-                <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
-              </svg>
-              ${c.likes || 0}
-            </button>
-            <button class="comment-action-btn" onclick="toggleReplyForm(this, '${c._id}')">Reply</button>
-          </div>
-          <div class="reply-form" id="reply-form-${c._id}">
-            <textarea placeholder="Write a reply…" rows="2"></textarea>
-            <div class="comment-form-actions" style="margin-top:8px;">
-              <button class="btn-sm btn-sm-ghost" onclick="toggleReplyForm(this, '${c._id}')">Cancel</button>
-              <button class="btn-sm btn-sm-primary" onclick="submitReply('${c._id}', this)">Reply</button>
+            <!-- Owner actions -->
+            <div class="owner-actions" id="owner-actions">
+              <button class="btn btn-ghost" id="edit-btn" onclick="editPost()">
+                <svg
+                  width="13"
+                  height="13"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                  />
+                </svg>
+                Edit
+              </button>
+              <button
+                class="btn btn-ghost"
+                id="hide-btn"
+                onclick="toggleVisibility()"
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Visibility
+              </button>
+              <button
+                class="btn btn-danger"
+                id="delete-btn"
+                onclick="openDeleteModal()"
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                  <path d="M10 11v6M14 11v6M9 6V4h6v2" />
+                </svg>
+                Delete
+              </button>
             </div>
           </div>
-          ${renderReplies(c.replies || [])}
-        </div>`;
-      container.appendChild(el);
-    });
-  }
 
-  function renderReplies(replies) {
-    if (!replies.length) return '';
-    return `<div class="replies-list">${replies.map(r => {
-      const initials = (r.authorName || 'A').slice(0,2).toUpperCase();
-      return `<div class="reply-card">
-        <div class="reply-avatar">${initials}</div>
-        <div class="reply-body">
-          <span class="reply-author">${escapeHtml(r.authorName || 'Anonymous')}</span>
-          <span class="reply-time" style="margin-left:8px;">${timeAgo(r.createdAt)}</span>
-          <div class="reply-text">${escapeHtml(r.content || '')}</div>
+          <!-- Article body -->
+          <div class="article-body" id="article-body"></div>
+
+          <!-- Reactions bar -->
+          <div class="reactions-bar" id="reactions-bar">
+            <div
+              id="reaction-buttons"
+              style="display: flex; gap: 8px; flex-wrap: wrap"
+            ></div>
+            <span
+              class="reactions-summary"
+              id="reactions-summary"
+              onclick="openInteractionsModal('likes')"
+              style="display: none"
+            ></span>
+          </div>
+
+          <!-- Comments -->
+          <div class="comments-section">
+            <div class="comments-header">
+              <h2 class="comments-title" id="comments-count-title">
+                Responses
+              </h2>
+              <button
+                class="btn btn-ghost"
+                id="add-comment-btn"
+                onclick="toggleCommentForm()"
+                style="display: none"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+                  />
+                </svg>
+                Add comment
+              </button>
+            </div>
+
+            <!-- Comment form -->
+            <div class="comment-form" id="comment-form">
+              <div class="comment-form-inner">
+                <div
+                  class="comment-avatar"
+                  id="comment-user-avatar"
+                  style="
+                    width: 36px;
+                    height: 36px;
+                    font-size: 13px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #6366f1, #2563eb);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+                    font-weight: 700;
+                    flex-shrink: 0;
+                  "
+                ></div>
+                <div style="flex: 1">
+                  <textarea
+                    id="comment-content"
+                    placeholder="What are your thoughts?"
+                    rows="3"
+                  ></textarea>
+                  <div class="comment-form-actions">
+                    <button
+                      class="btn-sm btn-sm-ghost"
+                      onclick="toggleCommentForm()"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      class="btn-sm btn-sm-primary"
+                      onclick="submitComment()"
+                    >
+                      Comment
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comments list -->
+            <div id="comments-container"></div>
+            <div id="comments-pagination" class="pagination"></div>
+          </div>
         </div>
-      </div>`;
-    }).join('')}</div>`;
-  }
+        <!-- /post-content -->
+      </article>
 
-  /* ═══ Comment interactions ══ */
-  function toggleCommentForm() {
-    document.getElementById('comment-form').classList.toggle('visible');
-    if (document.getElementById('comment-form').classList.contains('visible')) {
-      document.getElementById('comment-content').focus();
-    }
-  }
-
-  function submitComment() {
-    const content = document.getElementById('comment-content').value.trim();
-    if (!content) { showToast('Write something first!', 'error'); return; }
-    // In production: POST /api/comments with { postId, content }
-    showToast('Comment posted!', 'success');
-    document.getElementById('comment-content').value = '';
-    toggleCommentForm();
-  }
-
-  function toggleReplyForm(btn, commentId) {
-    const form = document.getElementById('reply-form-' + commentId);
-    if (form) {
-      form.classList.toggle('open');
-      if (form.classList.contains('open')) form.querySelector('textarea').focus();
-    }
-  }
-
-  function submitReply(commentId, btn) {
-    const form    = document.getElementById('reply-form-' + commentId);
-    const content = form.querySelector('textarea').value.trim();
-    if (!content) { showToast('Write something first!', 'error'); return; }
-    // In production: POST /api/replies with { commentId, content }
-    showToast('Reply posted!', 'success');
-    form.querySelector('textarea').value = '';
-    form.classList.remove('open');
-  }
-
-  function likeComment(btn) {
-    btn.classList.toggle('liked');
-    const cur = parseInt(btn.textContent.trim()) || 0;
-    const count = btn.classList.contains('liked') ? cur + 1 : Math.max(0, cur - 1);
-    btn.innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/>
-      <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg> ${count}`;
-  }
-
-  /* ═══ Related posts ══ */
-  function renderRelated(posts) {
-    const section = document.getElementById('related-section');
-    const grid    = document.getElementById('related-posts-container');
-    section.style.display = 'block';
-    grid.innerHTML = posts.map(p => `
-      <a class="related-card" href="/posts/${p._id}">
-        ${p.coverImage
-          ? `<img class="related-cover" src="${p.coverImage}" alt="${escapeHtml(p.title)}">`
-          : `<div class="related-cover-placeholder"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`}
-        <div class="related-body">
-          ${p.category ? `<div class="related-category">${escapeHtml(p.category)}</div>` : ''}
-          <div class="related-title">${escapeHtml(p.title)}</div>
-          <div class="related-meta">${formatDate(p.createdAt)} · ${Math.max(1, Math.round(((p.content||'').split(/\s+/).length) / 200))} min read</div>
+      <!-- ── SIDEBAR ── -->
+      <aside class="sidebar-col" id="sidebar-col">
+        <!-- Author card -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Written by</div>
+          <div class="sidebar-author">
+            <div class="sidebar-author-avatar" id="sidebar-author-avatar"></div>
+            <div class="sidebar-author-name" id="sidebar-author-name"></div>
+            <div class="sidebar-author-bio" id="sidebar-author-bio">
+              Writes about technology, design, and the future of the web.
+            </div>
+            <button class="follow-btn" id="follow-btn" onclick="toggleFollow()">
+              Follow
+            </button>
+          </div>
         </div>
-      </a>`).join('');
-  }
 
-  /* ═══ Owner actions ══ */
-  function openDeleteModal() { openModal('delete-modal'); }
-  function executeDelete() {
-    // In production: DELETE /api/posts/:id
-    showToast('Story deleted', 'error');
-    closeModal('delete-modal');
-    setTimeout(() => window.location.href = '/dashboard', 1500);
-  }
-  function toggleVisibility() {
-    // In production: PATCH /api/posts/:id with { status }
-    showToast('Visibility updated', 'success');
-  }
+        <!-- Stats -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Story Stats</div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-num" id="sidebar-views">—</div>
+              <div class="stat-label">Views</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num" id="sidebar-reactions">—</div>
+              <div class="stat-label">Reactions</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num" id="sidebar-comments">—</div>
+              <div class="stat-label">Comments</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num" id="sidebar-read">—</div>
+              <div class="stat-label">Min Read</div>
+            </div>
+          </div>
+        </div>
 
-  function openInteractionsModal(tab) {
-    openModal('interactions-modal');
-    switchTab(tab);
-  }
+        <!-- Share -->
+        <div class="sidebar-card">
+          <div class="sidebar-card-title">Share this story</div>
+          <div class="share-btns">
+            <button class="share-btn" onclick="sharePost('copy')">
+              <svg
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy link
+            </button>
+            <button class="share-btn" onclick="sharePost('twitter')">
+              <svg
+                width="14"
+                height="14"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                />
+              </svg>
+              Share on X
+            </button>
+            <button class="share-btn" onclick="sharePost('linkedin')">
+              <svg
+                width="14"
+                height="14"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                />
+              </svg>
+              Share on LinkedIn
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
 
-  /* ═══ Follow ══ */
-  let following = false;
-  function toggleFollow() {
-    following = !following;
-    const btn = document.getElementById('follow-btn');
-    btn.textContent = following ? 'Following' : 'Follow';
-    btn.classList.toggle('following', following);
-    showToast(following ? 'Following author' : 'Unfollowed', following ? 'success' : '');
-  }
+    <!-- ════════════ RELATED POSTS ══ -->
+    <section class="related-section" id="related-section" style="display: none">
+      <div class="related-inner">
+        <h2 class="related-heading">Recommended for you</h2>
+        <div class="related-grid" id="related-posts-container"></div>
+      </div>
+    </section>
 
-  /* ═══ Share ══ */
-  function sharePost(type) {
-    const url   = window.location.href;
-    const title = document.getElementById('post-title').textContent;
-    if (type === 'copy') {
-      navigator.clipboard.writeText(url).then(() => showToast('Link copied!', 'success'));
-    } else if (type === 'twitter') {
-      window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,'_blank');
-    } else if (type === 'linkedin') {
-      window.open(`https://linkedin.com/shareArticle?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,'_blank');
-    }
-  }
+    <!-- ════════════ INTERACTIONS MODAL ══ -->
+    <div class="modal-overlay" id="interactions-modal">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h3>Interactions</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('interactions-modal')"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="modal-tabs">
+          <button
+            class="tab-btn active"
+            data-tab="likes"
+            onclick="switchTab('likes')"
+          >
+            Reactions
+          </button>
+          <button
+            class="tab-btn"
+            data-tab="comments"
+            onclick="switchTab('comments')"
+          >
+            Comments
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="likes-list" style="display: block">
+            <div
+              style="padding: 40px; text-align: center; color: var(--text-3)"
+            >
+              Loading…
+            </div>
+          </div>
+          <div id="comments-list" style="display: none">
+            <div
+              style="padding: 40px; text-align: center; color: var(--text-3)"
+            >
+              Loading…
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  /* ═══ Helpers ══ */
-  function escapeHtml(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+    <!-- ════════════ DELETE CONFIRM MODAL ══ -->
+    <div class="modal-overlay" id="delete-modal">
+      <div class="modal-box" style="max-width: 400px">
+        <div class="modal-head">
+          <h3>Delete Story</h3>
+          <button class="modal-close" onclick="closeModal('delete-modal')">
+            &times;
+          </button>
+        </div>
+        <div style="padding: 24px">
+          <div
+            style="
+              width: 52px;
+              height: 52px;
+              border-radius: 50%;
+              background: #fee2e2;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 16px;
+            "
+          >
+            <svg
+              width="22"
+              height="22"
+              fill="none"
+              stroke="#dc2626"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+              <path d="M10 11v6M14 11v6M9 6V4h6v2" />
+            </svg>
+          </div>
+          <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px">
+            Delete this story permanently?
+          </div>
+          <div
+            style="
+              font-size: 13px;
+              color: var(--text-2);
+              line-height: 1.6;
+              margin-bottom: 24px;
+            "
+          >
+            All comments and reactions will be removed. This action cannot be
+            undone.
+          </div>
+          <div style="display: flex; gap: 10px">
+            <button
+              class="btn btn-ghost"
+              style="flex: 1"
+              onclick="closeModal('delete-modal')"
+            >
+              Cancel
+            </button>
+            <button
+              class="btn"
+              style="flex: 1; background: var(--danger); color: #fff"
+              onclick="executeDelete()"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  function formatDate(str) {
-    if (!str) return '';
-    const d = new Date(str);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
-  function timeAgo(str) {
-    if (!str) return '';
-    const diff = Math.floor((Date.now() - new Date(str)) / 1000);
-    if (diff < 60)    return 'just now';
-    if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
-    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
-    return formatDate(str);
-  }
+    <!-- ════════════ FOOTER ══ -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-logo">Byte & Beyond</div>
+        <p class="footer-copy">
+          &copy; 2026 Byte & Beyond. All rights reserved.
+        </p>
+      </div>
+    </footer>
 
-  // Stubs — your auth.js should define these
-  function isLoggedIn()     { return typeof window.getToken !== 'undefined' && !!window.getToken?.(); }
-  function getCurrentUserId(){ return window.currentUser?._id || null; }
-  function getCurrentUser()  { return window.currentUser || null; }
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <script src="/js/auth.js"></script>
 
-  /* ═══ Demo loader (remove if view-post.js handles data) ══ */
-  window.addEventListener('DOMContentLoaded', () => {
-    // view-post.js will typically call renderPost(data) after fetching from API.
-    // This demo data runs only when view-post.js hasn't populated content yet.
-    setTimeout(() => {
-      if (document.getElementById('post-skeleton').style.display !== 'none') {
-        renderPost({
-          _id: 'demo',
-          title: 'How I Built a Full-Stack Blog Platform in 30 Days',
-          subtitle: 'A complete journey through Node.js, MongoDB, and modern frontend craft',
-          content: `## The Beginning\n\nBuilding a full-stack blog from scratch is one of the most rewarding projects a developer can tackle. It touches every layer of the stack — authentication, file uploads, rich text editing, comments, reactions, and SEO.\n\n> The best stack is the one you already know, plus one new thing you want to learn.\n\n## The Tech Stack\n\nI chose **Node.js with Express** for the backend, **MongoDB** for the database, and wrote the frontend in vanilla HTML/CSS — deliberately avoiding heavy frameworks to sharpen my fundamentals.\n\n## Key Challenges\n\n- **Authentication** — JWT with refresh tokens took two full days to get right\n- **Image uploads** — Multer + Cloudinary integration was surprisingly smooth\n- **Rich text editing** — contenteditable vs a library: I went custom\n\n## What I Learned\n\nThe most valuable lesson wasn't technical. It was about *shipping*. A working product beats a perfect prototype every single time.`,
-          category: 'Engineering',
-          tags: ['nodejs', 'mongodb', 'fullstack'],
-          authorName: 'Jordan Dev',
-          authorId: null,
-          status: 'published',
-          coverImage: null,
-          views: 1240,
-          reactionCount: 84,
-          commentCount: 12,
-          createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-          reactions: [
-            { type: 'like' }, { type: 'like' }, { type: 'insightful' },
-            { type: 'like' }, { type: 'insightful' }, { type: 'funny' },
-          ],
-          comments: [
-            {
-              _id: 'c1', authorName: 'Sarah Chen', content: 'This is exactly what I needed — thank you for sharing the full journey including the mistakes!', likes: 14, createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-              replies: [{ _id: 'r1', authorName: 'Jordan Dev', content: 'Glad it helped! The mistakes are the most valuable part 😄', createdAt: new Date(Date.now() - 3600000 * 4).toISOString() }]
-            },
-            { _id: 'c2', authorName: 'Mike Torres', content: 'Did you consider using Next.js for the frontend? Would love a comparison post!', likes: 7, createdAt: new Date(Date.now() - 86400000).toISOString(), replies: [] },
-            { _id: 'c3', authorName: 'Priya Patel', content: 'The part about shipping over perfection really resonated. I keep rewriting my projects instead of launching.', likes: 22, createdAt: new Date(Date.now() - 86400000 * 2).toISOString(), replies: [] },
-          ],
-          related: [
-            { _id: 'r1', title: 'Setting Up MongoDB Atlas for Production', category: 'Database', createdAt: new Date().toISOString(), content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua' },
-            { _id: 'r2', title: 'JWT Authentication Deep Dive', category: 'Security', createdAt: new Date().toISOString(), content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit' },
-            { _id: 'r3', title: 'Building Accessible Forms', category: 'Design', createdAt: new Date().toISOString(), content: 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod' },
-          ]
+    <script>
+      /* ═══ State ══ */
+      const postId = document.getElementById("post-id").value;
+      let currentPost = null;
+      let currentCommentPage = 1;
+      const COMMENT_LIMIT = 9;
+      const user = getUser();
+
+      /* ═══ Reading Progress ══ */
+      window.addEventListener("scroll", () => {
+        const el = document.documentElement;
+        const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+        document.getElementById("read-progress").style.width = pct + "%";
+      });
+
+      /* ═══ Toast ══ */
+      function showToast(msg, type = "") {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.className = "toast show " + type;
+        setTimeout(() => (t.className = "toast"), 3000);
+      }
+
+      /* ═══ Modal helpers ══ */
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("open");
+      }
+      function openModal(id) {
+        document.getElementById(id).classList.add("open");
+      }
+
+      document.querySelectorAll(".modal-overlay").forEach((o) => {
+        o.addEventListener("click", (e) => {
+          if (e.target === o) o.classList.remove("open");
+        });
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape")
+          document
+            .querySelectorAll(".modal-overlay.open")
+            .forEach((m) => m.classList.remove("open"));
+      });
+
+      /* ═══ Tab switching ══ */
+      function switchTab(tab) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+        document.getElementById("likes-list").style.display =
+          tab === "likes" ? "block" : "none";
+        document.getElementById("comments-list").style.display =
+          tab === "comments" ? "block" : "none";
+      }
+
+      /* ═══ Helpers ══ */
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function formatDate(str) {
+        if (!str) return "";
+        return new Date(str).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
         });
       }
-    }, 800);
-  });
-</script>
-</body>
+      function timeAgo(str) {
+        if (!str) return "";
+        const diff = Math.floor((Date.now() - new Date(str)) / 1000);
+        if (diff < 60) return "just now";
+        if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+        if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+        return formatDate(str);
+      }
+
+      /* ═══ Populate post UI with real data ══ */
+      function populatePostUI(post) {
+        // Hide skeleton, show content
+        document.getElementById("post-skeleton").style.display = "none";
+        document.getElementById("post-content").style.display = "block";
+
+        // Hero cover image
+        const heroWrap = document.getElementById("post-hero-wrap");
+        if (post.image) {
+          heroWrap.innerHTML = `<div class="post-hero"><img src="${post.image}" alt="${escapeHtml(post.title)}"><div class="post-hero-overlay"></div></div>`;
+        } else {
+          heroWrap.innerHTML = '<div class="no-cover"></div>';
+        }
+
+        // Meta top: category + tags + status
+        const metaTop = document.getElementById("post-meta-top");
+        let metaHTML = "";
+        const categoryName =
+          post.categoryId && typeof post.categoryId === "object"
+            ? post.categoryId.name
+            : post.categoryId || "";
+        if (categoryName)
+          metaHTML += `<span class="category-badge">${escapeHtml(categoryName)}</span>`;
+        (post.tags || []).forEach(
+          (t) => (metaHTML += `<span class="tag-pill">${escapeHtml(t)}</span>`),
+        );
+        if (post.status === "draft")
+          metaHTML += `<span class="status-pill status-draft">📝 Draft</span>`;
+        if (post.status === "hidden")
+          metaHTML += `<span class="status-pill status-hidden">🔒 Hidden</span>`;
+        metaTop.innerHTML = metaHTML;
+
+        // Title
+        document.getElementById("post-title").textContent = post.title || "";
+        if (post.subtitle) {
+          const sub = document.getElementById("post-subtitle");
+          sub.textContent = post.subtitle;
+          sub.style.display = "block";
+        }
+
+        // Author row
+        const authorUser = post.userId || {};
+        const authorName = authorUser.username || post.username || "Anonymous";
+        const authorInitials = authorName
+          .split(" ")
+          .map((w) => w[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+
+        const avatarEl = document.getElementById("author-avatar-el");
+        if (authorUser.avatar) {
+          avatarEl.innerHTML = `<img src="${authorUser.avatar}" alt="${escapeHtml(authorName)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+        } else {
+          avatarEl.textContent = authorInitials;
+        }
+
+        document.getElementById("author-name-el").textContent = authorName;
+        document.getElementById("post-date-el").textContent = formatDate(
+          post.createdAt,
+        );
+
+        const words = (post.content || "")
+          .replace(/<[^>]+>/g, "")
+          .split(/\s+/)
+          .filter(Boolean).length;
+        const readMin = Math.max(1, Math.round(words / 200));
+        document.getElementById("read-time-el").textContent =
+          readMin + " min read";
+        document.getElementById("view-count-el").textContent =
+          (post.viewCount || 0) + " views";
+
+        // Sidebar author
+        const sidebarAvatar = document.getElementById("sidebar-author-avatar");
+        if (authorUser.avatar) {
+          sidebarAvatar.innerHTML = `<img src="${authorUser.avatar}" alt="${escapeHtml(authorName)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+        } else {
+          sidebarAvatar.textContent = authorInitials;
+        }
+        document.getElementById("sidebar-author-name").textContent = authorName;
+
+        // Sidebar stats
+        document.getElementById("sidebar-views").textContent =
+          post.viewCount || 0;
+        document.getElementById("sidebar-comments").textContent =
+          post.commentCount || 0;
+        document.getElementById("sidebar-read").textContent = readMin;
+
+        // Article body — render as HTML (from RTE) and sanitize
+        const bodyEl = document.getElementById("article-body");
+        const rawContent = post.content || "";
+        if (typeof DOMPurify !== "undefined") {
+          // If content looks like HTML (from RTE), use it directly; otherwise parse as markdown
+          if (
+            rawContent.includes("<p>") ||
+            rawContent.includes("<h") ||
+            rawContent.includes("<div")
+          ) {
+            bodyEl.innerHTML = DOMPurify.sanitize(rawContent);
+          } else if (typeof marked !== "undefined") {
+            bodyEl.innerHTML = DOMPurify.sanitize(marked.parse(rawContent));
+          } else {
+            bodyEl.innerHTML = rawContent;
+          }
+        } else {
+          bodyEl.innerHTML = rawContent;
+        }
+
+        // Owner actions — show if current user is the post author
+        const authorId =
+          typeof authorUser === "object"
+            ? authorUser._id || ""
+            : post.userId || "";
+        if (
+          user &&
+          (user._id === authorId || user._id === String(post.userId))
+        ) {
+          document.getElementById("owner-actions").classList.add("visible");
+        }
+
+        // Comment form for logged in users
+        if (user) {
+          document.getElementById("add-comment-btn").style.display =
+            "inline-flex";
+          const commentAvatar = document.getElementById("comment-user-avatar");
+          if (user.avatar) {
+            commentAvatar.innerHTML = `<img src="${user.avatar}" alt="${escapeHtml(user.username)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+          } else {
+            commentAvatar.textContent = (user.username || "U")
+              .slice(0, 2)
+              .toUpperCase();
+          }
+        }
+      }
+
+      /* ═══ Load Reactions from API ══ */
+      async function loadReactions() {
+        try {
+          const data = await apiRequest(`/reactions/post/${postId}`);
+          const container = document.getElementById("reaction-buttons");
+          const summary = document.getElementById("reactions-summary");
+
+          const loves =
+            data.grouped && data.grouped.love ? data.grouped.love : [];
+          const loveCount = loves.length;
+          const userLoved =
+            user && loves.some((r) => r.userId && r.userId._id === user._id);
+
+          // Render love button
+          container.innerHTML = `
+        <button class="reaction-btn ${userLoved ? "active" : ""}" id="love-reaction-btn">
+          <span class="reaction-emoji">❤️</span>
+          <span>Love</span>
+          <span class="reaction-count">${loveCount}</span>
+        </button>`;
+
+          document
+            .getElementById("love-reaction-btn")
+            .addEventListener("click", async (e) => {
+              try {
+                await apiRequest("/reactions", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    targetType: "post",
+                    targetId: postId,
+                    reactionType: "love",
+                  }),
+                });
+                loadReactions(); // Refresh
+              } catch (error) {
+                showToast("Error: " + error.message, "error");
+              }
+            });
+
+          // Update sidebar reactions count
+          document.getElementById("sidebar-reactions").textContent = loveCount;
+
+          // Summary link
+          if (loveCount > 0) {
+            summary.style.display = "inline";
+            summary.textContent =
+              loveCount + " reaction" + (loveCount !== 1 ? "s" : "");
+          } else {
+            summary.style.display = "none";
+          }
+        } catch (error) {
+          console.error("Error loading reactions:", error);
+        }
+      }
+
+      /* ═══ Load Comments from API ══ */
+      async function loadComments() {
+        try {
+          const data = await apiRequest(
+            `/comments/post/${postId}?page=${currentCommentPage}&limit=${COMMENT_LIMIT}`,
+          );
+          const container = document.getElementById("comments-container");
+          const title = document.getElementById("comments-count-title");
+          const totalWithReplies = data.pagination
+            ? data.pagination.totalWithReplies || data.pagination.total
+            : 0;
+
+          title.textContent = `Responses (${totalWithReplies})`;
+          document.getElementById("sidebar-comments").textContent =
+            totalWithReplies;
+
+          if (!data.comments || data.comments.length === 0) {
+            container.innerHTML = `<div style="text-align:center;padding:48px 0;color:var(--text-3);">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:12px;opacity:.4;">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+          </svg>
+          <p style="font-size:14px;">No responses yet. Be the first!</p>
+        </div>`;
+            document.getElementById("comments-pagination").innerHTML = "";
+            return;
+          }
+
+          let html = "";
+          data.comments.forEach((comment) => {
+            const initials = comment.username
+              ? comment.username.slice(0, 2).toUpperCase()
+              : "U";
+            const avatarHtml = comment.userAvatar
+              ? `<img src="${comment.userAvatar}" alt="${escapeHtml(comment.username)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+              : initials;
+            const cTime = timeAgo(comment.createdAt);
+            const isOwner = user && String(comment.userId) === String(user._id);
+            const isLiked = comment.isLiked || false;
+
+            html += `
+          <div class="comment-card" id="comment-${comment._id}">
+            <div class="comment-avatar">${avatarHtml}</div>
+            <div class="comment-body">
+              <div class="comment-meta">
+                <span class="comment-author">${escapeHtml(comment.username || "Anonymous")}</span>
+                <span class="comment-time">${cTime}</span>
+              </div>
+              <div class="comment-text" id="comment-text-${comment._id}">${escapeHtml(comment.content || "")}</div>
+              <div class="comment-actions">
+                <button class="comment-action-btn ${isLiked ? "liked" : ""}" onclick="toggleCommentLike('${comment._id}', ${isLiked}, ${comment.reactionCount || 0})" id="like-btn-${comment._id}">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/>
+                    <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
+                  </svg>
+                  <span id="like-count-${comment._id}">${comment.reactionCount || 0}</span>
+                </button>
+                ${user ? `<button class="comment-action-btn" onclick="toggleReplyFormUI('${comment._id}')">Reply</button>` : ""}
+                ${isOwner ? `<button class="comment-action-btn" onclick="enableEditComment('${comment._id}')">Edit</button>` : ""}
+                ${isOwner ? `<button class="comment-action-btn delete-c" onclick="deleteComment('${comment._id}')">Delete</button>` : ""}
+              </div>
+              <div class="reply-form" id="reply-form-${comment._id}">
+                <textarea placeholder="Write a reply…" rows="2" id="reply-input-${comment._id}"></textarea>
+                <div class="comment-form-actions" style="margin-top:8px;">
+                  <button class="btn-sm btn-sm-ghost" onclick="toggleReplyFormUI('${comment._id}')">Cancel</button>
+                  <button class="btn-sm btn-sm-primary" onclick="submitReplyAPI('${comment._id}')">Reply</button>
+                </div>
+              </div>
+              ${
+                comment.replyCount > 0
+                  ? `
+                <button class="comment-action-btn" style="margin-top:8px;color:var(--accent);" onclick="toggleRepliesUI('${comment._id}')" id="view-replies-btn-${comment._id}">
+                  View ${comment.replyCount} ${comment.replyCount === 1 ? "reply" : "replies"}
+                </button>
+                <div class="replies-list" id="replies-container-${comment._id}" style="display:none;"></div>
+              `
+                  : `<div class="replies-list" id="replies-container-${comment._id}" style="display:none;"></div>`
+              }
+            </div>
+          </div>`;
+          });
+          container.innerHTML = html;
+          renderCommentsPagination(data.pagination);
+        } catch (error) {
+          console.error("Error loading comments:", error);
+        }
+      }
+
+      /* ═══ Comment Pagination ══ */
+      function renderCommentsPagination(pagination) {
+        const container = document.getElementById("comments-pagination");
+        if (!pagination || pagination.pages <= 1) {
+          container.innerHTML = "";
+          return;
+        }
+        let html = "";
+        for (let i = 1; i <= pagination.pages; i++) {
+          html += `<button class="page-btn ${i === pagination.page ? "active" : ""}" onclick="goToCommentPage(${i})">${i}</button>`;
+        }
+        container.innerHTML = html;
+      }
+
+      function goToCommentPage(page) {
+        currentCommentPage = page;
+        loadComments();
+        document
+          .getElementById("comments-count-title")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      /* ═══ Comment actions ══ */
+      function toggleCommentForm() {
+        document.getElementById("comment-form").classList.toggle("visible");
+        if (
+          document.getElementById("comment-form").classList.contains("visible")
+        ) {
+          document.getElementById("comment-content").focus();
+        }
+      }
+
+      async function submitComment() {
+        const content = document.getElementById("comment-content").value.trim();
+        if (!content) {
+          showToast("Write something first!", "error");
+          return;
+        }
+        try {
+          await apiRequest(`/comments/post/${postId}`, {
+            method: "POST",
+            body: JSON.stringify({ content }),
+          });
+          document.getElementById("comment-content").value = "";
+          toggleCommentForm();
+          showToast("Comment posted!", "success");
+          loadComments();
+        } catch (error) {
+          showToast("Error: " + error.message, "error");
+        }
+      }
+
+      async function deleteComment(commentId) {
+        if (!confirm("Delete this comment?")) return;
+        try {
+          await apiRequest(`/comments/${commentId}`, { method: "DELETE" });
+          showToast("Comment deleted", "success");
+          loadComments();
+        } catch (error) {
+          showToast("Error: " + error.message, "error");
+        }
+      }
+
+      function enableEditComment(commentId) {
+        const textEl = document.getElementById(`comment-text-${commentId}`);
+        if (!textEl) return;
+        const currentContent = textEl.textContent;
+        textEl.innerHTML = `
+      <textarea id="edit-input-${commentId}" style="width:100%;font-family:var(--font-body);font-size:13px;border:1px solid var(--border);border-radius:8px;padding:8px;outline:none;resize:none;min-height:60px;">${escapeHtml(currentContent)}</textarea>
+      <div style="display:flex;gap:6px;margin-top:6px;justify-content:flex-end;">
+        <button class="btn-sm btn-sm-ghost" onclick="loadComments()">Cancel</button>
+        <button class="btn-sm btn-sm-primary" onclick="saveEditComment('${commentId}')">Save</button>
+      </div>`;
+      }
+
+      async function saveEditComment(commentId) {
+        const input = document.getElementById(`edit-input-${commentId}`);
+        if (!input) return;
+        const newContent = input.value.trim();
+        if (!newContent) return;
+        try {
+          await apiRequest(`/comments/${commentId}`, {
+            method: "PUT",
+            body: JSON.stringify({ content: newContent }),
+          });
+          showToast("Comment updated", "success");
+          loadComments();
+        } catch (error) {
+          showToast("Error: " + error.message, "error");
+        }
+      }
+
+      /* ═══ Comment Like (toggle) ══ */
+      async function toggleCommentLike(commentId) {
+        try {
+          await apiRequest("/reactions", {
+            method: "POST",
+            body: JSON.stringify({
+              targetType: "comment",
+              targetId: commentId,
+              reactionType: "love",
+            }),
+          });
+          loadComments(); // Refresh to get correct state
+        } catch (error) {
+          showToast("Error: " + error.message, "error");
+        }
+      }
+
+      /* ═══ Replies ══ */
+      function toggleReplyFormUI(commentId) {
+        const form = document.getElementById("reply-form-" + commentId);
+        if (form) {
+          form.classList.toggle("open");
+          if (form.classList.contains("open")) {
+            const ta = document.getElementById("reply-input-" + commentId);
+            if (ta) ta.focus();
+          }
+        }
+      }
+
+      async function submitReplyAPI(commentId) {
+        const input = document.getElementById(`reply-input-${commentId}`);
+        if (!input) return;
+        const content = input.value.trim();
+        if (!content) {
+          showToast("Write something first!", "error");
+          return;
+        }
+        try {
+          await apiRequest(`/replies/comment/${commentId}`, {
+            method: "POST",
+            body: JSON.stringify({ content }),
+          });
+          input.value = "";
+          showToast("Reply posted!", "success");
+          // Reload replies
+          toggleRepliesUI(commentId, true);
+          loadComments();
+        } catch (error) {
+          showToast("Error: " + error.message, "error");
+        }
+      }
+
+      async function toggleRepliesUI(commentId, forceOpen) {
+        const container = document.getElementById(
+          `replies-container-${commentId}`,
+        );
+        const btn = document.getElementById(`view-replies-btn-${commentId}`);
+        if (!container) return;
+
+        if (container.style.display === "none" || forceOpen) {
+          container.style.display = "block";
+          container.innerHTML =
+            '<div style="padding:12px;color:var(--text-3);font-size:13px;">Loading…</div>';
+          if (btn) btn.textContent = "Hide replies";
+          try {
+            const data = await apiRequest(
+              `/replies/comment/${commentId}?limit=50`,
+            );
+            const replies = data.replies || [];
+            if (replies.length === 0) {
+              container.innerHTML = "";
+              container.style.display = "none";
+              return;
+            }
+            container.innerHTML = replies
+              .map((r) => {
+                const initials = (r.username || "U").slice(0, 2).toUpperCase();
+                const avatarHtml = r.userAvatar
+                  ? `<img src="${r.userAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+                  : initials;
+                return `<div class="reply-card">
+            <div class="reply-avatar">${avatarHtml}</div>
+            <div class="reply-body">
+              <span class="reply-author">${escapeHtml(r.username || "Anonymous")}</span>
+              <span class="reply-time" style="margin-left:8px;">${timeAgo(r.createdAt)}</span>
+              <div class="reply-text">${escapeHtml(r.content || "")}</div>
+            </div>
+          </div>`;
+              })
+              .join("");
+          } catch (error) {
+            container.innerHTML =
+              '<div style="padding:12px;color:var(--danger);font-size:13px;">Failed to load replies</div>';
+          }
+        } else {
+          container.style.display = "none";
+          if (btn) btn.textContent = "View replies";
+        }
+      }
+
+      /* ═══ Related Posts ══ */
+      async function loadRelatedPosts() {
+        try {
+          const data = await apiRequest(`/posts/${postId}/related`);
+          if (data.success && data.posts && data.posts.length > 0) {
+            const section = document.getElementById("related-section");
+            const grid = document.getElementById("related-posts-container");
+            section.style.display = "block";
+            grid.innerHTML = data.posts
+              .map((p) => {
+                const catName =
+                  p.categoryId && typeof p.categoryId === "object"
+                    ? p.categoryId.name
+                    : "Story";
+                const pDate = formatDate(p.createdAt);
+                return `<a class="related-card" href="/posts/${p._id}">
+            ${
+              p.image
+                ? `<img class="related-cover" src="${p.image}" alt="${escapeHtml(p.title)}">`
+                : `<div class="related-cover-placeholder"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`
+            }
+            <div class="related-body">
+              <div class="related-category">${escapeHtml(catName)}</div>
+              <div class="related-title">${escapeHtml(p.title)}</div>
+              <div class="related-meta">${pDate}</div>
+            </div>
+          </a>`;
+              })
+              .join("");
+          }
+        } catch (error) {
+          console.error("Error loading related posts:", error);
+        }
+      }
+
+      /* ═══ Owner actions ══ */
+      function editPost() {
+        window.location.href = `/posts/${postId}/edit`;
+      }
+
+      function openDeleteModal() {
+        openModal("delete-modal");
+      }
+
+      async function executeDelete() {
+        try {
+          await apiRequest(`/posts/${postId}`, { method: "DELETE" });
+          showToast("Story deleted", "success");
+          closeModal("delete-modal");
+          setTimeout(() => (window.location.href = "/dashboard"), 1500);
+        } catch (error) {
+          showToast("Error: " + error.message, "error");
+          closeModal("delete-modal");
+        }
+      }
+
+      async function toggleVisibility() {
+        try {
+          await apiRequest(`/posts/${postId}/hide`, { method: "PATCH" });
+          showToast("Visibility updated", "success");
+          setTimeout(() => location.reload(), 1000);
+        } catch (error) {
+          showToast("Error: " + error.message, "error");
+        }
+      }
+
+      function openInteractionsModal(tab) {
+        openModal("interactions-modal");
+        switchTab(tab);
+        loadInteractionsModalData(tab);
+      }
+
+      async function loadInteractionsModalData(tab) {
+        if (tab === "likes") {
+          const likesList = document.getElementById("likes-list");
+          likesList.innerHTML =
+            '<div style="padding:40px;text-align:center;color:var(--text-3);">Loading…</div>';
+          try {
+            const data = await apiRequest(`/reactions/post/${postId}`);
+            const loves =
+              data.grouped && data.grouped.love ? data.grouped.love : [];
+            if (loves.length === 0) {
+              likesList.innerHTML =
+                '<div style="padding:40px;text-align:center;color:var(--text-3);">No reactions yet</div>';
+              return;
+            }
+            likesList.innerHTML = loves
+              .map((r) => {
+                const u = r.userId || {};
+                const initials = (u.username || "U").slice(0, 2).toUpperCase();
+                return `<div class="user-list-item">
+            <div class="user-list-avatar">${u.avatar ? `<img src="${u.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : initials}</div>
+            <div>
+              <div class="user-list-name">${escapeHtml(u.username || "Anonymous")}</div>
+              <div class="user-list-meta">${formatDate(r.createdAt)}</div>
+            </div>
+          </div>`;
+              })
+              .join("");
+          } catch (error) {
+            likesList.innerHTML = `<div style="padding:20px;text-align:center;color:var(--danger);">Error loading reactions</div>`;
+          }
+        }
+      }
+
+      /* ═══ Follow ══ */
+      let following = false;
+      function toggleFollow() {
+        following = !following;
+        const btn = document.getElementById("follow-btn");
+        btn.textContent = following ? "Following" : "Follow";
+        btn.classList.toggle("following", following);
+        showToast(
+          following ? "Following author" : "Unfollowed",
+          following ? "success" : "",
+        );
+      }
+
+      /* ═══ Share ══ */
+      function sharePost(type) {
+        const url = window.location.href;
+        const title = document.getElementById("post-title").textContent;
+        if (type === "copy") {
+          navigator.clipboard
+            .writeText(url)
+            .then(() => showToast("Link copied!", "success"));
+        } else if (type === "twitter") {
+          window.open(
+            `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+            "_blank",
+          );
+        } else if (type === "linkedin") {
+          window.open(
+            `https://linkedin.com/shareArticle?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
+            "_blank",
+          );
+        }
+      }
+
+      /* ═══ Init: Load everything from API ══ */
+      (async function init() {
+        // Update user avatar in header
+        if (user) {
+          const avatarEl = document.getElementById("user-avatar");
+          if (avatarEl) {
+            if (user.avatar) {
+              avatarEl.style.backgroundImage = `url(${user.avatar})`;
+              avatarEl.style.backgroundSize = "cover";
+              avatarEl.textContent = "";
+            } else {
+              avatarEl.textContent = (user.displayName || user.username || "U")
+                .slice(0, 2)
+                .toUpperCase();
+            }
+          }
+        }
+
+        // Load post data
+        try {
+          const data = await apiRequest(`/posts/${postId}`);
+          currentPost = data.post;
+          populatePostUI(currentPost);
+
+          // Load reactions, comments, related posts in parallel
+          loadReactions();
+          loadComments();
+          loadRelatedPosts();
+        } catch (error) {
+          document.getElementById("post-skeleton").innerHTML = `
+        <div style="text-align:center;padding:80px 0;color:var(--danger);">
+          <p style="font-size:18px;font-weight:700;margin-bottom:8px;">Failed to load story</p>
+          <p style="font-size:14px;color:var(--text-2);">${escapeHtml(error.message)}</p>
+          <a href="/" class="btn btn-ghost" style="margin-top:20px;">Go home</a>
+        </div>`;
+        }
+      })();
+    </script>
+  </body>
 </html>
