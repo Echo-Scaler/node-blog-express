@@ -58,6 +58,15 @@ router.put(
   authenticate,
   upload.single("image"),
   mongoIdValidation("id"),
+  (req, res, next) => {
+    // Force tags to be an array (same normalization as POST route)
+    if (req.body.tags === undefined) {
+      req.body.tags = [];
+    } else if (typeof req.body.tags === "string") {
+      req.body.tags = [req.body.tags];
+    }
+    next();
+  },
   createPostValidation,
   updatePost,
 );
