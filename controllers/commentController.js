@@ -103,6 +103,14 @@ const createComment = async (req, res) => {
       });
     }
 
+    // Check if comments are allowed
+    if (post.allowComments === false) {
+      return res.status(403).json({
+        success: false,
+        message: "Comments are disabled for this story",
+      });
+    }
+
     const comment = new Comment({
       postId,
       userId: req.userId,

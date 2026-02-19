@@ -23,6 +23,14 @@ const categorySchema = new mongoose.Schema(
       type: String,
       default: "#1a8917", // Default Medium-like green
     },
+    icon: {
+      type: String,
+      default: "tag", // Default icon name (e.g. for Feathers/Lucide)
+    },
+    sortOrder: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

@@ -56,46 +56,59 @@ const toArray = (value) => {
     ) {
       return JSON.parse(value);
     }
-  } catch (e) {}
-  return [value];
-};
-
-// Normalize tags on req.body before express-validator runs
-const normalizeTags = (req, res, next) => {
-  const raw = req.body.tags;
-  if (raw === undefined || raw === null || raw === "") {
-    req.body.tags = [];
-  } else if (typeof raw === "string") {
-    try {
-      if (raw.startsWith("[") && raw.endsWith("]")) {
-        req.body.tags = JSON.parse(raw);
-      } else {
-        req.body.tags = [raw];
-      }
-    } catch (e) {
-      req.body.tags = [raw];
-    }
+  } catch (e) {
+    console.error("Tags sanitization error:", e);
+    return []; // Return empty array on error instead of falling through to [value] which might be bad JSON string
   }
-  // If already an array, leave it
-  next();
+  return [value];
 };
 
 // Validation rules for creating a post
 const createPostValidation = [
-  // First: normalize tags to a proper array on req.body
-  normalizeTags,
-
   body("title")
     .trim()
     .notEmpty()
     .withMessage("Title is required")
     .isLength({ max: 200 })
     .withMessage("Title cannot exceed 200 characters"),
-  body("content").trim().notEmpty().withMessage("Content is required"),
-  body("status")
+  body("subtitle")
     .optional()
-    .isIn(["published", "draft", "hidden"])
-    .withMessage("Invalid status"),
+    .trim()
+    .isLength({ max: 255 })
+    .withMessage("Subtitle cannot exceed 255 characters"),
+  body("content").trim(), // Content might be empty for drafts
+  body("visibility")
+    .optional()
+    .isIn(["public", "draft", "private"])
+    .withMessage("Invalid visibility"),
+  body("scheduledAt")
+    .optional()
+    .isISO8601()
+    .withMessage("Invalid scheduled date"),
+
+  // Sanitize tags to ensure they are always an array
+  body("tags").customSanitizer((value) => {
+    if (value === undefined || value === null || value === "") return [];
+    if (Array.isArray(value)) return value;
+    try {
+      // Handle JSON stringified array
+      if (
+        typeof value === "string" &&
+        value.trim().startsWith("[") &&
+        value.trim().endsWith("]")
+      ) {
+        return JSON.parse(value);
+      }
+    } catch (e) {}
+    // Comma-separated string or single value
+    if (typeof value === "string" && value.includes(",")) {
+      return value
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+    }
+    return [value];
+  }),
 
   body("tags").custom((value) => {
     if (!Array.isArray(value)) {

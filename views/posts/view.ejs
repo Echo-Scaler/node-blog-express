@@ -1041,6 +1041,7 @@
         margin-bottom: 8px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
       }
@@ -1822,13 +1823,21 @@
             : post.categoryId || "";
         if (categoryName)
           metaHTML += `<span class="category-badge">${escapeHtml(categoryName)}</span>`;
-        (post.tags || []).forEach(
-          (t) => (metaHTML += `<span class="tag-pill">${escapeHtml(t)}</span>`),
-        );
-        if (post.status === "draft")
+        if (post.tags && Array.isArray(post.tags)) {
+          post.tags.forEach(
+            (t) =>
+              (metaHTML += `<span class="tag-pill">${escapeHtml(t)}</span>`),
+          );
+        }
+        if (post.visibility === "draft")
           metaHTML += `<span class="status-pill status-draft">📝 Draft</span>`;
-        if (post.status === "hidden")
-          metaHTML += `<span class="status-pill status-hidden">🔒 Hidden</span>`;
+        if (post.visibility === "private")
+          metaHTML += `<span class="status-pill status-hidden">🔒 Members Only</span>`;
+
+        if (post.scheduledAt && new Date(post.scheduledAt) > new Date()) {
+          const d = new Date(post.scheduledAt).toLocaleDateString();
+          metaHTML += `<span class="status-pill status-draft">📅 Scheduled: ${d}</span>`;
+        }
         metaTop.innerHTML = metaHTML;
 
         // Title
@@ -1865,7 +1874,8 @@
           .replace(/<[^>]+>/g, "")
           .split(/\s+/)
           .filter(Boolean).length;
-        const readMin = Math.max(1, Math.round(words / 200));
+        const readMin =
+          post.readTimeMins || Math.max(1, Math.round(words / 200));
         document.getElementById("read-time-el").textContent =
           readMin + " min read";
         document.getElementById("view-count-el").textContent =
@@ -1931,6 +1941,14 @@
               .slice(0, 2)
               .toUpperCase();
           }
+        }
+
+        // Toggle comments section visibility based on allowComments
+        const commentsSection = document.querySelector(".comments-section");
+        if (post.allowComments === false) {
+          commentsSection.style.display = "none";
+        } else {
+          commentsSection.style.display = "block";
         }
       }
 

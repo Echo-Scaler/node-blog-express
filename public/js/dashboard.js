@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Always scope to the current user as requested
         // Add timestamp to bypass cache
-        let url = `/posts/search?page=${currentPage}&limit=${limit}&userId=${user._id}&t=${Date.now()}`;
+        let url = `/posts/user/${user._id}?page=${currentPage}&limit=${limit}&t=${Date.now()}`;
         if (q) url += `&q=${encodeURIComponent(q)}`;
         if (status) url += `&status=${status}`;
         if (startDate) url += `&startDate=${startDate}`;
@@ -73,10 +73,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             year: "numeric",
           });
 
+          // Fallback if status is missing (though backend should provide it)
+          const postStatus =
+            post.status ||
+            (post.visibility === "public" ? "published" : "draft") ||
+            "draft";
+
           const statusBadgeClass =
-            post.status === "published"
+            postStatus === "published"
               ? "badge-published"
-              : post.status === "hidden"
+              : postStatus === "hidden"
                 ? "badge-hidden"
                 : "badge-draft";
 
@@ -94,7 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <span style="font-size: 13px; color: var(--text-secondary);">${categoryName}</span>
           </td>
           <td>
-            <span class="badge ${statusBadgeClass}">${post.status.toUpperCase()}</span>
+            <span class="badge ${statusBadgeClass}">${postStatus.toUpperCase()}</span>
           </td>
           <td>
             <div style="font-weight: 600;">${post.viewCount}</div>
@@ -110,7 +116,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               <a href="/posts/${post._id}/edit" class="action-btn" title="Edit">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
               </a>
-              <button onclick="toggleHide('${post._id}')" class="action-btn" title="${post.status === "hidden" ? "Make Public" : "Hide Story"}">
+              <button onclick="toggleHide('${post._id}')" class="action-btn" title="${postStatus === "published" ? "Hide Story" : "Make Public"}">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
               </button>
               <button onclick="deletePost('${post._id}')" class="action-btn" style="color: #ef4444;" title="Delete">

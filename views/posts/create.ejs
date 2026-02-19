@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Story — Byte & Beyond</title>
+    <title>New Story — Byte &amp; Beyond</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
       rel="stylesheet"
@@ -16,7 +16,6 @@
         margin: 0;
         padding: 0;
       }
-
       :root {
         --bg: #f7f6f3;
         --surface: #ffffff;
@@ -27,7 +26,6 @@
         --text-2: #5a5854;
         --text-3: #9a9793;
         --accent: #2563eb;
-        --accent-dk: #1d4ed8;
         --danger: #dc2626;
         --success: #16a34a;
         --warn: #d97706;
@@ -38,7 +36,6 @@
         --font-body: "DM Sans", sans-serif;
         --font-serif: "Lora", Georgia, serif;
       }
-
       body {
         background: var(--bg);
         font-family: var(--font-body);
@@ -46,13 +43,13 @@
         min-height: 100vh;
       }
 
-      /* ═══════════════════════════════ HEADER ══ */
+      /* ── HEADER ── */
       .editor-header {
         position: sticky;
         top: 0;
         z-index: 200;
         height: 56px;
-        background: rgba(247, 246, 243, 0.92);
+        background: rgba(247, 246, 243, 0.95);
         backdrop-filter: blur(14px);
         border-bottom: 1px solid var(--border);
         display: flex;
@@ -63,7 +60,7 @@
       .header-left {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
       }
       .back-btn {
         width: 34px;
@@ -89,7 +86,6 @@
         font-family: var(--font-serif);
         font-size: 17px;
         font-weight: 700;
-        letter-spacing: -0.01em;
         background: linear-gradient(135deg, #6366f1, #10b981);
         -webkit-background-clip: text;
         background-clip: text;
@@ -102,14 +98,22 @@
         background: var(--surface2);
         padding: 3px 10px;
         border-radius: 20px;
+        transition:
+          color 0.2s,
+          background 0.2s;
       }
       .save-status.saving {
         color: var(--warn);
+        background: #fef3c7;
       }
       .save-status.saved {
         color: var(--success);
+        background: #dcfce7;
       }
-
+      .save-status.error {
+        color: var(--danger);
+        background: #fee2e2;
+      }
       .header-right {
         display: flex;
         align-items: center;
@@ -126,6 +130,7 @@
         font-size: 13px;
         font-weight: 600;
         color: #fff;
+        overflow: hidden;
       }
       .btn {
         font-family: var(--font-body);
@@ -158,24 +163,50 @@
         cursor: not-allowed;
       }
 
-      /* ═════════════════════════════ LAYOUT ══ */
+      /* ── VISIBILITY BADGE in header ── */
+      .visibility-badge {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid;
+        cursor: pointer;
+        transition: all 0.15s;
+        user-select: none;
+      }
+      .visibility-badge.public {
+        color: #16a34a;
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+      }
+      .visibility-badge.draft {
+        color: #d97706;
+        background: #fffbeb;
+        border-color: #fde68a;
+      }
+      .visibility-badge.private {
+        color: #7c3aed;
+        background: #f5f3ff;
+        border-color: #ddd6fe;
+      }
+
+      /* ── LAYOUT ── */
       .editor-shell {
         display: grid;
         grid-template-columns: 1fr 320px;
-        gap: 0;
         max-width: 1200px;
         margin: 0 auto;
         min-height: calc(100vh - 56px);
       }
-
-      /* ══════════════════════ MAIN EDITOR PANE ══ */
       .editor-main {
         padding: 40px 48px 80px;
         border-right: 1px solid var(--border);
-        overflow-y: auto;
       }
 
-      /* Cover */
+      /* ── COVER ── */
       .cover-zone {
         position: relative;
         width: 100%;
@@ -198,15 +229,14 @@
         border-style: solid;
         border-color: transparent;
       }
-
       .cover-label {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         height: 100%;
-        cursor: pointer;
         gap: 10px;
+        pointer-events: none;
       }
       .cover-icon {
         width: 48px;
@@ -228,7 +258,6 @@
         font-size: 11px;
         color: var(--text-3);
       }
-
       #image-preview {
         position: absolute;
         inset: 0;
@@ -262,7 +291,7 @@
         display: none;
       }
 
-      /* Field validation */
+      /* ── FIELDS ── */
       .field-wrap {
         position: relative;
         margin-bottom: 6px;
@@ -277,12 +306,6 @@
       .field-error.show {
         display: block;
       }
-      .required-star {
-        color: var(--danger);
-        margin-left: 2px;
-      }
-
-      /* Title */
       .title-input {
         width: 100%;
         font-family: var(--font-serif);
@@ -298,6 +321,7 @@
         display: block;
         border-bottom: 2px solid transparent;
         transition: border-color 0.2s;
+        overflow: hidden;
       }
       .title-input::placeholder {
         color: #d0cfc9;
@@ -308,7 +332,6 @@
       .title-input.error {
         border-bottom-color: var(--danger);
       }
-
       .char-count {
         font-size: 11px;
         color: var(--text-3);
@@ -322,8 +345,6 @@
         color: var(--danger);
         font-weight: 600;
       }
-
-      /* Subtitle / Excerpt inline */
       .subtitle-input {
         width: 100%;
         font-family: var(--font-serif);
@@ -340,6 +361,7 @@
         margin-top: 16px;
         border-bottom: 2px solid transparent;
         transition: border-color 0.2s;
+        overflow: hidden;
       }
       .subtitle-input::placeholder {
         color: #d0cfc9;
@@ -347,14 +369,13 @@
       .subtitle-input:focus {
         border-bottom-color: var(--border2);
       }
-
       .editor-divider {
         border: none;
         border-top: 1px solid var(--border);
         margin: 28px 0;
       }
 
-      /* ─── Rich Text Toolbar ─── */
+      /* ── TOOLBAR ── */
       .rte-toolbar {
         display: flex;
         align-items: center;
@@ -366,7 +387,6 @@
         border-radius: var(--radius) var(--radius) 0 0;
         padding: 6px 8px;
       }
-
       .tb-group {
         display: flex;
         align-items: center;
@@ -378,7 +398,6 @@
         background: var(--border);
         margin: 0 6px;
       }
-
       .tb-btn {
         display: flex;
         align-items: center;
@@ -415,14 +434,12 @@
         background: var(--text);
         color: #fff;
         font-size: 11px;
-        font-weight: 500;
         padding: 3px 8px;
         border-radius: 5px;
         white-space: nowrap;
         pointer-events: none;
-        letter-spacing: 0.01em;
+        z-index: 10;
       }
-
       .tb-select {
         font-family: var(--font-body);
         font-size: 12px;
@@ -440,7 +457,7 @@
         background: var(--surface2);
       }
 
-      /* Rich Text Editor Area */
+      /* ── RTE ── */
       .rte-body {
         border: 1px solid var(--border);
         border-radius: 0 0 var(--radius) var(--radius);
@@ -520,15 +537,12 @@
         color: #d4d4d4;
         padding: 16px 20px;
         border-radius: 8px;
-        overflow-x: auto;
         margin: 16px 0;
       }
       .rte-body pre code {
         background: none;
         border: none;
         padding: 0;
-        font-size: 13px;
-        color: inherit;
       }
       .rte-body img {
         max-width: 100%;
@@ -540,7 +554,6 @@
         border-top: 2px solid var(--border);
         margin: 32px 0;
       }
-
       .rte-footer {
         display: flex;
         align-items: center;
@@ -553,91 +566,34 @@
         font-size: 11px;
         color: var(--text-3);
       }
-
-      /* Image URL modal */
-      .modal-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 500;
-        background: rgba(0, 0, 0, 0.45);
-        backdrop-filter: blur(4px);
-        display: none;
-        align-items: center;
-        justify-content: center;
-      }
-      .modal-overlay.open {
+      .stats-row {
         display: flex;
-      }
-      .modal-box {
-        background: var(--surface);
-        border-radius: var(--radius-lg);
-        padding: 28px 32px;
-        width: 420px;
-        max-width: 92vw;
-        box-shadow: var(--shadow-md);
-        animation: slideUp 0.2s ease;
-      }
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(16px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .modal-title {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 18px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .modal-field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 16px;
-      }
-      .modal-label {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--text-2);
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-      }
-      .modal-input {
-        font-family: var(--font-body);
-        font-size: 14px;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 10px 12px;
-        outline: none;
-        color: var(--text);
-        transition: border-color 0.15s;
-      }
-      .modal-input:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-      }
-      .modal-actions {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
+        gap: 16px;
         margin-top: 20px;
       }
+      .stat-item {
+        text-align: center;
+      }
+      .stat-num {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .stat-label {
+        font-size: 10px;
+        color: var(--text-3);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
 
-      /* ═══════════════════ SIDEBAR PANEL ══ */
+      /* ── SIDEBAR ── */
       .editor-sidebar {
         padding: 32px 28px;
         background: var(--surface);
         overflow-y: auto;
       }
-
       .sidebar-section {
-        margin-bottom: 32px;
+        margin-bottom: 28px;
         animation: fadeIn 0.3s ease both;
       }
       @keyframes fadeIn {
@@ -662,7 +618,6 @@
       .sidebar-section:nth-child(5) {
         animation-delay: 0.2s;
       }
-
       .section-heading {
         font-size: 11px;
         font-weight: 600;
@@ -674,10 +629,6 @@
         align-items: center;
         gap: 6px;
       }
-      .section-heading svg {
-        color: var(--text-3);
-      }
-
       .form-group {
         display: flex;
         flex-direction: column;
@@ -693,7 +644,6 @@
         color: var(--danger);
         margin-left: 2px;
       }
-
       .form-control {
         font-family: var(--font-body);
         font-size: 14px;
@@ -707,6 +657,7 @@
           border-color 0.15s,
           box-shadow 0.15s;
         appearance: none;
+        width: 100%;
       }
       .form-control:focus {
         border-color: var(--accent);
@@ -719,12 +670,10 @@
       .form-control::placeholder {
         color: var(--text-3);
       }
-
       textarea.form-control {
         resize: vertical;
         line-height: 1.6;
       }
-
       select.form-control {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9793' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
@@ -733,7 +682,83 @@
         cursor: pointer;
       }
 
-      /* Tags input */
+      /* ── VISIBILITY SELECTOR ── */
+      .visibility-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+      }
+      .vis-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 8px;
+        border-radius: var(--radius);
+        border: 2px solid var(--border);
+        background: var(--bg);
+        cursor: pointer;
+        transition: all 0.15s;
+        text-align: center;
+      }
+      .vis-option:hover {
+        border-color: var(--border2);
+        background: var(--surface);
+      }
+      .vis-option.selected-public {
+        border-color: #16a34a;
+        background: #f0fdf4;
+      }
+      .vis-option.selected-draft {
+        border-color: #d97706;
+        background: #fffbeb;
+      }
+      .vis-option.selected-private {
+        border-color: #7c3aed;
+        background: #f5f3ff;
+      }
+      .vis-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .vis-icon.public {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .vis-icon.draft {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .vis-icon.private {
+        background: #ede9fe;
+        color: #7c3aed;
+      }
+      .vis-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-2);
+      }
+      .vis-desc {
+        font-size: 10px;
+        color: var(--text-3);
+        line-height: 1.3;
+      }
+
+      /* Schedule row */
+      .schedule-row {
+        display: none;
+        margin-top: 12px;
+      }
+      .schedule-row.show {
+        display: flex;
+        gap: 10px;
+      }
+
+      /* ── TAGS ── */
       .tags-wrap {
         display: flex;
         flex-wrap: wrap;
@@ -775,7 +800,6 @@
         font-size: 14px;
         line-height: 1;
         padding: 0 0 0 2px;
-        transition: color 0.1s;
       }
       .tag-chip button:hover {
         color: #fff;
@@ -794,38 +818,12 @@
         color: var(--text-3);
       }
 
-      /* Readability */
-      .readability-bar {
-        height: 6px;
-        border-radius: 3px;
-        background: var(--border);
-        overflow: hidden;
-        margin-top: 8px;
-      }
-      .readability-fill {
-        height: 100%;
-        border-radius: 3px;
-        background: linear-gradient(
-          90deg,
-          var(--danger),
-          var(--warn),
-          var(--success)
-        );
-        transition: width 0.4s ease;
-        width: 0%;
-      }
-      .readability-label {
-        font-size: 11px;
-        color: var(--text-3);
-        margin-top: 4px;
-      }
-
-      /* Toggle switch */
+      /* ── TOGGLES ── */
       .toggle-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 0;
+        padding: 10px 0;
         border-top: 1px solid var(--border);
       }
       .toggle-row:first-child {
@@ -883,29 +881,44 @@
         transform: translateX(18px);
       }
 
-      /* Schedule date */
-      .schedule-row {
-        display: none;
-        margin-top: 12px;
+      /* ── READABILITY ── */
+      .readability-bar {
+        height: 6px;
+        border-radius: 3px;
+        background: var(--border);
+        overflow: hidden;
+        margin-top: 8px;
       }
-      .schedule-row.show {
-        display: flex;
-        gap: 10px;
+      .readability-fill {
+        height: 100%;
+        border-radius: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--danger),
+          var(--warn),
+          var(--success)
+        );
+        transition: width 0.4s ease;
+        width: 0%;
+      }
+      .readability-label {
+        font-size: 11px;
+        color: var(--text-3);
+        margin-top: 4px;
       }
 
-      /* Publish actions */
+      /* ── PUBLISH ACTIONS ── */
       .publish-actions {
         background: var(--bg);
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 20px;
+        padding: 16px;
       }
       .publish-btn-main {
         width: 100%;
         font-family: var(--font-body);
         font-size: 14px;
         font-weight: 600;
-        background: var(--text);
         color: #fff;
         border: none;
         border-radius: var(--radius);
@@ -919,39 +932,72 @@
         justify-content: center;
         gap: 8px;
       }
-      .publish-btn-main:hover {
-        background: #333;
+      .publish-btn-main.status-public {
+        background: #16a34a;
       }
-      .publish-btn-main:active {
-        transform: scale(0.98);
+      .publish-btn-main.status-public:hover {
+        background: #15803d;
+      }
+      .publish-btn-main.status-draft {
+        background: #d97706;
+      }
+      .publish-btn-main.status-draft:hover {
+        background: #b45309;
+      }
+      .publish-btn-main.status-private {
+        background: #7c3aed;
+      }
+      .publish-btn-main.status-private:hover {
+        background: #6d28d9;
       }
       .publish-btn-main:disabled {
-        background: var(--border2);
+        background: var(--border2) !important;
         color: var(--text-3);
         cursor: not-allowed;
         transform: none;
       }
-
-      .draft-btn {
-        width: 100%;
-        font-family: var(--font-body);
-        font-size: 13px;
-        font-weight: 500;
-        background: transparent;
-        color: var(--text-2);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 10px;
-        cursor: pointer;
+      .publish-actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
         margin-top: 10px;
-        transition: all 0.15s;
       }
-      .draft-btn:hover {
-        background: var(--surface2);
-        color: var(--text);
+      .action-btn {
+        font-family: var(--font-body);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 9px 8px;
+        border-radius: var(--radius);
+        border: 1.5px solid;
+        cursor: pointer;
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+      .action-btn.draft {
+        color: #d97706;
+        border-color: #fde68a;
+        background: #fffbeb;
+      }
+      .action-btn.draft:hover {
+        background: #fef3c7;
+      }
+      .action-btn.private {
+        color: #7c3aed;
+        border-color: #ddd6fe;
+        background: #f5f3ff;
+      }
+      .action-btn.private:hover {
+        background: #ede9fe;
+      }
+      .action-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
 
-      /* Validation summary */
+      /* ── VALIDATION ── */
       .validation-summary {
         background: #fef2f2;
         border: 1px solid #fecaca;
@@ -978,28 +1024,83 @@
         margin-bottom: 3px;
       }
 
-      /* Word count etc */
-      .stats-row {
+      /* ── MODALS ── */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.open {
         display: flex;
-        gap: 16px;
-        margin-top: 8px;
       }
-      .stat-item {
-        text-align: center;
+      .modal-box {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        width: 420px;
+        max-width: 92vw;
+        box-shadow: var(--shadow-md);
+        animation: slideUp 0.2s ease;
       }
-      .stat-num {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text);
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
       }
-      .stat-label {
-        font-size: 10px;
-        color: var(--text-3);
+      .modal-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .modal-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .modal-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-2);
+        letter-spacing: 0.04em;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+      }
+      .modal-input {
+        font-family: var(--font-body);
+        font-size: 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        outline: none;
+        color: var(--text);
+        transition: border-color 0.15s;
+        width: 100%;
+      }
+      .modal-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
       }
 
-      /* Notification toast */
+      /* ── TOAST ── */
       .toast {
         position: fixed;
         bottom: 28px;
@@ -1025,6 +1126,63 @@
       .toast.error {
         background: var(--danger);
       }
+      .toast.warn {
+        background: var(--warn);
+      }
+
+      /* ── SPINNER ── */
+      .btn-spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── SUCCESS OVERLAY ── */
+      .success-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 600;
+        backdrop-filter: blur(8px);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+      }
+      .success-overlay.show {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+      }
+      .success-overlay.status-public {
+        background: rgba(22, 163, 74, 0.95);
+      }
+      .success-overlay.status-draft {
+        background: rgba(217, 119, 6, 0.95);
+      }
+      .success-overlay.status-private {
+        background: rgba(124, 58, 237, 0.95);
+      }
+      .success-overlay svg {
+        color: #fff;
+      }
+      .success-overlay h2 {
+        color: #fff;
+        font-family: var(--font-serif);
+        font-size: 28px;
+      }
+      .success-overlay p {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 15px;
+      }
 
       @media (max-width: 900px) {
         .editor-shell {
@@ -1040,10 +1198,15 @@
     </style>
   </head>
   <body>
-    <!-- ════════════════════════════════════════ HEADER ══ -->
+    <!-- ════ HEADER ════ -->
     <header class="editor-header">
       <div class="header-left">
-        <a href="/dashboard" class="back-btn" title="Back">
+        <a
+          href="javascript:void(0)"
+          class="back-btn"
+          onclick="confirmLeave(event)"
+          title="Go back"
+        >
           <svg
             width="15"
             height="15"
@@ -1055,9 +1218,14 @@
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </a>
-        <span class="site-name">Byte & Beyond</span>
-
-       <span class="save-mode-badge">
+        <span class="site-name">Byte &amp; Beyond</span>
+        <span class="save-status" id="save-status">Draft</span>
+        <!-- Live visibility badge in header -->
+        <span
+          class="visibility-badge draft"
+          id="header-vis-badge"
+          onclick="scrollToVisibility()"
+        >
           <svg
             width="11"
             height="11"
@@ -1069,46 +1237,33 @@
             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
             <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
           </svg>
-          Draft
+          <span id="header-vis-label">Draft</span>
         </span>
       </div>
       <div class="header-right">
-        <button class="btn btn-ghost" onclick="saveDraft()">Save draft</button>
-        <div class="avatar" id="user-avatar">JD</div>
         <button
           class="btn btn-primary"
           id="publish-btn"
           onclick="handlePublish()"
         >
-          Publish Story
+          Publish
         </button>
       </div>
     </header>
 
-    <!-- ════════════════════════════════ MAIN SHELL ══ -->
+    <!-- ════ SHELL ════ -->
     <div class="editor-shell">
-      <!-- ─────────────────── EDITOR MAIN ─── -->
+      <!-- MAIN EDITOR -->
       <main class="editor-main">
-        <!-- Cover Image -->
-        <div
-          class="cover-zone"
-          id="cover-zone"
-          onclick="document.getElementById('cover-file').click()"
-        >
+        <!-- Cover -->
+        <div class="cover-zone" id="cover-zone">
           <input
             type="file"
             id="cover-file"
             accept="image/*"
             onchange="previewCover(this)"
           />
-          <label
-            class="cover-label"
-            id="cover-label"
-            onclick="
-              event.stopPropagation();
-              document.getElementById('cover-file').click();
-            "
-          >
+          <div class="cover-label">
             <div class="cover-icon">
               <svg
                 width="22"
@@ -1125,15 +1280,9 @@
             </div>
             <span>Add cover image</span>
             <small>Recommended: 1600 × 700px · JPG, PNG, WebP</small>
-          </label>
+          </div>
           <img id="image-preview" src="" alt="Cover preview" />
-          <button
-            class="cover-change-btn"
-            onclick="
-              event.stopPropagation();
-              document.getElementById('cover-file').click();
-            "
-          >
+          <button class="cover-change-btn" id="cover-change-btn" type="button">
             Change image
           </button>
         </div>
@@ -1174,16 +1323,12 @@
 
         <hr class="editor-divider" />
 
-        <!-- Rich Text Toolbar -->
-        <div class="rte-toolbar" id="rte-toolbar">
-          <!-- Heading select -->
+        <!-- Toolbar -->
+        <div class="rte-toolbar">
           <div class="tb-group">
             <select
               class="tb-select"
-              onchange="
-                formatBlock(this.value);
-                this.value = 'p';
-              "
+              onchange="applyFormatBlock(this)"
               title="Text style"
             >
               <option value="p">Paragraph</option>
@@ -1193,10 +1338,7 @@
               <option value="pre">Code block</option>
             </select>
           </div>
-
           <div class="tb-sep"></div>
-
-          <!-- Text formatting -->
           <div class="tb-group">
             <button
               class="tb-btn"
@@ -1231,10 +1373,7 @@
               <s>S</s>
             </button>
           </div>
-
           <div class="tb-sep"></div>
-
-          <!-- Lists & Quote -->
           <div class="tb-group">
             <button
               class="tb-btn"
@@ -1253,9 +1392,9 @@
                 <line x1="8" y1="6" x2="21" y2="6" />
                 <line x1="8" y1="12" x2="21" y2="12" />
                 <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
+                <circle cx="3" cy="6" r=".5" fill="currentColor" />
+                <circle cx="3" cy="12" r=".5" fill="currentColor" />
+                <circle cx="3" cy="18" r=".5" fill="currentColor" />
               </svg>
             </button>
             <button
@@ -1318,10 +1457,7 @@
               </svg>
             </button>
           </div>
-
           <div class="tb-sep"></div>
-
-          <!-- Alignment -->
           <div class="tb-group">
             <button
               class="tb-btn"
@@ -1378,10 +1514,7 @@
               </svg>
             </button>
           </div>
-
           <div class="tb-sep"></div>
-
-          <!-- Media & Link -->
           <div class="tb-group">
             <button
               class="tb-btn"
@@ -1436,10 +1569,7 @@
               </svg>
             </button>
           </div>
-
           <div class="tb-sep"></div>
-
-          <!-- Undo / Redo -->
           <div class="tb-group">
             <button class="tb-btn" onclick="execCmd('undo')" title="Undo">
               <svg
@@ -1470,7 +1600,6 @@
           </div>
         </div>
 
-        <!-- Editable Content Area -->
         <div
           id="rte-body"
           class="rte-body"
@@ -1486,8 +1615,7 @@
           <span id="read-time">~0 min read</span>
         </div>
 
-        <!-- Stats row -->
-        <div class="stats-row" style="margin-top: 20px">
+        <div class="stats-row">
           <div class="stat-item">
             <div class="stat-num" id="stat-words">0</div>
             <div class="stat-label">Words</div>
@@ -1507,7 +1635,7 @@
         </div>
       </main>
 
-      <!-- ─────────────────── SIDEBAR ─── -->
+      <!-- SIDEBAR -->
       <aside class="editor-sidebar">
         <!-- Readability -->
         <div class="sidebar-section">
@@ -1532,7 +1660,137 @@
           </div>
         </div>
 
-        <!-- Publishing settings -->
+        <!-- ★ VISIBILITY SECTION ★ -->
+        <div class="sidebar-section" id="visibility-section">
+          <div class="section-heading">
+            <svg
+              width="12"
+              height="12"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            Visibility
+          </div>
+          <div class="visibility-selector">
+            <div
+              class="vis-option selected-draft"
+              id="vis-draft"
+              onclick="selectVisibility('draft')"
+            >
+              <div class="vis-icon draft">
+                <svg
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                  />
+                </svg>
+              </div>
+              <div class="vis-label">Draft</div>
+              <div class="vis-desc">Only you can see</div>
+            </div>
+            <div
+              class="vis-option"
+              id="vis-public"
+              onclick="selectVisibility('public')"
+            >
+              <div class="vis-icon public">
+                <svg
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+                </svg>
+              </div>
+              <div class="vis-label">Public</div>
+              <div class="vis-desc">Everyone can read</div>
+            </div>
+            <div
+              class="vis-option"
+              id="vis-private"
+              onclick="selectVisibility('private')"
+            >
+              <div class="vis-icon private">
+                <svg
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0110 0v4" />
+                </svg>
+              </div>
+              <div class="vis-label">Private</div>
+              <div class="vis-desc">Members only</div>
+            </div>
+          </div>
+
+          <!-- Schedule (shown when public is selected) -->
+          <div class="schedule-row" id="schedule-row" style="margin-top: 12px">
+            <div style="width: 100%">
+              <label
+                style="
+                  font-size: 11px;
+                  font-weight: 600;
+                  color: var(--text-2);
+                  display: flex;
+                  align-items: center;
+                  gap: 5px;
+                  margin-bottom: 8px;
+                "
+              >
+                <input
+                  type="checkbox"
+                  id="schedule-toggle"
+                  onchange="toggleSchedule(this)"
+                  style="accent-color: var(--accent)"
+                />
+                Schedule for later
+              </label>
+              <div
+                id="schedule-fields"
+                style="display: none; gap: 8px; display: none"
+              >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="schedule-date"
+                  style="flex: 1"
+                />
+                <input
+                  type="time"
+                  class="form-control"
+                  id="schedule-time"
+                  style="width: 110px"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Publishing Settings -->
         <div class="sidebar-section">
           <div class="section-heading">
             <svg
@@ -1555,27 +1813,8 @@
             <label class="form-label" for="categoryId"
               >Category <span class="req">*</span></label
             >
-            <select
-              id="categoryId"
-              class="form-control"
-              required
-              onchange="
-                validateField(
-                  this,
-                  'category-error',
-                  'Please select a category',
-                )
-              "
-            >
+            <select id="categoryId" class="form-control" required>
               <option value="">Select category…</option>
-              <option value="tech">Technology</option>
-              <option value="design">Design</option>
-              <option value="product">Product</option>
-              <option value="engineering">Engineering</option>
-              <option value="data">Data & AI</option>
-              <option value="culture">Culture</option>
-              <option value="career">Career</option>
-              <option value="other">Other</option>
             </select>
             <span class="field-error" id="category-error"
               >Please select a category</span
@@ -1583,9 +1822,7 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="tags-input"
-              >Tags <span class="req">*</span></label
-            >
+            <label class="form-label">Tags <span class="req">*</span></label>
             <div
               class="tags-wrap"
               id="tags-wrap"
@@ -1635,7 +1872,7 @@
               "
             >
               <span class="field-error" id="excerpt-error"
-                >Description is required (min 20 characters)</span
+                >Description required (min 20 characters)</span
               >
               <span class="char-count" id="excerpt-count">0 / 160</span>
             </div>
@@ -1657,17 +1894,16 @@
                 margin-top: 4px;
                 display: block;
               "
-            >
-              yourdomain.com/story/<span
+              >yourdomain.com/story/<span
                 id="slug-preview"
                 style="color: var(--accent)"
                 >…</span
-              >
-            </small>
+              ></small
+            >
           </div>
         </div>
 
-        <!-- Visibility -->
+        <!-- Options -->
         <div class="sidebar-section">
           <div class="section-heading">
             <svg
@@ -1678,86 +1914,46 @@
               stroke-width="2"
               viewBox="0 0 24 24"
             >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
               <circle cx="12" cy="12" r="3" />
-            </svg>
-            Visibility & Options
-          </div>
-
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <span class="toggle-name">Allow comments</span>
-              <span class="toggle-desc">Readers can leave comments</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="allow-comments" checked />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <span class="toggle-name">Featured story</span>
-              <span class="toggle-desc">Pin to top of feed</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="featured" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <span class="toggle-name">Members only</span>
-              <span class="toggle-desc">Restrict to subscribers</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="members-only" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <span class="toggle-name">Schedule publish</span>
-              <span class="toggle-desc">Set a future publish date</span>
-            </div>
-            <label class="toggle-switch">
-              <input
-                type="checkbox"
-                id="schedule-toggle"
-                onchange="toggleSchedule(this)"
+              <path
+                d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"
               />
-              <span class="toggle-slider"></span>
-            </label>
+            </svg>
+            Options
           </div>
-
-          <div class="schedule-row" id="schedule-row">
-            <input
-              type="date"
-              class="form-control"
-              id="schedule-date"
-              style="flex: 1"
-            />
-            <input
-              type="time"
-              class="form-control"
-              id="schedule-time"
-              style="width: 110px"
-            />
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <span class="toggle-name">Allow comments</span
+              ><span class="toggle-desc">Readers can leave comments</span>
+            </div>
+            <label class="toggle-switch"
+              ><input type="checkbox" id="allow-comments" checked /><span
+                class="toggle-slider"
+              ></span
+            ></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <span class="toggle-name">Featured story</span
+              ><span class="toggle-desc">Pin to top of feed</span>
+            </div>
+            <label class="toggle-switch"
+              ><input type="checkbox" id="featured" /><span
+                class="toggle-slider"
+              ></span
+            ></label>
           </div>
         </div>
 
-        <!-- Validation summary + publish -->
+        <!-- Publish panel -->
         <div class="sidebar-section">
           <div class="validation-summary" id="validation-summary">
             <p>Please fix the following:</p>
             <ul id="validation-list"></ul>
           </div>
-
           <div class="publish-actions">
             <button
-              class="publish-btn-main"
+              class="publish-btn-main status-draft"
               id="sidebar-publish-btn"
               onclick="handlePublish()"
             >
@@ -1772,17 +1968,56 @@
                 <path d="M22 2L11 13" />
                 <path d="M22 2L15 22 11 13 2 9l20-7z" />
               </svg>
-              Publish Story
+              <span id="publish-btn-label">Save as Draft</span>
             </button>
-            <button class="draft-btn" onclick="saveDraft()">
-              Save as draft
-            </button>
+            <div class="publish-actions-grid">
+              <button
+                class="action-btn draft"
+                id="btn-save-draft"
+                onclick="saveAs('draft')"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                  />
+                </svg>
+                Save Draft
+              </button>
+              <button
+                class="action-btn private"
+                id="btn-save-private"
+                onclick="saveAs('private')"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0110 0v4" />
+                </svg>
+                Make Private
+              </button>
+            </div>
           </div>
         </div>
       </aside>
     </div>
 
-    <!-- ════════ IMAGE URL MODAL ══ -->
+    <!-- IMAGE MODAL -->
     <div class="modal-overlay" id="image-modal">
       <div class="modal-box">
         <div class="modal-title">
@@ -1796,13 +2031,12 @@
           >
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <circle cx="8.5" cy="8.5" r="1.5" />
-            <polyline points="21 15 16 10 5 21" />
-          </svg>
-          Insert Image
+            <polyline points="21 15 16 10 5 21" /></svg
+          >Insert Image
         </div>
         <div class="modal-field">
-          <label class="modal-label">Image URL</label>
-          <input
+          <label class="modal-label">Image URL</label
+          ><input
             type="url"
             id="img-url-input"
             class="modal-input"
@@ -1810,8 +2044,8 @@
           />
         </div>
         <div class="modal-field">
-          <label class="modal-label">Alt text</label>
-          <input
+          <label class="modal-label">Alt text</label
+          ><input
             type="text"
             id="img-alt-input"
             class="modal-input"
@@ -1820,16 +2054,15 @@
         </div>
         <div class="modal-actions">
           <button class="btn btn-ghost" onclick="closeModal('image-modal')">
-            Cancel
-          </button>
-          <button class="btn btn-primary" onclick="insertImage()">
+            Cancel</button
+          ><button class="btn btn-primary" onclick="insertImage()">
             Insert
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ════════ LINK MODAL ══ -->
+    <!-- LINK MODAL -->
     <div class="modal-overlay" id="link-modal">
       <div class="modal-box">
         <div class="modal-title">
@@ -1846,13 +2079,12 @@
             />
             <path
               d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"
-            />
-          </svg>
-          Insert Link
+            /></svg
+          >Insert Link
         </div>
         <div class="modal-field">
-          <label class="modal-label">URL</label>
-          <input
+          <label class="modal-label">URL</label
+          ><input
             type="url"
             id="link-url-input"
             class="modal-input"
@@ -1860,8 +2092,8 @@
           />
         </div>
         <div class="modal-field">
-          <label class="modal-label">Display text (optional)</label>
-          <input
+          <label class="modal-label">Display text (optional)</label
+          ><input
             type="text"
             id="link-text-input"
             class="modal-input"
@@ -1870,126 +2102,228 @@
         </div>
         <div class="modal-actions">
           <button class="btn btn-ghost" onclick="closeModal('link-modal')">
-            Cancel
+            Cancel</button
+          ><button class="btn btn-primary" onclick="insertLink()">
+            Insert
           </button>
-          <button class="btn btn-primary" onclick="insertLink()">Insert</button>
         </div>
       </div>
     </div>
 
-    <!-- Toast -->
+    <!-- SUCCESS OVERLAY -->
+    <div class="success-overlay status-draft" id="success-overlay">
+      <svg
+        width="64"
+        height="64"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="9 12 11 14 15 10" />
+      </svg>
+      <h2 id="success-title">Draft Saved!</h2>
+      <p id="success-message">Your story has been saved.</p>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script src="/js/auth.js"></script>
     <script>
-      /* ═══ Utilities ══════════════════════════════════════ */
+      // Auth check
+      if (!isAuthenticated()) {
+        window.location.href =
+          "/login?redirect=" + encodeURIComponent(window.location.pathname);
+      }
+      /* ═══════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════ */
       let tags = [];
       let savedSelection = null;
       let autosaveTimer = null;
+      let isDirty = false;
+      let currentVisibility = "public"; // 'public' | 'draft' | 'private'
 
-      // Check auth and load data on init
-      document.addEventListener("DOMContentLoaded", async () => {
-        if (typeof isAuthenticated !== "function") {
-          console.error("Auth functions not loaded");
-          return;
-        }
-        if (!isAuthenticated()) {
-          window.location.href =
-            "/login?redirect=" + encodeURIComponent(window.location.pathname);
-          return;
-        }
+      const VIS_CONFIG = {
+        public: {
+          label: "Public",
+          btnLabel: "Publish Public",
+          successTitle: "Story Published!",
+          successMsg: "Your story is now live for everyone.",
+          toastMsg: "Published publicly!",
+          icon: "🌐",
+        },
+        draft: {
+          label: "Draft",
+          btnLabel: "Save as Draft",
+          successTitle: "Draft Saved!",
+          successMsg: "Your draft has been saved.",
+          toastMsg: "Draft saved.",
+          icon: "✏️",
+        },
+        private: {
+          label: "Private",
+          btnLabel: "Save as Private",
+          successTitle: "Saved Privately!",
+          successMsg: "Only members can view this story.",
+          toastMsg: "Saved as private.",
+          icon: "🔒",
+        },
+      };
 
-        // Update user avatar
-        const user = getUser();
-        if (user) {
-          const avatarEl = document.getElementById("user-avatar");
-          if (avatarEl) {
-            if (user.avatar) {
-              avatarEl.style.backgroundImage = `url(${user.avatar})`;
-              avatarEl.style.backgroundSize = "cover";
-              avatarEl.textContent = "";
-            } else {
-              avatarEl.textContent = (user.displayName || user.username)
-                .substring(0, 2)
-                .toUpperCase();
-            }
-          }
-        }
-
+      /* ═══════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════ */
+      document.addEventListener("DOMContentLoaded", () => {
         // Load categories
-        await loadCategories();
+        loadCategories();
+
+        // Cover zone
+        const zone = document.getElementById("cover-zone");
+        zone.addEventListener("click", () =>
+          document.getElementById("cover-file").click(),
+        );
+        document
+          .getElementById("cover-change-btn")
+          .addEventListener("click", (e) => {
+            e.stopPropagation();
+            document.getElementById("cover-file").click();
+          });
+
+        document.querySelectorAll("textarea").forEach((el) => autoResize(el));
+
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById("schedule-date").value = tomorrow
+          .toISOString()
+          .split("T")[0];
+        document.getElementById("schedule-time").value = "09:00";
+
+        document.getElementById("title").addEventListener("input", () => {
+          isDirty = true;
+        });
+        document.getElementById("rte-body").addEventListener("input", () => {
+          isDirty = true;
+        });
+
+        selectVisibility("public");
       });
 
       async function loadCategories() {
+        const select = document.getElementById("categoryId");
         try {
           const data = await apiRequest("/categories");
           if (data.success) {
-            const select = document.getElementById("categoryId");
-            if (select) {
-              const first = select.firstElementChild;
-              select.innerHTML = "";
-              if (first) select.appendChild(first);
-
-              data.categories.forEach((cat) => {
-                const opt = document.createElement("option");
-                opt.value = cat._id;
-                opt.textContent = cat.name;
-                select.appendChild(opt);
-              });
-            }
+            let options = '<option value="">Select category…</option>';
+            data.categories.forEach((cat) => {
+              options += `<option value="${cat._id}">${cat.name}</option>`;
+            });
+            select.innerHTML = options;
           }
         } catch (err) {
-          console.error("Failed to load categories", err);
-          showToast("Failed to load categories", "error");
+          console.error("Failed to load categories:", err);
         }
       }
 
+      /* ═══════════════════════════════════════
+       VISIBILITY
+    ═══════════════════════════════════════ */
+      function selectVisibility(vis) {
+        currentVisibility = vis;
+
+        // Update selector UI
+        ["public", "draft", "private"].forEach((v) => {
+          const el = document.getElementById("vis-" + v);
+          el.className = "vis-option" + (v === vis ? " selected-" + v : "");
+        });
+
+        // Update header badge
+        const badge = document.getElementById("header-vis-badge");
+        badge.className = "visibility-badge " + vis;
+        document.getElementById("header-vis-label").textContent =
+          VIS_CONFIG[vis].label;
+
+        // Update main publish button
+        const btn = document.getElementById("sidebar-publish-btn");
+        btn.className = "publish-btn-main status-" + vis;
+        document.getElementById("publish-btn-label").textContent =
+          VIS_CONFIG[vis].btnLabel;
+
+        // Show schedule row only for public
+        const scheduleRow = document.getElementById("schedule-row");
+        scheduleRow.style.display = vis === "public" ? "block" : "none";
+
+        // Update success overlay color
+        const overlay = document.getElementById("success-overlay");
+        overlay.className = "success-overlay status-" + vis;
+      }
+
+      function scrollToVisibility() {
+        document
+          .getElementById("visibility-section")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      /* ═══════════════════════════════════════
+       UTILITIES
+    ═══════════════════════════════════════ */
       function showToast(msg, type = "") {
         const t = document.getElementById("toast");
         t.textContent = msg;
         t.className = "toast show " + type;
-        setTimeout(() => (t.className = "toast"), 3000);
+        setTimeout(() => {
+          t.className = "toast";
+        }, 3200);
       }
 
       function setSaveStatus(txt, cls = "") {
         const s = document.getElementById("save-status");
+        if (!s) return;
         s.textContent = txt;
         s.className = "save-status " + cls;
       }
 
-      /* ═══ Auto-resize textareas ══ */
       function autoResize(el) {
         el.style.height = "auto";
         el.style.height = el.scrollHeight + "px";
       }
-      document.querySelectorAll("textarea").forEach((el) => {
-        autoResize(el);
-        el.addEventListener("input", () => autoResize(el));
-      });
 
-      /* ═══ Cover preview ══ */
+      function confirmLeave(e) {
+        if (
+          isDirty &&
+          !confirm("You have unsaved changes. Leave without saving?")
+        ) {
+          e.preventDefault();
+        } else {
+          window.history.back();
+        }
+      }
+
+      /* ═══════════════════════════════════════
+       COVER
+    ═══════════════════════════════════════ */
       function previewCover(input) {
         if (!input.files || !input.files[0]) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-          const preview = document.getElementById("image-preview");
-          const zone = document.getElementById("cover-zone");
-          preview.src = e.target.result;
-          preview.style.display = "block";
-          zone.classList.add("has-image");
+          document.getElementById("image-preview").src = e.target.result;
+          document.getElementById("image-preview").style.display = "block";
+          document.getElementById("cover-zone").classList.add("has-image");
         };
         reader.readAsDataURL(input.files[0]);
       }
 
-      /* ═══ Title ══ */
+      /* ═══════════════════════════════════════
+       TITLE / SLUG / EXCERPT
+    ═══════════════════════════════════════ */
       function onTitleInput(el) {
         autoResize(el);
         const len = el.value.length;
         const counter = document.getElementById("title-count");
         counter.textContent = len + " / 120";
         counter.className =
-          "char-count" + (len > 100 ? (len > 115 ? " over" : " warn") : "");
-        // Auto-generate slug
+          "char-count" + (len > 115 ? " over" : len > 100 ? " warn" : "");
         const slug = el.value
           .toLowerCase()
           .replace(/[^a-z0-9\s-]/g, "")
@@ -1997,30 +2331,32 @@
           .replace(/\s+/g, "-");
         document.getElementById("slug").value = slug;
         document.getElementById("slug-preview").textContent = slug || "…";
+        isDirty = true;
         triggerAutosave();
       }
 
-      /* ═══ Slug ══ */
       function slugify(el) {
         const clean = el.value
           .toLowerCase()
           .replace(/[^a-z0-9-]/g, "-")
-          .replace(/-+/g, "-");
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
         el.value = clean;
         document.getElementById("slug-preview").textContent = clean || "…";
       }
 
-      /* ═══ Excerpt ══ */
       function onExcerptInput(el) {
         const len = el.value.length;
         const counter = document.getElementById("excerpt-count");
         counter.textContent = len + " / 160";
         counter.className =
-          "char-count" + (len > 140 ? (len > 155 ? " over" : " warn") : "");
+          "char-count" + (len > 155 ? " over" : len > 140 ? " warn" : "");
         triggerAutosave();
       }
 
-      /* ═══ RTE commands ══ */
+      /* ═══════════════════════════════════════
+       RTE
+    ═══════════════════════════════════════ */
       function execCmd(cmd, val = null) {
         document.getElementById("rte-body").focus();
         document.execCommand(cmd, false, val);
@@ -2028,30 +2364,34 @@
         onRteInput();
       }
 
-      function formatBlock(tag) {
-        if (!tag) return;
+      function applyFormatBlock(select) {
+        const val = select.value;
+        if (!val) return;
         document.getElementById("rte-body").focus();
-        document.execCommand("formatBlock", false, tag);
+        document.execCommand("formatBlock", false, val);
+        setTimeout(() => {
+          select.value = "p";
+        }, 0);
         onRteInput();
       }
 
       function insertCode() {
         const sel = window.getSelection();
         const text = sel && sel.toString() ? sel.toString() : "code";
+        document.getElementById("rte-body").focus();
         document.execCommand("insertHTML", false, `<code>${text}</code>`);
         onRteInput();
       }
 
       function updateToolbarState() {
-        const cmds = [
+        [
           "bold",
           "italic",
           "underline",
           "strikeThrough",
           "insertUnorderedList",
           "insertOrderedList",
-        ];
-        cmds.forEach((cmd) => {
+        ].forEach((cmd) => {
           const btn = document.querySelector(`[data-cmd="${cmd}"]`);
           if (btn)
             btn.classList.toggle("active", document.queryCommandState(cmd));
@@ -2063,7 +2403,7 @@
         const text = el.innerText || "";
         const words = text.trim().split(/\s+/).filter(Boolean);
         const wc = words.length;
-        const cc = text.length;
+        const cc = text.replace(/\s/g, "").length;
         const readMin = Math.max(1, Math.round(wc / 200));
         const paraCount = el.querySelectorAll(
           "p,h1,h2,h3,blockquote,li",
@@ -2077,22 +2417,33 @@
         document.getElementById("stat-read").textContent = readMin;
         document.getElementById("stat-para").textContent = paraCount;
 
-        // Readability score (simple Flesch approximation)
-        const score = Math.min(100, Math.round((wc / Math.max(1, cc)) * 1500));
+        const sentences = text
+          .split(/[.!?]+/)
+          .filter((s) => s.trim().length > 0).length;
+        const avgWords = sentences > 0 ? wc / sentences : wc;
+        const score = Math.min(
+          100,
+          Math.max(0, Math.round(100 - (avgWords - 10) * 3)),
+        );
         document.getElementById("readability-fill").style.width = score + "%";
         document.getElementById("readability-label").textContent =
-          score < 30
-            ? "Needs work"
-            : score < 60
-              ? "Fair"
-              : score < 80
-                ? "Good"
-                : "Excellent";
+          wc < 10
+            ? "Start writing to see score"
+            : score < 30
+              ? "Needs work — try shorter sentences"
+              : score < 60
+                ? "Fair"
+                : score < 80
+                  ? "Good"
+                  : "Excellent";
 
+        isDirty = true;
         triggerAutosave();
       }
 
-      /* ═══ Tags ══ */
+      /* ═══════════════════════════════════════
+       TAGS
+    ═══════════════════════════════════════ */
       function handleTag(e) {
         const input = document.getElementById("tags-input");
         if (e.key === "Enter" || e.key === ",") {
@@ -2105,6 +2456,7 @@
       }
 
       function addTag(val) {
+        val = val.toLowerCase().trim();
         if (!val || tags.includes(val) || tags.length >= 5) return;
         tags.push(val);
         renderTags();
@@ -2125,6 +2477,12 @@
           chip.innerHTML = `${t}<button onclick="removeTag(${i})" type="button">×</button>`;
           wrap.insertBefore(chip, input);
         });
+        input.placeholder =
+          tags.length >= 5
+            ? "Max tags reached"
+            : tags.length === 0
+              ? "Add tags…"
+              : "Add more…";
       }
 
       function tagInputHint(el) {
@@ -2134,27 +2492,22 @@
         }
       }
 
-      /* ═══ Schedule toggle ══ */
+      /* ═══════════════════════════════════════
+       SCHEDULE
+    ═══════════════════════════════════════ */
       function toggleSchedule(el) {
-        const row = document.getElementById("schedule-row");
-        row.classList.toggle("show", el.checked);
-        if (el.checked) {
-          const now = new Date();
-          now.setDate(now.getDate() + 1);
-          document.getElementById("schedule-date").value = now
-            .toISOString()
-            .split("T")[0];
-          document.getElementById("schedule-time").value = "09:00";
-        }
+        const fields = document.getElementById("schedule-fields");
+        fields.style.display = el.checked ? "flex" : "none";
       }
 
-      /* ═══ Modals ══ */
+      /* ═══════════════════════════════════════
+       MODALS
+    ═══════════════════════════════════════ */
       function openImageModal() {
         saveSelection();
         document.getElementById("image-modal").classList.add("open");
         setTimeout(() => document.getElementById("img-url-input").focus(), 100);
       }
-
       function openLinkModal() {
         saveSelection();
         const sel = window.getSelection();
@@ -2166,24 +2519,20 @@
           100,
         );
       }
-
       function closeModal(id) {
         document.getElementById(id).classList.remove("open");
       }
-
       function saveSelection() {
         const sel = window.getSelection();
         if (sel && sel.rangeCount > 0)
           savedSelection = sel.getRangeAt(0).cloneRange();
       }
-
       function restoreSelection() {
         if (!savedSelection) return;
         const sel = window.getSelection();
         sel.removeAllRanges();
         sel.addRange(savedSelection);
       }
-
       function insertImage() {
         const url = document.getElementById("img-url-input").value.trim();
         const alt = document.getElementById("img-alt-input").value.trim();
@@ -2196,14 +2545,13 @@
         document.execCommand(
           "insertHTML",
           false,
-          `<img src="${url}" alt="${alt}" style="max-width:100%;border-radius:8px;margin:8px 0;">`,
+          `<img src="${url}" alt="${alt || "Image"}" style="max-width:100%;border-radius:8px;margin:8px 0;">`,
         );
         closeModal("image-modal");
         document.getElementById("img-url-input").value = "";
         document.getElementById("img-alt-input").value = "";
         onRteInput();
       }
-
       function insertLink() {
         const url = document.getElementById("link-url-input").value.trim();
         const txt = document.getElementById("link-text-input").value.trim();
@@ -2217,95 +2565,95 @@
           document.execCommand(
             "insertHTML",
             false,
-            `<a href="${url}" target="_blank">${txt}</a>`,
+            `<a href="${url}" target="_blank" rel="noopener">${txt}</a>`,
           );
         } else {
           document.execCommand("createLink", false, url);
-          const links = document
+          document
             .getElementById("rte-body")
-            .querySelectorAll("a:not([target])");
-          links.forEach((a) => a.setAttribute("target", "_blank"));
+            .querySelectorAll("a:not([target])")
+            .forEach((a) => {
+              a.setAttribute("target", "_blank");
+              a.setAttribute("rel", "noopener");
+            });
         }
         closeModal("link-modal");
         document.getElementById("link-url-input").value = "";
         document.getElementById("link-text-input").value = "";
         onRteInput();
       }
-
-      // Close modal on overlay click
       document.querySelectorAll(".modal-overlay").forEach((overlay) => {
         overlay.addEventListener("click", (e) => {
           if (e.target === overlay) overlay.classList.remove("open");
         });
       });
-
-      // Close modal on Escape
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape")
           document
             .querySelectorAll(".modal-overlay.open")
             .forEach((m) => m.classList.remove("open"));
+        if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+          e.preventDefault();
+          saveAs("draft");
+        }
       });
 
-      /* ═══ Validation ══ */
+      /* ═══════════════════════════════════════
+       VALIDATION
+    ═══════════════════════════════════════ */
       function validateField(el, errorId, msg) {
         const err = document.getElementById(errorId);
         const invalid = !el.value.trim();
         el.classList.toggle("error", invalid);
-        if (err) {
-          err.classList.toggle("show", invalid);
-        }
+        if (err) err.classList.toggle("show", invalid);
         return !invalid;
       }
 
-      function validateAll() {
+      function validateAll(isDraftSave = false) {
         const errors = [];
-
         const title = document.getElementById("title").value.trim();
-        if (title.length < 5) {
-          document.getElementById("title").classList.add("error");
-          document.getElementById("title-error").classList.add("show");
-          errors.push("Story title is required (min 5 characters)");
-        } else {
-          document.getElementById("title").classList.remove("error");
-          document.getElementById("title-error").classList.remove("show");
-        }
+        const titleValid = title.length >= 5;
+        document.getElementById("title").classList.toggle("error", !titleValid);
+        document
+          .getElementById("title-error")
+          .classList.toggle("show", !titleValid);
+        if (!titleValid) errors.push("Story title required (min 5 characters)");
 
-        const content = document.getElementById("rte-body").innerText.trim();
-        if (content.length < 50) {
-          document.getElementById("rte-body").classList.add("error");
-          errors.push("Story content is required (min 50 characters)");
-        } else {
-          document.getElementById("rte-body").classList.remove("error");
-        }
+        if (!isDraftSave) {
+          const content = document.getElementById("rte-body").innerText.trim();
+          const contentValid = content.length >= 50;
+          document
+            .getElementById("rte-body")
+            .classList.toggle("error", !contentValid);
+          if (!contentValid)
+            errors.push("Story content required (min 50 characters)");
 
-        const cat = document.getElementById("categoryId").value;
-        if (!cat) {
-          document.getElementById("categoryId").classList.add("error");
-          document.getElementById("category-error").classList.add("show");
-          errors.push("Please select a category");
-        } else {
-          document.getElementById("categoryId").classList.remove("error");
-          document.getElementById("category-error").classList.remove("show");
-        }
+          const cat = document.getElementById("categoryId").value;
+          document.getElementById("categoryId").classList.toggle("error", !cat);
+          document
+            .getElementById("category-error")
+            .classList.toggle("show", !cat);
+          if (!cat) errors.push("Please select a category");
 
-        if (tags.length === 0) {
-          document.getElementById("tags-wrap").classList.add("error");
-          document.getElementById("tags-error").classList.add("show");
-          errors.push("Add at least one tag");
-        } else {
-          document.getElementById("tags-wrap").classList.remove("error");
-          document.getElementById("tags-error").classList.remove("show");
-        }
+          const tagsValid = tags.length > 0;
+          document
+            .getElementById("tags-wrap")
+            .classList.toggle("error", !tagsValid);
+          document
+            .getElementById("tags-error")
+            .classList.toggle("show", !tagsValid);
+          if (!tagsValid) errors.push("Add at least one tag");
 
-        const excerpt = document.getElementById("excerpt").value.trim();
-        if (excerpt.length < 20) {
-          document.getElementById("excerpt").classList.add("error");
-          document.getElementById("excerpt-error").classList.add("show");
-          errors.push("SEO description required (min 20 characters)");
-        } else {
-          document.getElementById("excerpt").classList.remove("error");
-          document.getElementById("excerpt-error").classList.remove("show");
+          const excerpt = document.getElementById("excerpt").value.trim();
+          const excerptValid = excerpt.length >= 20;
+          document
+            .getElementById("excerpt")
+            .classList.toggle("error", !excerptValid);
+          document
+            .getElementById("excerpt-error")
+            .classList.toggle("show", !excerptValid);
+          if (!excerptValid)
+            errors.push("SEO description required (min 20 characters)");
         }
 
         const summary = document.getElementById("validation-summary");
@@ -2317,154 +2665,170 @@
         } else {
           summary.classList.remove("show");
         }
-
         return errors.length === 0;
       }
 
-      /* ═══ Publish ══ */
+      /* ═══════════════════════════════════════
+       COLLECT FORM DATA
+    ═══════════════════════════════════════ */
+      function collectFormData(status) {
+        const formData = new FormData();
+        formData.append(
+          "title",
+          document.getElementById("title").value.trim() || "Untitled",
+        );
+        formData.append(
+          "content",
+          document.getElementById("rte-body").innerHTML,
+        );
+        formData.append(
+          "excerpt",
+          document.getElementById("excerpt").value.trim(),
+        );
+        formData.append("slug", document.getElementById("slug").value.trim());
+        formData.append("status", status);
+        formData.append("visibility", status); // maps to DB column
+
+        const catId = document.getElementById("categoryId").value;
+        if (catId) formData.append("categoryId", catId);
+        tags.forEach((tag) => formData.append("tags", tag));
+        formData.append(
+          "allowComments",
+          document.getElementById("allow-comments").checked,
+        );
+        formData.append(
+          "featured",
+          document.getElementById("featured").checked,
+        );
+
+        const fileInput = document.getElementById("cover-file");
+        if (fileInput.files[0]) formData.append("image", fileInput.files[0]);
+
+        // Schedule (only relevant for public)
+        const schedToggle = document.getElementById("schedule-toggle");
+        if (schedToggle.checked && status === "public") {
+          const d = document.getElementById("schedule-date").value;
+          const t = document.getElementById("schedule-time").value;
+          if (d && t)
+            formData.append("scheduledAt", new Date(d + "T" + t).toISOString());
+        }
+
+        return formData;
+      }
+
+      /* ═══════════════════════════════════════
+       BUTTON STATE
+    ═══════════════════════════════════════ */
+      function setLoadingState(loading) {
+        const ids = [
+          "publish-btn",
+          "sidebar-publish-btn",
+          "btn-save-draft",
+          "btn-save-private",
+          "draft-btn-header",
+        ];
+        ids.forEach((id) => {
+          const b = document.getElementById(id);
+          if (b) b.disabled = loading;
+        });
+        if (loading) {
+          document.getElementById("publish-btn-label").textContent = "Saving…";
+          document
+            .querySelector(
+              "#sidebar-publish-btn .btn-spinner, #sidebar-publish-btn svg",
+            )
+            ?.remove?.();
+          document.getElementById("sidebar-publish-btn").prepend(
+            Object.assign(document.createElement("span"), {
+              className: "btn-spinner",
+            }),
+          );
+        } else {
+          selectVisibility(currentVisibility); // restores button labels
+        }
+      }
+
+      /* ═══════════════════════════════════════
+       SHOW SUCCESS
+    ═══════════════════════════════════════ */
+      function showSuccess(vis) {
+        const cfg = VIS_CONFIG[vis];
+        const overlay = document.getElementById("success-overlay");
+        document.getElementById("success-title").textContent = cfg.successTitle;
+        document.getElementById("success-message").textContent = cfg.successMsg;
+        overlay.className = "success-overlay status-" + vis + " show";
+        setTimeout(() => {
+          overlay.classList.remove("show");
+          setLoadingState(false);
+        }, 2500);
+      }
+
+      /* ═══════════════════════════════════════
+       MAIN PUBLISH (uses current visibility)
+    ═══════════════════════════════════════ */
       async function handlePublish() {
-        if (!validateAll()) {
-          showToast("Please fix the errors before publishing", "error");
+        const isDraftSave = currentVisibility === "draft";
+        if (!validateAll(isDraftSave)) {
+          showToast("Please fix the errors before saving", "error");
           return;
         }
-        const scheduled = document.getElementById("schedule-toggle").checked;
+        await saveAs(currentVisibility);
+      }
 
-        // Disable buttons
-        const pubBtn = document.getElementById("publish-btn");
-        const sidebarPubBtn = document.getElementById("sidebar-publish-btn");
-        if (pubBtn) pubBtn.disabled = true;
-        if (sidebarPubBtn) sidebarPubBtn.disabled = true;
-        setSaveStatus("Publishing…", "saving");
+      /* ═══════════════════════════════════════
+       SAVE AS (public | draft | private)
+    ═══════════════════════════════════════ */
+      async function saveAs(status) {
+        const isDraftSave = status === "draft";
+        if (!validateAll(isDraftSave)) {
+          showToast("Please fix the errors", "error");
+          return;
+        }
+
+        setLoadingState(true);
+        setSaveStatus("Saving…", "saving");
 
         try {
-          const formData = new FormData();
-          formData.append(
-            "title",
-            document.getElementById("title").value.trim(),
-          );
-          formData.append(
-            "content",
-            document.getElementById("rte-body").innerHTML,
-          );
-          formData.append(
-            "excerpt",
-            document.getElementById("excerpt").value.trim(),
-          );
-          const catId = document.getElementById("categoryId").value;
-          if (catId) formData.append("categoryId", catId);
-          formData.append("status", scheduled ? "draft" : "published");
+          const formData = collectFormData(status);
 
-          tags.forEach((tag) => formData.append("tags", tag));
-
-          const fileInput = document.getElementById("cover-file");
-          if (fileInput.files[0]) {
-            formData.append("image", fileInput.files[0]);
-          }
-
-          const res = await apiRequest("/posts", {
+          // ── Connect to your backend here ──
+          const data = await apiRequest("/posts", {
             method: "POST",
             body: formData,
           });
 
-          if (res.success) {
-            setSaveStatus("Published", "saved");
-            showToast("Story published successfully!", "success");
-            setTimeout(() => {
-              window.location.href = "/dashboard";
-            }, 1500);
-          } else {
-            throw new Error(res.message || "Failed to publish");
-          }
+          setSaveStatus("Saved", "saved");
+          isDirty = false;
+
+          showSuccess(status);
+          showToast(VIS_CONFIG[status].toastMsg, "success");
+
+          // Redirect after short delay
+          setTimeout(() => {
+            window.location.href = `/posts/${data.post._id}`;
+          }, 1500);
         } catch (err) {
-          console.error("Publish Error:", err);
-          if (err.errors && Array.isArray(err.errors)) {
-            const msg = err.errors.map((e) => `${e.path}: ${e.msg}`).join("\n");
-            console.error("Validation Errors:", msg);
-            showToast("Validation failed: " + err.errors[0].msg, "error");
-          } else {
-            showToast(err.message || "Error publishing story", "error");
-          }
-          setSaveStatus("Error", "saving");
-          if (pubBtn) pubBtn.disabled = false;
-          if (sidebarPubBtn) sidebarPubBtn.disabled = false;
+          console.error("Save error:", err);
+          showToast(err.message || "Save failed", "error");
+          setSaveStatus("Error", "error");
+          setLoadingState(false);
         }
       }
 
-      /* ═══ Autosave ══ */
+      /* ═══════════════════════════════════════
+       AUTOSAVE
+    ═══════════════════════════════════════ */
       function triggerAutosave() {
         setSaveStatus("Saving…", "saving");
         clearTimeout(autosaveTimer);
         autosaveTimer = setTimeout(() => {
           setSaveStatus("Saved", "saved");
-          setTimeout(() => setSaveStatus("Draft"), 2000);
-        }, 1200);
-      }
-
-      async function saveDraft() {
-        setSaveStatus("Saving…", "saving");
-
-        try {
-          const formData = new FormData();
-          // Allow empty title for draft if needed, but let's default
-          const title = document.getElementById("title").value.trim();
-          formData.append("title", title || "Untitled Draft");
-          formData.append(
-            "content",
-            document.getElementById("rte-body").innerHTML,
+          setTimeout(
+            () => setSaveStatus(VIS_CONFIG[currentVisibility].label),
+            2500,
           );
-
-          const excerpt = document.getElementById("excerpt").value.trim();
-          if (excerpt) formData.append("excerpt", excerpt);
-
-          const catId = document.getElementById("categoryId").value;
-          if (catId) formData.append("categoryId", catId);
-
-          formData.append("status", "draft");
-
-          tags.forEach((tag) => formData.append("tags", tag));
-
-          const fileInput = document.getElementById("cover-file");
-          if (fileInput.files[0]) {
-            formData.append("image", fileInput.files[0]);
-          }
-
-          const res = await apiRequest("/posts", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (res.success) {
-            setSaveStatus("Saved", "saved");
-            showToast("Draft saved successfully", "success");
-            setTimeout(() => {
-              // Redirect to edit page so future saves are updates
-              if (res.post && res.post._id) {
-                window.location.href = `/posts/${res.post._id}/edit`;
-              }
-            }, 1000);
-          } else {
-            throw new Error(res.message);
-          }
-        } catch (err) {
-          console.error("Save Draft Error:", err);
-          if (err.errors && Array.isArray(err.errors)) {
-            const msg = err.errors.map((e) => `${e.path}: ${e.msg}`).join("\n");
-            console.error("Validation Errors:", msg);
-            showToast("Validation failed: " + err.errors[0].msg, "error");
-          } else {
-            showToast("Failed to save draft: " + err.message, "error");
-          }
-          setSaveStatus("Error", "saving");
-        }
+        }, 1500);
       }
-
-      // Ctrl+S shortcut
-      document.addEventListener("keydown", (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-          e.preventDefault();
-          saveDraft();
-        }
-      });
     </script>
   </body>
 </html>

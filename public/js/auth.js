@@ -58,6 +58,35 @@ const apiRequest = async (endpoint, options = {}) => {
     }
 
     if (!response.ok) {
+      if (response.status === 401) {
+        // Clear stale session
+        const wasAuthenticated = !!getToken();
+        removeToken();
+        removeUser();
+
+        // If this wasn't a login attempt, decide whether to redirect or reload
+        if (!endpoint.includes("/auth/login") && wasAuthenticated) {
+          const protectedPaths = [
+            "/dashboard",
+            "/profile",
+            "/posts/create",
+            "/posts/edit",
+          ];
+          const isProtected = protectedPaths.some((p) =>
+            location.pathname.startsWith(p),
+          );
+
+          if (isProtected) {
+            window.location.href = "/login";
+            return; // Stop execution
+          } else {
+            // Public page: reload once to clear UI state (now that token is gone)
+            location.reload();
+            return; // Stop execution
+          }
+        }
+      }
+
       const error = new Error(
         data.message || `Request failed with status ${response.status}`,
       );
