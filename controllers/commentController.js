@@ -1,5 +1,6 @@
 const Comment = require("../models/Comment");
 const Post = require("../models/Post");
+const mongoose = require("mongoose");
 
 // Get all comments for a post
 const getCommentsByPost = async (req, res) => {
@@ -21,6 +22,22 @@ const getCommentsByPost = async (req, res) => {
       { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: limit },
+      // Lookup author details (avatar)
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "author",
+        },
+      },
+      { $unwind: { path: "$author", preserveNullAndEmptyArrays: true } },
+      {
+        $addFields: {
+          userAvatar: "$author.avatar",
+        },
+      },
+      { $project: { author: 0 } },
     ];
 
     // If user is logged in, check if they liked the comment
@@ -63,6 +80,12 @@ const getCommentsByPost = async (req, res) => {
       isDeleted: false,
     });
 
+    // Calculate total including replies (Facebook-style count)
+    const repliesCount = await mongoose.model("Reply").countDocuments({
+      postId,
+      isDeleted: false,
+    });
+
     res.json({
       success: true,
       comments,
@@ -70,6 +93,7 @@ const getCommentsByPost = async (req, res) => {
         page,
         limit,
         total,
+        totalWithReplies: total + repliesCount,
         pages: Math.ceil(total / limit),
       },
     });
@@ -90,16 +114,34 @@ const createComment = async (req, res) => {
     const { content } = req.body;
 
     // Check if post exists
-    const post = await Post.findOne({
-      _id: postId,
-      status: "published",
-      isDeleted: false,
-    });
+    const post = await Post.findById(postId);
 
-    if (!post) {
+    if (!post || post.isDeleted) {
       return res.status(404).json({
         success: false,
-        message: "Post not found or not available for comments",
+        message: "Post not found",
+      });
+    }
+
+    // Access Control for comments
+    const user = req.user;
+    const isAuthor = user && post.userId.toString() === user._id.toString();
+    const isAdmin = user && user.role === "admin";
+    const isMember = user && (user.role === "member" || isAdmin || isAuthor);
+
+    // If it's a draft, only author and admin can comment
+    if (post.visibility === "draft" && !isAuthor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "You cannot comment on this draft.",
+      });
+    }
+
+    // If it's private, only members (and author/admin) can comment
+    if (post.visibility === "private" && !isMember) {
+      return res.status(403).json({
+        success: false,
+        message: "This is a members-only story. Please join to comment.",
       });
     }
 

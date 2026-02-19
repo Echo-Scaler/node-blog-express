@@ -1,5 +1,6 @@
 const Reply = require("../models/Reply");
 const Comment = require("../models/Comment");
+const Post = require("../models/Post");
 
 const mongoose = require("mongoose");
 
@@ -123,6 +124,44 @@ const createReply = async (req, res) => {
       });
     }
 
+    // Check if post exists and is accessible
+    const post = await Post.findById(comment.postId);
+
+    if (!post || post.isDeleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    // Access Control for replies
+    const user = req.user;
+    const isAuthor = user && post.userId.toString() === user._id.toString();
+    const isAdmin = user && user.role === "admin";
+    const isMember = user && (user.role === "member" || isAdmin || isAuthor);
+
+    if (post.visibility === "draft" && !isAuthor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "You cannot reply on this draft.",
+      });
+    }
+
+    if (post.visibility === "private" && !isMember) {
+      return res.status(403).json({
+        success: false,
+        message: "This is a members-only story. Please join to reply.",
+      });
+    }
+
+    // Check if comments/replies are allowed
+    if (post.allowComments === false) {
+      return res.status(403).json({
+        success: false,
+        message: "Comments are disabled for this story",
+      });
+    }
+
     const reply = new Reply({
       commentId,
       postId: comment.postId,
@@ -138,8 +177,6 @@ const createReply = async (req, res) => {
     await comment.save();
 
     // Increment comment count on post
-    const Post = require("../models/Post");
-    const post = await Post.findById(comment.postId);
     if (post) {
       post.commentCount += 1;
       await post.save();
@@ -240,7 +277,6 @@ const deleteReply = async (req, res) => {
     }
 
     // Decrement comment count on post
-    const Post = require("../models/Post");
     const post = await Post.findById(reply.postId);
     if (post) {
       post.commentCount = Math.max(0, post.commentCount - 1);

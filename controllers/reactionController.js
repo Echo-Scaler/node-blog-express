@@ -14,13 +14,36 @@ const addReaction = async (req, res) => {
 
     switch (targetType) {
       case "post":
-        target = await Post.findOne({ _id: targetId, isDeleted: false });
-        if (!target) {
+        target = await Post.findById(targetId);
+        if (!target || target.isDeleted) {
           return res.status(404).json({
             success: false,
             message: "Post not found",
           });
         }
+
+        // Access Control for reactions
+        const user = req.user;
+        const isAuthor =
+          user && target.userId.toString() === user._id.toString();
+        const isAdmin = user && user.role === "admin";
+        const isMember =
+          user && (user.role === "member" || isAdmin || isAuthor);
+
+        if (target.visibility === "draft" && !isAuthor && !isAdmin) {
+          return res.status(403).json({
+            success: false,
+            message: "You cannot react to this draft.",
+          });
+        }
+
+        if (target.visibility === "private" && !isMember) {
+          return res.status(403).json({
+            success: false,
+            message: "This is a members-only story. Please join to react.",
+          });
+        }
+
         targetOwnerId = target.userId;
         break;
 
