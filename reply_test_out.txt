@@ -1,0 +1,55 @@
+  console.error
+    Create reply error: TypeError: Cannot read properties of undefined (reading 'toString')
+        at toString (C:\Users\outward_tech01\OneDrive\Desktop\node-simple-blog\controllers\replyController.js:139:66)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at Object.<anonymous> (C:\Users\outward_tech01\OneDrive\Desktop\node-simple-blog\tests\unit\replyController.test.js:59:7)
+
+    [0m [90m 189 |[39m     })[33m;[39m
+     [90m 190 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 191 |[39m     console[33m.[39merror([32m"Create reply error:"[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 192 |[39m     res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 193 |[39m       success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 194 |[39m       message[33m:[39m [32m"Error creating reply"[39m[33m,[39m[0m
+
+      at error (controllers/replyController.js:191:13)
+      at Object.<anonymous> (tests/unit/replyController.test.js:59:7)
+
+FAIL tests/unit/replyController.test.js (22.441 s)
+  Reply Controller
+    createReply
+      × should create a reply and return 201 (157 ms)
+      √ should return 404 if comment not found (4 ms)
+      √ should return 500 on server error (2 ms)
+    updateReply
+      √ should update a reply successfully (3 ms)
+      √ should return 404 if reply not found (3 ms)
+      √ should return 403 if user cannot edit reply (2 ms)
+    deleteReply
+      √ should soft delete a reply and decrement counts (4 ms)
+      √ should return 404 if reply not found (2 ms)
+      √ should return 403 if user lacks permission to delete (3 ms)
+      √ should handle replyCount not going below 0 (3 ms)
+
+  ● Reply Controller › createReply › should create a reply and return 201
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 500
+
+      59 |       await createReply(req, res);
+      60 |
+    > 61 |       expect(res.statusCode).toBe(201);
+         |                              ^
+      62 |       const data = res._getJSONData();
+      63 |       expect(data.success).toBe(true);
+      64 |       expect(mockComment.replyCount).toBe(3);
+
+      at Object.toBe (tests/unit/replyController.test.js:61:30)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 9 passed, 10 total
+Snapshots:   0 total
+Time:        23.96 s
+Ran all test suites matching tests/unit/replyController.test.js.

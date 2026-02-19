@@ -490,9 +490,12 @@ exports.getUserPosts = async (req, res) => {
 
     res.json({
       success: true,
-      count: posts.length,
-      total,
-      pages: Math.ceil(total / limit),
+      pagination: {
+        total,
+        pages: Math.ceil(total / limit),
+        page: parseInt(page),
+        limit: parseInt(limit),
+      },
       posts: posts.map((p) => ({
         ...p.toObject(),
         // Ensure frontend compatibility (dashboard expects status, model has visibility)

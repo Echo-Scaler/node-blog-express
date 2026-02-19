@@ -9,7 +9,11 @@ const {
   addReaction,
   removeReaction,
   getReactions,
+  getMyInteractions,
 } = require("../controllers/reactionController");
+
+// Get recent interactions on current user's posts
+router.get("/my-interactions", authenticate, getMyInteractions);
 
 // Get reactions for a target (public)
 router.get("/:targetType/:targetId", getReactions);

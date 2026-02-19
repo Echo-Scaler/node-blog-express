@@ -26,7 +26,7 @@ describe("Reply Controller", () => {
       req.params = { commentId: "comment123" };
       req.body = { content: "Nice comment!" };
       req.userId = "user123";
-      req.user = { username: "testuser" };
+      req.user = { _id: "user123", username: "testuser" };
 
       const mockComment = {
         _id: "comment123",
@@ -48,6 +48,9 @@ describe("Reply Controller", () => {
       const Post = require("../../models/Post");
       const mockPost = {
         _id: "post123",
+        userId: "user456",
+        visibility: "public",
+        allowComments: true,
         commentCount: 10,
         save: jest.fn().mockResolvedValue(true),
       };
@@ -217,6 +220,7 @@ describe("Reply Controller", () => {
 
       const Post = require("../../models/Post");
       const mockPost = {
+        _id: "post123",
         commentCount: 0,
         save: jest.fn().mockResolvedValue(true),
       };

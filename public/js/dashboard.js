@@ -90,6 +90,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             ? post.categoryId.name
             : "Uncategorized";
 
+          let statusIcon = "";
+          if (postStatus === "published") {
+            statusIcon =
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>';
+          } else if (postStatus === "hidden") {
+            statusIcon =
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+          } else {
+            statusIcon =
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
+          }
+
           html += `
         <tr>
           <td>
@@ -100,7 +112,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             <span style="font-size: 13px; color: var(--text-secondary);">${categoryName}</span>
           </td>
           <td>
-            <span class="badge ${statusBadgeClass}">${postStatus.toUpperCase()}</span>
+            <span class="badge ${statusBadgeClass}">
+              ${statusIcon}
+              ${postStatus.toUpperCase()}
+            </span>
           </td>
           <td>
             <div style="font-weight: 600;">${post.viewCount}</div>
@@ -247,6 +262,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
         });
     }
+
+    // Call it on load
   } catch (err) {
     console.error("Dashboard initialization error:", err);
     alert("Dashboard Error: " + err.message);

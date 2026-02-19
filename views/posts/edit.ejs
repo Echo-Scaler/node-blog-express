@@ -699,6 +699,74 @@
       .sidebar-section:nth-child(5) {
         animation-delay: 0.2s;
       }
+      /* ── VISIBILITY SELECTOR ── */
+      .visibility-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+      }
+      .vis-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 8px;
+        border-radius: var(--radius);
+        border: 2px solid var(--border);
+        background: var(--bg);
+        cursor: pointer;
+        transition: all 0.15s;
+        text-align: center;
+      }
+      .vis-option:hover {
+        border-color: var(--border2);
+        background: var(--surface);
+      }
+      .vis-option.selected-public {
+        border-color: #10b981;
+        background: #ecfdf5;
+      }
+      .vis-option.selected-draft {
+        border-color: #d97706;
+        background: #fffbeb;
+      }
+      .vis-option.selected-private {
+        border-color: #64748b;
+        background: #f1f5f9;
+      }
+      .vis-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .vis-icon.public {
+        background: #dcfce7;
+        color: #10b981;
+      }
+      .vis-icon.draft {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .vis-icon.private {
+        background: #f1f5f9;
+        color: #64748b;
+      }
+      .vis-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .vis-desc {
+        font-size: 9px;
+        color: var(--text-3);
+        line-height: 1.2;
+      }
+
       .section-heading {
         font-size: 11px;
         font-weight: 600;
@@ -1124,6 +1192,14 @@
         <span class="site-name">Byte &amp; Beyond</span>
         <!-- FIX: Added id="save-status" so JS can actually find it; fixed SVG viewBox -->
         <span class="save-status" id="save-status">Draft</span>
+        <span
+          class="visibility-badge draft"
+          id="header-vis-badge"
+          onclick="scrollToVisibility()"
+        >
+          <span class="vis-dot"></span>
+          <span id="header-vis-label">Draft</span>
+        </span>
         <span class="save-mode-badge">
           <svg
             width="11"
@@ -1150,10 +1226,21 @@
         <div class="avatar" id="user-avatar">J</div>
         <button
           class="btn btn-primary"
-          id="publish-btn"
+          id="sidebar-publish-btn"
           onclick="handlePublish()"
         >
-          Publish Story
+          <svg
+            width="15"
+            height="15"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M22 2L11 13" />
+            <path d="M22 2L15 22 11 13 2 9l20-7z" />
+          </svg>
+          <span id="publish-btn-label">Publish Story</span>
         </button>
       </div>
     </header>
@@ -1699,38 +1786,75 @@
             </svg>
             Visibility &amp; Options
           </div>
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <span class="toggle-name">Allow comments</span
-              ><span class="toggle-desc">Readers can leave comments</span>
+          <div class="visibility-selector">
+            <div
+              class="vis-option"
+              id="vis-draft"
+              onclick="selectVisibility('draft')"
+            >
+              <div class="vis-icon draft">
+                <svg
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                  />
+                </svg>
+              </div>
+              <div class="vis-label">Draft</div>
+              <div class="vis-desc">Only you</div>
             </div>
-            <label class="toggle-switch"
-              ><input type="checkbox" id="allow-comments" checked /><span
-                class="toggle-slider"
-              ></span
-            ></label>
-          </div>
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <span class="toggle-name">Featured story</span
-              ><span class="toggle-desc">Pin to top of feed</span>
+            <div
+              class="vis-option"
+              id="vis-public"
+              onclick="selectVisibility('public')"
+            >
+              <div class="vis-icon public">
+                <svg
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+                </svg>
+              </div>
+              <div class="vis-label">Public</div>
+              <div class="vis-desc">Everyone</div>
             </div>
-            <label class="toggle-switch"
-              ><input type="checkbox" id="featured" /><span
-                class="toggle-slider"
-              ></span
-            ></label>
-          </div>
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <span class="toggle-name">Members only</span
-              ><span class="toggle-desc">Restrict to subscribers</span>
+            <div
+              class="vis-option"
+              id="vis-private"
+              onclick="selectVisibility('private')"
+            >
+              <div class="vis-icon private">
+                <svg
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0110 0v4" />
+                </svg>
+              </div>
+              <div class="vis-label">Private</div>
+              <div class="vis-desc">Subscribers</div>
             </div>
-            <label class="toggle-switch"
-              ><input type="checkbox" id="members-only" /><span
-                class="toggle-slider"
-              ></span
-            ></label>
           </div>
           <div class="toggle-row">
             <div class="toggle-info">
@@ -1771,7 +1895,7 @@
           <div class="publish-actions">
             <button
               class="publish-btn-main"
-              id="sidebar-publish-btn"
+              id="sidebar-publish-btn-main"
               onclick="handlePublish()"
             >
               <svg
@@ -1785,7 +1909,7 @@
                 <path d="M22 2L11 13" />
                 <path d="M22 2L15 22 11 13 2 9l20-7z" />
               </svg>
-              Publish Story
+              <span id="publish-btn-label-main">Publish Story</span>
             </button>
             <button
               class="draft-btn"
@@ -2007,6 +2131,73 @@
           console.error("Failed to load categories:", err);
           showToast("Failed to load categories", "error");
         }
+      }
+
+      const VIS_CONFIG = {
+        public: {
+          label: "Public",
+          btnLabel: "Publish Public",
+          successTitle: "Story Published!",
+          successMsg: "Your story is now live for everyone.",
+          toastMsg: "Published publicly!",
+          icon: "🌐",
+        },
+        draft: {
+          label: "Draft",
+          btnLabel: "Save as Draft",
+          successTitle: "Draft Saved!",
+          successMsg: "Your draft has been saved.",
+          toastMsg: "Draft saved.",
+          icon: "✏️",
+        },
+        private: {
+          label: "Private",
+          btnLabel: "Save as Private",
+          successTitle: "Saved Privately!",
+          successMsg: "Only members can view this story.",
+          toastMsg: "Saved as private.",
+          icon: "🔒",
+        },
+      };
+
+      let currentVisibility = "public";
+
+      function selectVisibility(vis) {
+        currentVisibility = vis;
+
+        // Update selector UI
+        ["public", "draft", "private"].forEach((v) => {
+          const el = document.getElementById("vis-" + v);
+          if (el) {
+            el.className = "vis-option" + (v === vis ? " selected-" + v : "");
+          }
+        });
+
+        // Update header badge
+        const badge = document.getElementById("header-vis-badge");
+        if (badge) {
+          badge.className = "visibility-badge " + vis;
+          document.getElementById("header-vis-label").textContent =
+            VIS_CONFIG[vis].label;
+        }
+
+        // Update main publish buttons
+        const labels = ["publish-btn-label", "publish-btn-label-main"];
+        labels.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = VIS_CONFIG[vis].btnLabel;
+        });
+
+        // Show schedule row only for public
+        const scheduleRow = document.getElementById("schedule-row");
+        if (scheduleRow) {
+          scheduleRow.style.display = vis === "public" ? "block" : "none";
+        }
+      }
+
+      function scrollToVisibility() {
+        const el = document.querySelector(".visibility-selector");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       }
 
       /* ═══════════════════════════════════════════
@@ -2522,15 +2713,7 @@
         );
         formData.append("slug", document.getElementById("slug").value.trim());
         // Determine visibility
-        const isMembersOnly = document.getElementById("members-only").checked;
-        let visibility = "draft";
-
-        if (status === "published" || status === "public") {
-          // Handle both terminologies if any
-          visibility = isMembersOnly ? "private" : "public";
-        } else {
-          visibility = "draft";
-        }
+        let visibility = currentVisibility || "draft";
 
         formData.append("visibility", visibility);
         // We can still send status for backward compatibility if needed, but visibility is the source of truth now
@@ -2627,8 +2810,12 @@
           document.getElementById("featured").checked = !!post.featured;
           document.getElementById("allow-comments").checked =
             post.allowComments !== false;
-          document.getElementById("members-only").checked =
-            post.visibility === "private";
+
+          if (post.visibility) {
+            selectVisibility(post.visibility);
+          } else {
+            selectVisibility("draft");
+          }
 
           if (post.scheduledAt) {
             const d = new Date(post.scheduledAt);

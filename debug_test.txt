@@ -1,0 +1,55 @@
+  console.error
+    Create comment error [DEBUG]: TypeError: Cannot read properties of undefined (reading 'toString')
+        at toString (C:\Users\outward_tech01\OneDrive\Desktop\node-simple-blog\controllers\commentController.js:128:66)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at Object.<anonymous> (C:\Users\outward_tech01\OneDrive\Desktop\node-simple-blog\tests\unit\commentController.test.js:49:7)
+
+    [0m [90m 173 |[39m     })[33m;[39m
+     [90m 174 |[39m   } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 175 |[39m     console[33m.[39merror([32m"Create comment error [DEBUG]:"[39m[33m,[39m error)[33m;[39m
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 176 |[39m     res[33m.[39mstatus([35m500[39m)[33m.[39mjson({
+     [90m 177 |[39m       success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 178 |[39m       message[33m:[39m [32m"Error creating comment"[39m[33m,[39m[0m
+
+      at error (controllers/commentController.js:175:13)
+      at Object.<anonymous> (tests/unit/commentController.test.js:49:7)
+
+FAIL tests/unit/commentController.test.js
+  Comment Controller
+    createComment
+      × should create a comment and return 201 (83 ms)
+      √ should return 404 if post not found (3 ms)
+      √ should return 500 on server error (3 ms)
+    updateComment
+      √ should update a comment successfully (2 ms)
+      √ should return 404 if comment not found (1 ms)
+      √ should return 403 if user does not own the comment (1 ms)
+    deleteComment
+      √ should soft delete a comment and decrement post count (6 ms)
+      √ should return 404 if comment not found (1 ms)
+      √ should return 403 if user lacks permission (3 ms)
+      √ should handle commentCount not going below 0 (1 ms)
+
+  ● Comment Controller › createComment › should create a comment and return 201
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 500
+
+      49 |       await createComment(req, res);
+      50 |
+    > 51 |       expect(res.statusCode).toBe(201);
+         |                              ^
+      52 |       const data = res._getJSONData();
+      53 |       expect(data.success).toBe(true);
+      54 |       expect(data.comment.content).toBe("Great post!");
+
+      at Object.toBe (tests/unit/commentController.test.js:51:30)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 9 passed, 10 total
+Snapshots:   0 total
+Time:        2.96 s
+Ran all test suites matching tests/unit/commentController.test.js.

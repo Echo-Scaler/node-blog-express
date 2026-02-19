@@ -1,0 +1,55 @@
+FAIL tests/unit/commentController.test.js
+  Comment Controller
+    createComment
+      × should create a comment and return 201 (17 ms)
+      √ should return 404 if post not found (8 ms)
+      × should return 500 on server error (5 ms)
+    updateComment
+      √ should update a comment successfully (2 ms)
+      √ should return 404 if comment not found (1 ms)
+      √ should return 403 if user does not own the comment (8 ms)
+    deleteComment
+      √ should soft delete a comment and decrement post count (4 ms)
+      √ should return 404 if comment not found (2 ms)
+      √ should return 403 if user lacks permission (3 ms)
+      √ should handle commentCount not going below 0 (2 ms)
+
+  ● Comment Controller › createComment › should create a comment and return 201
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 404
+
+      46 |       await createComment(req, res);
+      47 |
+    > 48 |       expect(res.statusCode).toBe(201);
+         |                              ^
+      49 |       const data = res._getJSONData();
+      50 |       expect(data.success).toBe(true);
+      51 |       expect(data.comment.content).toBe("Great post!");
+
+      at Object.toBe (tests/unit/commentController.test.js:48:30)
+
+  ● Comment Controller › createComment › should return 500 on server error
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 500
+    Received: 404
+
+      73 |       await createComment(req, res);
+      74 |
+    > 75 |       expect(res.statusCode).toBe(500);
+         |                              ^
+      76 |       consoleSpy.mockRestore();
+      77 |     });
+      78 |   });
+
+      at Object.toBe (tests/unit/commentController.test.js:75:30)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 8 passed, 10 total
+Snapshots:   0 total
+Time:        4.226 s
+Ran all test suites matching tests/unit/commentController.test.js.

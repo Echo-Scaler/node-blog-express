@@ -39,11 +39,9 @@ const postSchema = new mongoose.Schema(
       type: String,
       enum: ["public", "draft", "private"],
       default: "draft",
-      index: true,
     },
     scheduledAt: {
       type: Date,
-      index: true,
     },
     publishedAt: {
       type: Date,

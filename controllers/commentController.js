@@ -11,7 +11,6 @@ const getCommentsByPost = async (req, res) => {
     const skip = (page - 1) * limit;
     const userId = req.userId; // Assuming authenticate or optionalAuth middleware sets this
 
-    // Build aggregation pipeline
     const pipeline = [
       {
         $match: {
@@ -22,7 +21,6 @@ const getCommentsByPost = async (req, res) => {
       { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: limit },
-      // Lookup author details (avatar)
       {
         $lookup: {
           from: "users",
@@ -40,38 +38,80 @@ const getCommentsByPost = async (req, res) => {
       { $project: { author: 0 } },
     ];
 
+    // Lookup Reply counts
+    pipeline.push({
+      $lookup: {
+        from: "replies",
+        localField: "_id",
+        foreignField: "commentId",
+        as: "replies",
+      },
+    });
+
+    // Lookup Reaction counts
+    pipeline.push({
+      $lookup: {
+        from: "reactions",
+        let: { commentId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$targetId", "$$commentId"] },
+                  { $eq: ["$targetType", "comment"] },
+                ],
+              },
+            },
+          },
+        ],
+        as: "reactions",
+      },
+    });
+
+    // Final projection with counts
+    pipeline.push({
+      $addFields: {
+        replyCount: {
+          $size: {
+            $filter: {
+              input: "$replies",
+              as: "r",
+              cond: { $eq: ["$$r.isDeleted", false] },
+            },
+          },
+        },
+        reactionCount: { $size: "$reactions" },
+      },
+    });
+
     // If user is logged in, check if they liked the comment
     if (userId) {
       pipeline.push({
-        $lookup: {
-          from: "reactions",
-          let: { commentId: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$targetId", "$$commentId"] },
-                    { $eq: ["$targetType", "comment"] },
-                    { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] },
-                  ],
+        $addFields: {
+          isLiked: {
+            $gt: [
+              {
+                $size: {
+                  $filter: {
+                    input: "$reactions",
+                    as: "re",
+                    cond: {
+                      $eq: ["$$re.userId", new mongoose.Types.ObjectId(userId)],
+                    },
+                  },
                 },
               },
-            },
-            { $project: { _id: 1 } },
-          ],
-          as: "userReaction",
+              0,
+            ],
+          },
         },
-      });
-      pipeline.push({
-        $addFields: {
-          isLiked: { $gt: [{ $size: "$userReaction" }, 0] },
-        },
-      });
-      pipeline.push({
-        $project: { userReaction: 0 },
       });
     }
+
+    pipeline.push({
+      $project: { replies: 0, reactions: 0 },
+    });
 
     const comments = await Comment.aggregate(pipeline);
 

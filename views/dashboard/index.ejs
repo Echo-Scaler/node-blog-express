@@ -33,113 +33,122 @@
         </a>
       </header>
 
-      <div class="filter-bar-premium glass">
-        <div class="filter-item search-main">
-          <input type="text" id="filter-q" placeholder="Search by title..." />
-        </div>
+      <div class="dashboard-full-width">
+        <div class="dashboard-main" style="width: 100%">
+          <div class="filter-bar-premium glass">
+            <div class="filter-item search-main">
+              <input
+                type="text"
+                id="filter-q"
+                placeholder="Search by title..."
+              />
+            </div>
 
-        <div class="filter-item">
-          <select id="filter-status">
-            <option value="">Status: All</option>
-            <option value="published">Published</option>
-            <option value="draft">Draft</option>
-            <option value="hidden">Hidden</option>
-          </select>
-        </div>
+            <div class="filter-item">
+              <select id="filter-status">
+                <option value="">Status: All</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="hidden">Hidden</option>
+              </select>
+            </div>
 
-        <div class="filter-item">
-          <input
-            type="text"
-            id="filter-start-date"
-            placeholder="From Date"
-            onfocus="this.type = 'date'"
-            onblur="this.type = 'text'"
-          />
-        </div>
+            <div class="filter-item">
+              <input
+                type="text"
+                id="filter-start-date"
+                placeholder="From Date"
+                onfocus="this.type = 'date'"
+                onblur="this.type = 'text'"
+              />
+            </div>
 
-        <div class="filter-item">
-          <input
-            type="text"
-            id="filter-end-date"
-            placeholder="To Date"
-            onfocus="this.type = 'date'"
-            onblur="this.type = 'text'"
-          />
-        </div>
+            <div class="filter-item">
+              <input
+                type="text"
+                id="filter-end-date"
+                placeholder="To Date"
+                onfocus="this.type = 'date'"
+                onblur="this.type = 'text'"
+              />
+            </div>
 
-        <button id="search-btn" class="btn btn-secondary search-submit">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <span>Search</span>
-        </button>
-      </div>
-
-      <div class="data-table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Category</th>
-              <th>Status</th>
-              <th>Views</th>
-              <th>Date</th>
-              <th style="text-align: right">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="my-posts-container">
-            <!-- Posts will be rendered here as table rows -->
-          </tbody>
-        </table>
-        <div
-          id="no-posts-msg"
-          style="
-            display: none;
-            padding: 60px;
-            text-align: center;
-            color: var(--text-secondary);
-          "
-        >
-          <p>No stories found. Start writing your first masterpiece!</p>
-        </div>
-        <div
-          class="pagination-wrapper"
-          style="
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 24px;
-            border-top: 1px solid var(--border-light);
-          "
-        >
-          <div
-            class="pagination-info"
-            style="font-size: 14px; color: var(--text-secondary)"
-          >
-            Showing
-            <span id="page-range" style="font-weight: 600; color: #111827"
-              >0-0</span
-            >
-            of
-            <span id="total-count" style="font-weight: 600; color: #111827"
-              >0</span
-            >
-            stories
+            <button id="search-btn" class="btn btn-secondary search-submit">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>Search</span>
+            </button>
           </div>
-          <div id="pagination" style="display: flex; gap: 8px">
-            <!-- Pagination buttons will be dynamically injected -->
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Views</th>
+                  <th>Date</th>
+                  <th style="text-align: right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="my-posts-container">
+                <!-- Posts will be rendered here as table rows -->
+              </tbody>
+            </table>
+            <div
+              id="no-posts-msg"
+              style="
+                display: none;
+                padding: 60px;
+                text-align: center;
+                color: var(--text-secondary);
+              "
+            >
+              <p>No stories found. Start writing your first masterpiece!</p>
+            </div>
+            <div
+              class="pagination-wrapper"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 24px;
+                border-top: 1px solid var(--border-light);
+              "
+            >
+              <div
+                class="pagination-info"
+                style="font-size: 14px; color: var(--text-secondary)"
+              >
+                Showing
+                <span id="page-range" style="font-weight: 600; color: #111827"
+                  >0-0</span
+                >
+                of
+                <span id="total-count" style="font-weight: 600; color: #111827"
+                  >0</span
+                >
+                stories
+              </div>
+              <div id="pagination" style="display: flex; gap: 8px">
+                <!-- Pagination buttons will be dynamically injected -->
+              </div>
+            </div>
           </div>
         </div>
+        <!-- Sidebar removed -->
       </div>
     </main>
 

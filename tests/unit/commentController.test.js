@@ -25,14 +25,17 @@ describe("Comment Controller", () => {
       req.params = { postId: "post123" };
       req.body = { content: "Great post!" };
       req.userId = "user123";
-      req.user = { username: "testuser" };
+      req.user = { _id: "user123", username: "testuser" };
 
       const mockPost = {
         _id: "post123",
+        userId: "user456", // Post author
+        visibility: "public",
+        allowComments: true,
         commentCount: 5,
         save: jest.fn().mockResolvedValue(true),
       };
-      Post.findOne.mockResolvedValue(mockPost);
+      Post.findById.mockResolvedValue(mockPost);
 
       const mockComment = {
         _id: "comment123",
@@ -56,7 +59,7 @@ describe("Comment Controller", () => {
     it("should return 404 if post not found", async () => {
       req.params = { postId: "nonexistent" };
       req.body = { content: "Comment" };
-      Post.findOne.mockResolvedValue(null);
+      Post.findById.mockResolvedValue(null);
 
       await createComment(req, res);
 
@@ -68,11 +71,15 @@ describe("Comment Controller", () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
       req.params = { postId: "post123" };
       req.body = { content: "Comment" };
-      Post.findOne.mockRejectedValue(new Error("DB error"));
+      // Add userId and user mock as the controller might access them before Post.findById
+      req.userId = "user123";
+      req.user = { _id: "user123", username: "testuser" };
+      Post.findById.mockRejectedValue(new Error("DB error"));
 
       await createComment(req, res);
 
       expect(res.statusCode).toBe(500);
+      expect(res._getJSONData().message).toMatch(/Error creating comment/);
       consoleSpy.mockRestore();
     });
   });

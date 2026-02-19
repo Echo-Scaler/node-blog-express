@@ -25,37 +25,59 @@ const getRepliesByComment = async (req, res) => {
       { $limit: limit },
     ];
 
-    if (userId) {
-      pipeline.push({
-        $lookup: {
-          from: "reactions",
-          let: { replyId: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$targetId", "$$replyId"] },
-                    { $eq: ["$targetType", "reply"] },
-                    { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] },
-                  ],
-                },
+    // Lookup Reaction counts
+    pipeline.push({
+      $lookup: {
+        from: "reactions",
+        let: { replyId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$targetId", "$$replyId"] },
+                  { $eq: ["$targetType", "reply"] },
+                ],
               },
             },
-            { $project: { _id: 1 } },
-          ],
-          as: "userReaction",
-        },
-      });
+          },
+        ],
+        as: "reactions",
+      },
+    });
+
+    pipeline.push({
+      $addFields: {
+        reactionCount: { $size: "$reactions" },
+      },
+    });
+
+    if (userId) {
       pipeline.push({
         $addFields: {
-          isLiked: { $gt: [{ $size: "$userReaction" }, 0] },
+          isLiked: {
+            $gt: [
+              {
+                $size: {
+                  $filter: {
+                    input: "$reactions",
+                    as: "re",
+                    cond: {
+                      $eq: ["$$re.userId", new mongoose.Types.ObjectId(userId)],
+                    },
+                  },
+                },
+              },
+              0,
+            ],
+          },
         },
       });
-      pipeline.push({
-        $project: { userReaction: 0 },
-      });
     }
+
+    pipeline.push({
+      $project: { reactions: 0 },
+    });
 
     // Add user avatar lookup
     pipeline.push({

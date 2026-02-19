@@ -221,20 +221,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       html += `
-        <span id="love-count-display" style="cursor: pointer; display: flex; align-items: center;" class="hover-underline">
+        <span id="love-count-display" style="cursor: pointer; display: flex; align-items: center; background: rgba(0,0,0,0.03); padding: 4px 12px; border-radius: 20px; transition: background 0.2s;" class="hover-interaction">
           ${avatarsHtml}
-          <div style="background: #ef4444; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 4px;">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-          </div>
-          <span style="font-weight: 500;">${loveCount} loves</span>
+          <span style="font-size: 16px; margin-right: 6px;">❤️</span>
+          <span style="font-weight: 700; color: var(--text-main); font-size: 13px;">${loveCount}</span>
         </span>
       `;
 
       // Display comment count
       const commentCount = currentPost.commentCount || 0;
-      html += `<span id="comment-count-display" style="cursor: pointer; display: flex; align-items: center; gap: 4px;" class="hover-underline">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-          ${commentCount} comments
+      html += `<span id="comment-count-display" style="cursor: pointer; display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.03); padding: 4px 12px; border-radius: 20px; transition: background 0.2s;" class="hover-interaction">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary);"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <span style="font-weight: 700; color: var(--text-main); font-size: 13px;">${commentCount}</span>
         </span>`;
 
       html += "</div>";
@@ -268,15 +266,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           data.grouped.love.some((r) => r.userId._id === user._id);
 
         reactionButtons.innerHTML = `
-          <div style="display: flex; gap: 4px; width: 100%; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); padding: 4px 0;">
-            <button class="reaction-btn ${userLoved ? "active-love" : ""}" data-type="love" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: none; border: none; border-radius: 4px; cursor: pointer; color: ${userLoved ? "#ef4444" : "var(--text-secondary)"}; font-weight: 600; transition: background 0.2s;">
-              <div style="background: ${userLoved ? "#ef4444" : "#e4e6eb"}; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              </div>
-              Love
+          <div style="display: flex; gap: 12px; width: 100%; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); padding: 8px 0; margin-top: 16px;">
+            <button class="reaction-btn ${userLoved ? "active-love" : ""}" data-type="love" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: none; border: 1px solid ${userLoved ? "#ef4444" : "var(--border-light)"}; border-radius: 99px; cursor: pointer; color: ${userLoved ? "#ef4444" : "var(--text-secondary)"}; font-weight: 700; transition: all 0.2s; background: ${userLoved ? "rgba(239, 68, 68, 0.05)" : "none"}">
+              <span style="font-size: 18px;">${userLoved ? "❤️" : "🤍"}</span>
+              ${userLoved ? "Loved" : "Love"}
             </button>
-            <button id="action-comment-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: none; border: none; border-radius: 4px; cursor: pointer; color: var(--text-secondary); font-weight: 600; transition: background 0.2s;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <button id="action-comment-btn" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: none; border: 1px solid var(--border-light); border-radius: 99px; cursor: pointer; color: var(--text-secondary); font-weight: 700; transition: all 0.2s;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
               Comment
             </button>
           </div>
@@ -384,25 +380,23 @@ document.addEventListener("DOMContentLoaded", async () => {
                   <div id="comment-text-${comment._id}" class="comment-text">${comment.content}</div>
                 </div>
                 <div class="comment-actions">
-                  <span>${timeAgo}</span>
+                  <span style="font-size: 11px;">${timeAgo}</span>
                   <button 
                     class="action-link ${comment.isLiked ? "active-like" : ""}" 
                     onclick="toggleCommentLike('${comment._id}', ${comment.isLiked}, ${comment.reactionCount})" 
-                    style="${comment.isLiked ? "color: #ef4444; font-weight: bold;" : ""}"
+                    style="${comment.isLiked ? "color: #ef4444; font-weight: 700;" : ""}"
                     id="like-btn-${comment._id}"
-                  >${comment.isLiked ? "Loved" : "Love"}</button>
+                  >${comment.isLiked ? "❤️ Loved" : "Love"}</button>
                   <span 
                     class="comment-reaction-count" 
                     onclick="openCommentLikes('${comment._id}')" 
-                    style="cursor: pointer; display: ${comment.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 2px; color: var(--text-secondary);"
+                    style="cursor: pointer; display: ${comment.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 4px; background: rgba(0,0,0,0.03); padding: 2px 8px; border-radius: 12px; color: var(--text-main); font-size: 11px; font-weight: 700;"
                     id="like-count-display-${comment._id}"
                   >
-                    <div style="background: #ef4444; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="white" stroke="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    </div>
+                    <span>❤️</span>
                     <span id="like-count-num-${comment._id}">${comment.reactionCount}</span>
                   </span>
-                  ${user ? `<button onclick="toggleReplyForm('${comment._id}')" class="action-link">Reply</button>` : ""}
+                  ${user ? `<button onclick="toggleReplyForm('${comment._id}')" class="action-link" style="font-weight: 600;">Reply</button>` : ""}
                   ${
                     user && String(comment.userId) === String(user._id)
                       ? `
@@ -461,7 +455,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const svg = countDisplay.querySelector("svg");
         countDisplay.innerHTML = "";
         if (svg) countDisplay.appendChild(svg);
-        countDisplay.append(` ${totalCount} comments`);
+        countDisplay.append(` ${totalCount}`);
       }
 
       // Update the section header
@@ -507,12 +501,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (actualNewLiked) {
       btn.classList.add("active-like");
       btn.style.color = "#ef4444";
-      btn.style.fontWeight = "bold";
-      btn.innerText = "Loved";
+      btn.style.fontWeight = "700";
+      btn.innerText = "❤️ Loved";
     } else {
       btn.classList.remove("active-like");
       btn.style.color = "";
-      btn.style.fontWeight = "";
+      btn.style.fontWeight = "600";
       btn.innerText = "Love";
     }
 
@@ -537,8 +531,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Open Comment Likes Modal
-  window.openCommentLikes = async (commentId) => {
+  // Open Comment/Reply Likes Modal
+  window.openCommentLikes = async (targetId, type = "comment") => {
     const modal = document.getElementById("interactions-modal");
     const likesList = document.getElementById("likes-list");
     const modalTitle = document.querySelector("#interactions-modal h3");
@@ -547,7 +541,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     modal.style.display = "flex";
     // Hide tabs, set title
     if (tabs) tabs.style.display = "none";
-    if (modalTitle) modalTitle.innerText = "People who loved this comment";
+
+    const titleText =
+      type === "reply"
+        ? "People who loved this reply"
+        : "People who loved this comment";
+    if (modalTitle) modalTitle.innerText = titleText;
 
     // Show likes list, hide comments list
     document.getElementById("likes-list").style.display = "block";
@@ -556,44 +555,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     likesList.innerHTML = '<div class="loading">Loading...</div>';
 
     try {
-      const data = await apiRequest(`/reactions/comment/${commentId}`);
+      const data = await apiRequest(`/reactions/${type}/${targetId}`);
 
       if (data.grouped && data.grouped.love) {
+        if (data.grouped.love.length === 0) {
+          likesList.innerHTML =
+            '<div style="padding: 40px; text-align: center; color: var(--text-secondary);">No loves yet</div>';
+          return;
+        }
         likesList.innerHTML = data.grouped.love
           .map((c) => {
-            const initials = c.username
-              ? c.username.substring(0, 2).toUpperCase()
+            const u = c.userId;
+            const initials = u.username
+              ? u.username.substring(0, 2).toUpperCase()
               : "U";
 
-            const avatarHtml = c.userAvatar
-              ? `<img src="${c.userAvatar}" alt="${c.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+            const avatarHtml = u.avatar
+              ? `<img src="${u.avatar}" alt="${u.username}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
               : initials;
 
             return `
-                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
-                    <div class="comment-avatar" style="width: 40px; height: 40px; font-size: 14px;">${avatarHtml}</div>
-                    <div style="display: flex; flex-direction: column;">
-                        <span style="font-weight: 600;">${c.username}</span>
-                        <span style="font-size: 12px; color: var(--text-secondary);">${new Date(c.createdAt).toLocaleDateString()}</span>
-                    </div>
-                </div>
-            `;
+              <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
+                  <div class="comment-avatar" style="width: 40px; height: 40px; font-size: 14px;">${avatarHtml}</div>
+                  <div style="display: flex; flex-direction: column;">
+                      <span style="font-weight: 700; color: var(--text-main);">${u.username}</span>
+                      <span style="font-size: 11px; color: var(--text-secondary);">${new Date(c.createdAt).toLocaleDateString()}</span>
+                  </div>
+              </div>
+          `;
           })
           .join("");
       } else {
         likesList.innerHTML =
-          '<div style="padding: 20px; text-align: center; color: var(--text-secondary);">No loves yet</div>';
+          '<div style="padding: 40px; text-align: center; color: var(--text-secondary);">No loves yet</div>';
       }
     } catch (error) {
-      likesList.innerHTML = `<div class="error">Error loading likes: ${error.message}</div>`;
+      likesList.innerHTML = `<div class="error" style="padding: 40px; text-align: center; color: #ef4444;">Error loading likes: ${error.message}</div>`;
     }
 
-    // Reset modal state on close?
-    // We need to make sure 'closeInteractionsModal' resets the tabs visibility if used for post interactions later.
-    const closeBtn = document.getElementById("close-modal-btn");
-    const originalClose = closeBtn.onclick; // Preserving original might be tricky if it was addEventListener
-
-    // We can just fix the reset in 'openInteractionsModal' to always show tabs.
+    // We rely on close button or modal click to close.
+    // When closing, we might want to reset tabs if we are reusing the modal.
+    // But 'openInteractionsModal' handles resetting tabs display.
   };
 
   // Original openInteractionsModal needs to ensure tabs are shown
@@ -1005,24 +1007,23 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
               </div>
               <div class="comment-actions">
-                <span>${timeAgo}</span>
+                <span style="font-size: 11px;">${timeAgo}</span>
                 <button 
                   class="action-link ${isLiked ? "active-like" : ""}" 
                   onclick="toggleReplyLike('${reply._id}', ${reply.reactionCount})"
                   id="reply-like-btn-${reply._id}"
-                  style="${isLiked ? "color: #ef4444; font-weight: bold;" : ""}"
-                >${isLiked ? "Loved" : "Love"}</button>
+                  style="${isLiked ? "color: #ef4444; font-weight: 700;" : ""}"
+                >${isLiked ? "❤️ Loved" : "Love"}</button>
                 <span 
-                  style="cursor: pointer; display: ${reply.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 2px; color: var(--text-secondary);"
+                  style="cursor: pointer; display: ${reply.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 4px; background: rgba(0,0,0,0.03); padding: 2px 8px; border-radius: 12px; color: var(--text-main); font-size: 11px; font-weight: 700;"
                   id="reply-like-count-display-${reply._id}"
                   class="comment-reaction-badge"
+                  onclick="openCommentLikes('${reply._id}')"
                 >
-                  <div style="background: #ef4444; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <svg width="8" height="8" viewBox="0 0 24 24" fill="white" stroke="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  </div>
+                  <span>❤️</span>
                   <span id="reply-like-count-num-${reply._id}" style="font-size: 11px;">${reply.reactionCount}</span>
                 </span>
-                ${user ? `<button onclick="toggleReplyForm('${commentId}')" class="action-link">Reply</button>` : ""}
+                ${user ? `<button onclick="toggleReplyForm('${commentId}')" class="action-link" style="font-weight: 600;">Reply</button>` : ""}
                 ${
                   isReplyOwner
                     ? `
@@ -1060,12 +1061,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (newLiked) {
       btn.classList.add("active-like");
       btn.style.color = "#ef4444";
-      btn.style.fontWeight = "bold";
-      btn.innerText = "Loved";
+      btn.style.fontWeight = "700";
+      btn.innerText = "❤️ Loved";
     } else {
       btn.classList.remove("active-like");
       btn.style.color = "";
-      btn.style.fontWeight = "";
+      btn.style.fontWeight = "600";
       btn.innerText = "Love";
     }
     countNum.innerText = actualCount;
@@ -1161,7 +1162,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function openInteractionsModal(tab = "likes") {
     modal.style.display = "flex";
 
-    // Refresh counts for tabs
+    // Reset UI state for Post Interactions
+    const modalTitle = document.querySelector("#interactions-modal h3");
+    const tabs = document.querySelector(".modal-tabs");
+
+    // Set default title for post interactions
+    if (modalTitle) modalTitle.innerText = "Interactions";
+
+    // Ensure tabs are visible (they might be hidden by openCommentLikes)
+    if (tabs) tabs.style.display = "flex";
+
+    switchTab(tab);
+
+    // Refresh counts for tabs asynchronously
     try {
       const [reactionData, commentData] = await Promise.all([
         apiRequest(`/reactions/post/${postId}`),
@@ -1185,18 +1198,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (e) {
       console.error("Error refreshing modal counts:", e);
     }
-
-    // Reset UI state for Post Interactions
-    const modalTitle = document.querySelector("#interactions-modal h3");
-    const tabs = document.querySelector(".modal-tabs");
-
-    // Set default title for post interactions
-    if (modalTitle) modalTitle.innerText = "Interactions";
-
-    // Ensure tabs are visible (they might be hidden by openCommentLikes)
-    if (tabs) tabs.style.display = "flex";
-
-    switchTab(tab);
   }
 
   function closeInteractionsModal() {
@@ -1325,32 +1326,33 @@ document.addEventListener("DOMContentLoaded", async () => {
                   </div>
                   <div id="modal-comment-text-${c._id}" class="comment-text">${c.content}</div>
                 </div>
-                <div class="comment-actions" style="margin-top: 4px; margin-left: 12px;">
-                  <span>${timeAgo}</span>
+                <div class="comment-actions" style="margin-top: 4px; margin-left: 12px; display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 10px;">${timeAgo}</span>
                   ${
                     user
                       ? `
                     <button 
                       class="action-link ${c.isLiked ? "active-like" : ""}" 
                       onclick="toggleModalCommentLike('${c._id}', this)"
-                      style="${c.isLiked ? "color: #ef4444; font-weight: bold;" : ""}"
-                    >${c.isLiked ? "Loved" : "Love"}</button>
+                      style="font-size: 11px; ${c.isLiked ? "color: #ef4444; font-weight: 700;" : ""}"
+                    >${c.isLiked ? "❤️ Loved" : "Love"}</button>
                   `
                       : ""
                   }
                   <span 
-                    style="display: ${c.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 2px; color: var(--text-secondary);"
+                    style="display: ${c.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 4px; background: rgba(0,0,0,0.03); padding: 1px 6px; border-radius: 10px; color: var(--text-main); font-size: 10px; font-weight: 700; cursor: pointer;"
                     id="modal-like-count-${c._id}"
+                    onclick="openCommentLikes('${c._id}', 'comment')"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    <span>❤️</span>
                     <span id="modal-like-num-${c._id}">${c.reactionCount}</span>
                   </span>
-                  ${user ? `<button onclick="toggleModalReplyForm('${c._id}')" class="action-link">Reply</button>` : ""}
+                  ${user ? `<button onclick="toggleModalReplyForm('${c._id}')" class="action-link" style="font-size: 11px; font-weight: 600;">Reply</button>` : ""}
                   ${
                     isOwner
                       ? `
-                    <button onclick="enableModalEditComment('${c._id}')" class="action-link">Edit</button>
-                    <button onclick="deleteModalComment('${c._id}')" class="action-link delete-action">Delete</button>
+                    <button onclick="enableModalEditComment('${c._id}')" class="action-link" style="font-size: 11px;">Edit</button>
+                    <button onclick="deleteModalComment('${c._id}')" class="action-link delete-action" style="font-size: 11px;">Delete</button>
                   `
                       : ""
                   }
@@ -1395,12 +1397,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (newLiked) {
       btn.classList.add("active-like");
       btn.style.color = "#ef4444";
-      btn.style.fontWeight = "bold";
-      btn.innerText = "Loved";
+      btn.style.fontWeight = "700";
+      btn.innerText = "❤️ Loved";
     } else {
       btn.classList.remove("active-like");
       btn.style.color = "";
-      btn.style.fontWeight = "";
+      btn.style.fontWeight = "600";
       btn.innerText = "Love";
     }
     countNum.innerText = count;
@@ -1463,10 +1465,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <span style="font-weight: 700; font-size: 11px;">${r.username}</span>
                     <div style="font-size: 12px; line-height: 1.3;" id="modal-reply-text-${r._id}">${r.content}</div>
                   </div>
-                  <div style="margin-left: 8px; margin-top: 2px; font-size: 10px; color: #65676b; display: flex; gap: 8px; align-items: center;">
+                  <div style="margin-left: 8px; margin-top: 2px; font-size: 10px; color: #65676b; display: flex; gap: 10px; align-items: center;">
                     <span>${rTime}</span>
-                    <button class="action-link" onclick="toggleModalReplyLike('${r._id}', this)" style="font-size: 10px; ${r.isLiked ? "color: #ef4444; font-weight: bold;" : ""}">${r.isLiked ? "Loved" : "Love"}</button>
-                    ${user ? `<button onclick="toggleModalReplyForm('${commentId}')" class="action-link" style="font-size: 10px;">Reply</button>` : ""}
+                    <button class="action-link ${r.isLiked ? "active-like" : ""}" onclick="toggleModalReplyLike('${r._id}', this)" style="font-size: 10px; font-weight: 600; ${r.isLiked ? "color: #ef4444; font-weight: 700;" : ""}">${r.isLiked ? "❤️ Loved" : "Love"}</button>
+                    ${user ? `<button onclick="replyToModalUser('${commentId}', '${r.username}')" class="action-link" style="font-size: 10px; font-weight: 600;">Reply</button>` : ""}
                     ${
                       user && String(r.userId) === String(user._id)
                         ? `
@@ -1475,7 +1477,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     `
                         : ""
                     }
-                    ${r.reactionCount > 0 ? `<span style="margin-left: 4px; display: flex; align-items: center; gap: 2px;"><div style="background: #ef4444; width: 12px; height: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><svg width="7" height="7" viewBox="0 0 24 24" fill="white" stroke="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div> <span id="modal-reply-like-num-${r._id}">${r.reactionCount}</span></span>` : ""}
+                    <span 
+                      style="display: ${r.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 4px; background: rgba(0,0,0,0.03); padding: 1px 6px; border-radius: 10px; color: var(--text-main); font-size: 9px; font-weight: 700; cursor: pointer;"
+                      id="modal-reply-like-display-${r._id}"
+                      onclick="openCommentLikes('${r._id}', 'reply')"
+                    >
+                      <span>❤️</span>
+                      <span id="modal-reply-like-num-${r._id}">${r.reactionCount}</span>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1485,8 +1494,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         if (textEl) textEl.textContent = "Hide replies";
       } catch (err) {
+        console.error("Error loading modal replies:", err);
         container.innerHTML =
-          '<div style="padding: 6px 0; font-size: 12px; color: red;">Error loading replies</div>';
+          '<div style="padding: 10px 0; font-size: 12px; color: #ef4444; text-align: center;">Error loading replies. Please try again.</div>';
       }
     } else {
       container.style.display = "none";
@@ -1608,10 +1618,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                   <span style="font-weight: 700; font-size: 11px;">${r.username}</span>
                   <div style="font-size: 12px; line-height: 1.3;" id="modal-reply-text-${r._id}">${r.content}</div>
                 </div>
-                <div style="margin-left: 8px; margin-top: 2px; font-size: 10px; color: #65676b; display: flex; gap: 8px; align-items: center;">
+                <div style="margin-left: 8px; margin-top: 2px; font-size: 10px; color: #65676b; display: flex; gap: 10px; align-items: center;">
                   <span>${rTime}</span>
-                  <button class="action-link" onclick="toggleModalReplyLike('${r._id}', this)" style="font-size: 10px; ${r.isLiked ? "color: #ef4444; font-weight: bold;" : ""}">${r.isLiked ? "Loved" : "Love"}</button>
-                  ${user ? `<button onclick="toggleModalReplyForm('${commentId}')" class="action-link" style="font-size: 10px;">Reply</button>` : ""}
+                  <button class="action-link" onclick="toggleModalReplyLike('${r._id}', this)" style="font-size: 10px; font-weight: 600; ${r.isLiked ? "color: #ef4444; font-weight: 700;" : ""}">${r.isLiked ? "❤️ Loved" : "Love"}</button>
+                  ${user ? `<button onclick="toggleModalReplyForm('${commentId}')" class="action-link" style="font-size: 10px; font-weight: 600;">Reply</button>` : ""}
                   ${
                     isReplyOwner
                       ? `
@@ -1620,7 +1630,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                   `
                       : ""
                   }
-                  ${r.reactionCount > 0 ? `<span style="margin-left: 4px; display: flex; align-items: center; gap: 2px;"><div style="background: #ef4444; width: 12px; height: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"><svg width="7" height="7" viewBox="0 0 24 24" fill="white" stroke="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></div> <span id="modal-reply-like-num-${r._id}">${r.reactionCount}</span></span>` : ""}
+                  <span 
+                    style="display: ${r.reactionCount > 0 ? "inline-flex" : "none"}; align-items: center; gap: 3px; background: rgba(0,0,0,0.03); padding: 1px 6px; border-radius: 9px; color: var(--text-main); font-size: 9px; font-weight: 700; cursor: pointer;"
+                    onclick="openCommentLikes('${r._id}')"
+                  >
+                    <span>❤️</span>
+                    <span id="modal-reply-like-num-${r._id}">${r.reactionCount}</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -1713,8 +1729,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Reply Like in modal
   window.toggleModalReplyLike = async (replyId, btn) => {
-    const isLiked = btn.style.fontWeight === "bold";
     const numEl = document.getElementById(`modal-reply-like-num-${replyId}`);
+    const displayEl = document.getElementById(
+      `modal-reply-like-display-${replyId}`,
+    );
+
+    const isActive = btn.classList.contains("active-like");
+    const newLiked = !isActive;
+    let actualCount = parseInt(numEl ? numEl.innerText : 0);
+    actualCount = newLiked ? actualCount + 1 : Math.max(0, actualCount - 1);
+
+    // Optimistic UI
+    if (newLiked) {
+      btn.classList.add("active-like");
+      btn.style.color = "#ef4444";
+      btn.style.fontWeight = "700";
+      btn.innerText = "❤️ Loved";
+    } else {
+      btn.classList.remove("active-like");
+      btn.style.color = "";
+      btn.style.fontWeight = "600";
+      btn.innerText = "Love";
+    }
+
+    if (numEl) numEl.innerText = actualCount;
+    if (displayEl)
+      displayEl.style.display = actualCount > 0 ? "inline-flex" : "none";
 
     try {
       await apiRequest("/reactions", {
@@ -1726,22 +1766,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         }),
       });
 
-      if (isLiked) {
-        btn.style.color = "";
-        btn.style.fontWeight = "";
-        btn.innerText = "Love";
-        if (numEl) numEl.innerText = Math.max(0, parseInt(numEl.innerText) - 1);
-      } else {
-        btn.style.color = "#ef4444";
-        btn.style.fontWeight = "bold";
-        btn.innerText = "Loved";
-        if (numEl) numEl.innerText = (parseInt(numEl.innerText) || 0) + 1;
-      }
-
       // Sync main view
       loadComments();
     } catch (error) {
-      console.error("Error reacting to modal reply:", error);
+      console.error("Error toggling modal reply like:", error);
+      alert("Failed to react");
+    }
+  };
+
+  window.replyToModalUser = (commentId, username) => {
+    toggleModalReplyForm(commentId);
+    const form = document.querySelector(
+      `#modal-replies-container-${commentId} .modal-reply-form`,
+    );
+    if (form) {
+      const input = form.querySelector("input");
+      if (input) {
+        input.value = `@${username} `;
+        input.focus();
+      }
     }
   };
 
