@@ -118,6 +118,13 @@ postSchema.index({ scheduledAt: 1 });
 postSchema.index({ createdAt: -1 });
 postSchema.index({ tags: 1 });
 
+// Compound Indexes for common feed queries
+postSchema.index({ visibility: 1, publishedAt: -1 });
+postSchema.index({ tags: 1, visibility: 1, publishedAt: -1 });
+
+// Text Index for Search
+postSchema.index({ title: "text", content: "text", tags: "text" });
+
 // Method to check if user can edit this post
 postSchema.methods.canEdit = function (userId) {
   return this.userId.toString() === userId.toString();

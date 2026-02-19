@@ -35,7 +35,15 @@ async function generateSlug(title, excludeId = null) {
 // @access  Public
 exports.getAllPosts = async (req, res) => {
   try {
-    const { category, tag, search, page = 1, limit = 12 } = req.query;
+    const {
+      category,
+      categoryId,
+      tag,
+      search,
+      page = 1,
+      limit = 9,
+      sort,
+    } = req.query;
     const skip = (page - 1) * limit;
 
     const query = {
@@ -47,6 +55,8 @@ exports.getAllPosts = async (req, res) => {
     if (category) {
       const cat = await Category.findOne({ slug: category });
       if (cat) query.categoryId = cat._id;
+    } else if (categoryId) {
+      query.categoryId = categoryId;
     }
 
     if (tag) {
@@ -54,30 +64,72 @@ exports.getAllPosts = async (req, res) => {
     }
 
     if (search) {
-      query.$or = [
-        { title: { $regex: search, $options: "i" } },
-        { content: { $regex: search, $options: "i" } },
-      ];
+      query.$text = { $search: search }; // Use text index for better search
     }
 
-    const posts = await Post.find(query)
-      .populate("userId", "username displayName avatar url")
-      .populate("categoryId", "name slug color")
-      .sort({ publishedAt: -1 })
-      .skip(skip)
-      .limit(parseInt(limit));
+    let posts;
+    let total;
 
-    const total = await Post.countDocuments(query);
+    if (sort === "smart") {
+      // SMART ALGORITHM: Fetch recent pool, score them, and sort
+      // 1. Fetch a pool of candidate posts (e.g., last 100 published)
+      const candidatePool = await Post.find(query)
+        .populate("userId", "username displayName avatar url")
+        .populate("categoryId", "name slug color")
+        .sort({ publishedAt: -1 })
+        .limit(100);
+
+      // 2. Score each post
+      const now = new Date();
+      const scoredPosts = candidatePool.map((p) => {
+        const hoursAge = (now - new Date(p.publishedAt)) / (1000 * 60 * 60);
+        const popularity =
+          (p.viewCount || 0) * 0.1 +
+          (p.reactionCount || 0) * 1.0 +
+          (p.commentCount || 0) * 2.0;
+
+        // Decay score: Popularity minus time decay
+        // Ensure new posts aren't buried: Start with a base, or weigh freshness heavily
+        // Formula: Score = Popularity / (Age + 2)^1.5  (Gravity decay)
+        // OR Linear: Score = Popularity - (Age * 0.5)
+
+        // Let's use a Gravity Decay model (Hacker News style-ish)
+        const score = (popularity + 1) / Math.pow(hoursAge + 2, 1.5);
+
+        return { post: p, score };
+      });
+
+      // 3. Sort by score descending
+      scoredPosts.sort((a, b) => b.score - a.score);
+
+      // 4. Paginate manually
+      total = scoredPosts.length;
+      posts = scoredPosts
+        .slice(skip, skip + parseInt(limit))
+        .map((item) => item.post);
+    } else {
+      // STANDARD CHRONOLOGICAL SORT
+      posts = await Post.find(query)
+        .populate("userId", "username displayName avatar url")
+        .populate("categoryId", "name slug color")
+        .sort({ publishedAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit));
+
+      total = await Post.countDocuments(query);
+    }
 
     res.json({
       success: true,
-      count: posts.length,
-      total,
-      pages: Math.ceil(total / limit),
-      currentPage: parseInt(page),
+      pagination: {
+        total,
+        pages: Math.ceil(total / limit),
+        page: parseInt(page),
+        limit: parseInt(limit),
+      },
       posts: posts.map((p) => ({
         ...p.toObject(),
-        author: p.userId, // Map userId to author for frontend consistency if needed
+        author: p.userId,
       })),
     });
   } catch (err) {
@@ -400,7 +452,7 @@ exports.hidePost = async (req, res) => {
 exports.getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { page = 1, limit = 12, q, status, startDate, endDate } = req.query;
+    const { page = 1, limit = 9, q, status, startDate, endDate } = req.query;
     const skip = (page - 1) * limit;
 
     // If viewing own profile, show everything (unless filtered). Else show public.
