@@ -180,6 +180,18 @@ exports.getPostById = async (req, res) => {
       });
     }
 
+    // Truncate content for guests (unauthenticated users)
+    let isTruncated = false;
+    let responsePost = post.toObject();
+
+    if (!user && post.visibility === "public") {
+      const teaserLength = 400;
+      if (responsePost.content.length > teaserLength) {
+        responsePost.content = responsePost.content.substring(0, teaserLength);
+        isTruncated = true;
+      }
+    }
+
     // Increment views (naive implementation)
     // In production, use a separate collection or Redis to prevent spam
     if (post.visibility === "public") {
@@ -187,7 +199,7 @@ exports.getPostById = async (req, res) => {
       await post.save({ validateBeforeSave: false });
     }
 
-    res.json({ success: true, post });
+    res.json({ success: true, post: responsePost, isTruncated });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server Error" });

@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const readTime = Math.ceil(post.content.split(" ").length / 200);
 
         html += `
-          <article class="story-card glass" onclick="window.location.href='/posts/${post._id}'" style="cursor: pointer;">
+          <article class="story-card glass" onclick="checkAuthAndNavigateLocal('/posts/${post._id}')" style="cursor: pointer;">
             ${
               post.image
                 ? `
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 : ""
             }
             <div class="story-category">${categoryName}</div>
-            <h3><a href="/posts/${post._id}" style="text-decoration: none; color: inherit;">${post.title}</a></h3>
+            <h3><a href="javascript:void(0)" style="text-decoration: none; color: inherit;">${post.title}</a></h3>
             <p class="story-excerpt">${post.excerpt || post.content.substring(0, 120) + "..."}</p>
             <div class="story-footer">
               <div class="story-author">
@@ -380,28 +380,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Expose for usage in inline onclick
   window.checkAuthAndNavigate = (url) => {
-    // We can't easily access 'getUser' from here if it's not global,
-    // but auth.js exposes 'getUser' globally?
-    // Let's check auth.js. Yes, const getUser = ... is defined at top level but NOT exposed to window unless we do so.
-    // However, auth.js runs before home.js.
-    // Wait, auth.js definitions are const, not var, so they are not on window by default?
-    // Actually, in browser scripts (non-module), top-level const/let are NOT attached to window.
-    // BUT we are in the same scope if included via script tags? No, separate script tags have separate scopes if modules,
-    // but separate script tags share global scope if NOT modules.
-    // auth.js: const getUser = ...
-    // If auth.js is not type="module", then:
-    // Chrome console: const a = 1; window.a is undefined.
-    // So 'getUser' is not globally available unless auth.js attaches it to window.
-    // Checking auth.js... it does NOT attach to window.
-    // So 'getUser' is NOT available here directly if it was just 'const getUser'.
-    // WAIT. If they are just script tags, they share the global scope.
-    // But 'const' in global scope does not create a property on window, but it IS accessible by name in subsequent scripts.
-    // Let's assume it is available.
-    // Safer: localStorage check directly.
-
     const user = localStorage.getItem("user");
     if (user) {
       window.open(url, "_blank");
+    } else {
+      showLoginModal();
+    }
+  };
+
+  window.checkAuthAndNavigateLocal = (url) => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      window.location.href = url;
     } else {
       showLoginModal();
     }
